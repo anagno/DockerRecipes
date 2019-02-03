@@ -1,12 +1,13 @@
 # Raspberry Pi
 
-As already mentioned, for the Ceph library we need an 64bit operating system.
+As already mentioned, for the Ceph library we need an 64 bit operating system.
 Generally many of the images we are using are only available for aarch64 not 
-the arm4vl (which is the 32bit version). So it is better to install an aarch64
+the arm4vl (which is the 32 bit version). So it is better to install an aarch64
 image. For that we will have to create our own images for the Raspberry Pi.
 
-I tried multiple distros, but debian was the most stable and I could install
-correctly the ceph-common package and docker.
+Rasbian does not have an official aarch64 image at the moment of writting this
+(i.e. 03/02/2019). I tried multiple distros, but debian was the most stable and 
+I could install correctly the ceph-common package and docker.
 
 
 ## Compiling a kernel and create a custom image
@@ -27,11 +28,11 @@ sudo apt-get intall debootstrap debian-archive-keyring qemu-user-static binfmt-s
 cd rpi23-gen-image
 ```
 
-Now that the scripts in our hard drive we need a template parameter file.
+Now that we have downloaded the scripts, we need a template parameter file.
 Here are mine:
 
-* [Raspberry Pi 3 model B](_scripts/rpi3-with-ceph ':ignore')
-* [Raspberry Pi 3 model B+](_scripts/rpi3P-with-ceph ':ignore')
+* [Raspberry Pi 3 model B](_assets/rpi3-with-ceph ':ignore')
+* [Raspberry Pi 3 model B+](_assets/rpi3P-with-ceph ':ignore')
 
 Download the file and just execute (do not forget to copy the parameter files
 in your working folder):
@@ -74,9 +75,79 @@ chmod 777 check-config.sh
 The extra modules with the "(optional)" tag in the list are not strictly necessary, 
 but they are there for the script.
 
+Once the script is finished you will find your image under the images folder.
+Write the image in an sd card and boot your Raspberry Pi.
 
 
-## Setting up the Raspberry Pi as a ceph client. 
+## Setting up after first boot
 
-!> **Important** notice with `inline code` and additional placeholder text used
-to force the content to wrap and span multiple lines.
+After we install our operating system in the Raspberry Pi, we still have to make
+some small changes. So log in the Rasbperry Pi by using SSH and execute:
+
+```bash
+sudo apt-get update && sudo apt-get upgrade
+
+# The first thing that I usually do is set the hostname of our new node
+sudo nano /etc/hostname 
+sudo nano /etc/hosts
+
+sudo nano /boot/cmdline.txt 
+# add cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1 
+# in the end of the line
+# https://www.raspberrypi.org/forums/viewtopic.php?t=203128
+# This is for limiting the memory consumption of some containers
+# and not only
+
+# change the password of the Raspberry Pi
+# I usually use the apg to generate random passwards
+passwd 
+sudo systemctl reboot
+```
+
+## Booting from a hard-drive
+
+This step is **not** really necessary, but for full documentation I leave it.
+Especially if you want to have an osd node I would not suggeste to boot from a
+hard-drive. It is easier to just use the whole drive. 
+So move to the **next sections**.
+
+The image we are using is a much more basic one we will have to adjust some 
+file to be able to 
+[boot](https://www.maketecheasier.com/boot-up-raspberry-pi-3-external-hard-disk/) 
+from an 
+[external hard drive](https://github.com/hypriot/image-builder-rpi/issues/260)
+
+To boot from an external hard drive adjust the root parameter in 
+the /boot/cmdline.txt to point to the hard drive:
+
+```
+dwc_otg.lpm_enable=0 console=tty1 root=/dev/sda2 rootfstype=ext4 cgroup_enable=cpuset cgroup_memory=1 swapaccount=1 elevator=deadline fsck.repair=yes rootwait console=ttyAMA0,115200 net.ifnames=0 rootdelay=5
+```
+
+and afterwards adjust the /etc/fstab to point again to the hard drive:
+
+```
+proc /proc proc defaults 0 0
+/dev/sda1 /boot vfat defaults 0 0
+/dev/sda2 / ext4 defaults,noatime 0 1
+```
+
+
+## Memorable mentions
+
+The [HypriotOS](https://blog.hypriot.com) is an image with docker 
+pre-installed. But as already mentioned it is better to have an 64 bit 
+operating system. The 
+[official image](https://github.com/hypriot/image-builder-rpi) 
+does not support yet the 64bit operating system. There is an 
+[unofficial image](https://github.com/DieterReuter/image-builder-rpi64).
+The HypriotOS is really nice project, but the provided kernels with 
+the images do not support Ceph. So I really had to compile my own
+kernels.
+
+
+## Resources 
+* https://withblue.ink/2017/12/31/yes-you-can-run-docker-on-raspbian.html
+* https://www.marksei.com/docker-on-raspberry-pi-raspbian/
+* https://github.com/drtyhlpr/rpi23-gen-image
+* https://wiki.debian.org/RaspberryPi3
