@@ -2,4 +2,13 @@
   - [Hardware](hardware/README.md)
   - [Raspberry Pi](hardware/raspberry.md)
   - [Armbian compatible boards](hardware/armbian_combatible.md)
+  - [X86 computers](hardware/x86.md)
+  - [Docker installation](hardware/docker_installation.md)
+- [Docker Swarm](swarm/README.md)
+  - [Persistent storage](persistent_storage/README.md)
+    - [ceph-mon](persistent_storage/ceph-mon.md)
+    - [ceph-mgr](persistent_storage/ceph-mgr.md)
+    - [ceph-osd](persistent_storage/ceph-osd.md)
+    - [ceph-mds](persistent_storage/ceph-mds.md)
+
 

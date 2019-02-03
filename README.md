@@ -20,7 +20,8 @@ way too many ugly README files
 ## Who is this for?
 
 For the strong of heart that are looking for new ideas. It is not meant as guide,
-but more as a starting step. I will not be providing any support, but any bugs/questions you are welcome to create an issue at github (and if I have time I 
+but more as a starting step. I will not be providing any support, but any 
+bugs/questions you are welcome to create an issue at github (and if I have time I 
 will answer them, but no promises). Think of it as a collection of guides for 
 creating your own cluster and running your self-hosted services. I post them
 so if I ever have to start again from the begging, I will not have to do it 
