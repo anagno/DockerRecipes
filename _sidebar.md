@@ -10,5 +10,6 @@
     - [ceph-mgr](persistent_storage/ceph-mgr.md)
     - [ceph-osd](persistent_storage/ceph-osd.md)
     - [ceph-mds](persistent_storage/ceph-mds.md)
+    - [Mounting CephFS](persistent_storage/mounting_clients.md)
 
 
