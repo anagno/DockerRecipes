@@ -55,10 +55,10 @@ mgr initial modules = dashboard
 
 # for rock64
 [osd]
-bluestore_cache_size = 421875000 #750MB
-bluestore_cache_size_hdd = 421875000 #750MB 
-bluestore_cache_size_ssd = 421875000 #750MB
-bluestore_cache_kv_max = 210937500 #750MB
+bluestore_cache_size = 343000000 #700MB
+bluestore_cache_size_hdd = 343000000 #700MB
+bluestore_cache_size_ssd = 343000000 #700MB
+bluestore_cache_kv_max = 171500000 #700MB
 osd map cache size = 500
 osd map cache bl size = 25
 osd map cache bl inc size = 50
