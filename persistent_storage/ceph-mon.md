@@ -55,16 +55,13 @@ mgr initial modules = dashboard
 
 # for rock64
 [osd]
-bluestore_cache_size = 343000000 #700MB
-bluestore_cache_size_hdd = 343000000 #700MB
-bluestore_cache_size_ssd = 343000000 #700MB
-bluestore_cache_kv_max = 171500000 #700MB
+osd_memory_target = 1073741824 #1GB
 osd map cache size = 500
 osd map cache bl size = 25
 osd map cache bl inc size = 50
 osd map message max = 50
 osd recovery delay start = 60
-osd recovery max active = 3 # if it too much then change this to 2
+osd recovery max active = 3
 osd recovery op priority = 2
 osd client message size cap = 524288000 #500MB 
 ```
@@ -101,10 +98,7 @@ In the Raspberry Pis I am using:
 
 ```yaml
 [osd]
-bluestore_cache_size = 1000000 #100MB 
-bluestore_cache_size_hdd = 1000000 #100MB 
-bluestore_cache_size_ssd = 1000000 #100MB 
-bluestore_cache_kv_max = 500000 #100MB 
+osd_memory_target = 268435456 #0.2GB 
 osd map cache size = 50
 osd map cache bl size = 25
 osd map cache bl inc size = 50
@@ -119,16 +113,13 @@ and in the ODROID-C2 boards I am using:
 
 ```yaml
 [osd]
-bluestore_cache_size = 125000000 #500MB 
-bluestore_cache_size_hdd = 125000000 #500MB 
-bluestore_cache_size_ssd = 125000000 #500MB 
-bluestore_cache_kv_max = 62500000 #500MB 
+osd_memory_target = 536870912 #0.5GB
 osd map cache size = 500
 osd map cache bl size = 25
 osd map cache bl inc size = 50
 osd map message max = 50
 osd recovery delay start = 60
-osd recovery max active = 2
+osd recovery max active = 2 
 osd recovery op priority = 2
 osd client message size cap = 524288000 #500MB 
 ```
