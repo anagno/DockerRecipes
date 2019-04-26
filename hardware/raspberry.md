@@ -34,8 +34,7 @@ Here are mine:
 * [Raspberry Pi 3 model B](_assets/rpi3-with-ceph ':ignore')
 * [Raspberry Pi 3 model B+](_assets/rpi3P-with-ceph ':ignore')
 
-Download the file and just execute (do not forget to copy the parameter files
-in your working folder):
+Download the file, copy it in the 'templates' folder and just execute:
 
 ```bash
 sudo CONFIG_TEMPLATE=rpi3-stretch-with-ceph ./rpi23-gen-image.sh
