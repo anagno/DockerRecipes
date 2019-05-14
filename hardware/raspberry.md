@@ -49,14 +49,14 @@ need to activate some extra modules. The modules we need are:
 * CEPH_LIB
 * CEPH_LIB_USE_DNS_RESOLVER
 * CONFIG_CGROUP_NET_PRIO
-* CONFIG_IPVLAN (optinoal)
-* CONFIG_RT_GROUP_SCHED (optinoal)
-* CONFIG_CFS_BANDWIDTH (optinoal)
-* CONFIG_CGROUP_HUGETLB (optinoal)
-* CONFIG_CGROUP_PERF (optinoal)
-* CONFIG_MEMCG_SWAP_ENABLED (optinoal)
-* CONFIG_MEMCG_SWAP (optinoal)
-* CONFIG_CGROUP_PIDS (optinoal)
+* CONFIG_IPVLAN (optional)
+* CONFIG_RT_GROUP_SCHED (optional)
+* CONFIG_CFS_BANDWIDTH (optional)
+* CONFIG_CGROUP_HUGETLB (optional)
+* CONFIG_CGROUP_PERF (optional)
+* CONFIG_MEMCG_SWAP_ENABLED (optional)
+* CONFIG_MEMCG_SWAP (optional)
+* CONFIG_CGROUP_PIDS (optional)
 
 ?> **Tip** To search in the menuconfig just press "/".
 
