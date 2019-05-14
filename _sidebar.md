@@ -11,5 +11,6 @@
     - [ceph-osd](persistent_storage/ceph-osd.md)
     - [ceph-mds](persistent_storage/ceph-mds.md)
     - [Mounting CephFS](persistent_storage/mounting_clients.md)
+  - [Virtual IP](swarm/keepalived.md)
 
 
