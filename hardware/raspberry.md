@@ -6,7 +6,7 @@ the arm4vl (which is the 32 bit version). So it is better to install an aarch64
 image. For that we will have to create our own images for the Raspberry Pi.
 
 Rasbian does not have an official aarch64 image at the moment of writting this
-(i.e. 03/02/2019). I tried multiple distros, but debian was the most stable and 
+(i.e. 26/05/2019). I tried multiple distros, but debian was the most stable and 
 I could install correctly the ceph-common package and docker.
 
 
@@ -33,15 +33,17 @@ Here are mine:
 
 * [Raspberry Pi 3 model B](_assets/rpi3-with-ceph ':ignore')
 * [Raspberry Pi 3 model B+](_assets/rpi3P-with-ceph ':ignore')
+* [Linux kernel configuration](_assets/linux.config ':ignore')
 
-Download the file, copy it in the 'templates' folder and just execute:
+Download the files, copy them in the 'templates' folder and just execute:
 
 ```bash
-sudo CONFIG_TEMPLATE=rpi3-stretch-with-ceph ./rpi23-gen-image.sh
+sudo CONFIG_TEMPLATE=rpi3-with-ceph ./rpi23-gen-image.sh
 ```
 
-The parameter files will also activate the menuconfig of the kernel because we
-need to activate some extra modules. The modules we need are:
+Altertanitive you can activate the menuconfig of the kernel by using the 
+`KERNEL_MENUCONFIG=true` parameter in the parameter file. 
+The extra modules we need to activate are:
 
 * CEPH_FS
 * CEPH_FSCACHE
@@ -49,6 +51,10 @@ need to activate some extra modules. The modules we need are:
 * CEPH_LIB
 * CEPH_LIB_USE_DNS_RESOLVER
 * CONFIG_CGROUP_NET_PRIO
+* CONFIG_NF_NAT_IPV4
+* CONFIG_IP_NF_TARGET_MASQUERADE
+* CONFIG_NF_NAT
+* CONFIG_NF_NAT_NEEDED
 * CONFIG_IPVLAN (optional)
 * CONFIG_RT_GROUP_SCHED (optional)
 * CONFIG_CFS_BANDWIDTH (optional)
@@ -57,6 +63,8 @@ need to activate some extra modules. The modules we need are:
 * CONFIG_MEMCG_SWAP_ENABLED (optional)
 * CONFIG_MEMCG_SWAP (optional)
 * CONFIG_CGROUP_PIDS (optional)
+* CONFIG_IP_NF_TARGET_REDIRECT (optional)
+* CONFIG_AUFS_FS (optional)
 
 ?> **Tip** To search in the menuconfig just press "/".
 
@@ -103,34 +111,43 @@ passwd
 sudo systemctl reboot
 ```
 
-## Booting from a hard-drive
+## Automating completely the creation of the image
 
-This step is **not** really necessary, but for full documentation I leave it.
-Especially if you want to have an osd node I would not suggeste to boot from a
-hard-drive. It is easier to just use the whole drive. 
-So move to the **next sections**.
-
-The image we are using is a much more basic one we will have to adjust some 
-file to be able to 
-[boot](https://www.maketecheasier.com/boot-up-raspberry-pi-3-external-hard-disk/) 
-from an 
-[external hard drive](https://github.com/hypriot/image-builder-rpi/issues/260)
-
-To boot from an external hard drive adjust the root parameter in 
-the /boot/cmdline.txt to point to the hard drive:
+By creating a `custom.d` folder in the same folder with the `rpi23-gen-image.sh`
+you can use your own scripts that will be executed before the image is packed.
+My script looks like:
 
 ```
-dwc_otg.lpm_enable=0 console=tty1 root=/dev/sda2 rootfstype=ext4 cgroup_enable=cpuset cgroup_memory=1 swapaccount=1 elevator=deadline fsck.repair=yes rootwait console=ttyAMA0,115200 net.ifnames=0 rootdelay=5
-```
+. ./functions.sh
 
-and afterwards adjust the /etc/fstab to point again to the hard drive:
+# Mounting the ceph fs
+chroot_exec apt-get -qq -y update 
+chroot_exec apt-get -qq -y install ceph-common
 
-```
-proc /proc proc defaults 0 0
-/dev/sda1 /boot vfat defaults 0 0
-/dev/sda2 / ext4 defaults,noatime 0 1
-```
+mkdir -p "${R}/mnt/"
+mkdir -p "${R}/mnt/storage/"
+echo "IP_1:6789,IP_2:6789,IP_3:6789:/ /mnt/storage ceph name=swarm,secret=YOUR_SECRET,noatime,_netdev 0 0" >> "${ETC_DIR}/fstab"
 
+# Installing docker
+# There is a bug in the iptables 
+# https://www.raspberrypi.org/forums/viewtopic.php?t=228261
+chroot_exec update-alternatives --set iptables /usr/sbin/iptables-legacy
+
+echo "deb [arch=arm64] https://download.docker.com/linux/debian buster stable" >> "${ETC_DIR}/apt/sources.list"
+echo "# deb-src [arch=arm64] https://download.docker.com/linux/debian buster stable" >> "${ETC_DIR}/apt/sources.list"
+
+curl -fsSL https://download.docker.com/linux/debian/gpg | chroot_exec apt-key add -
+
+chroot_exec apt-get -qq -y update
+chroot_exec apt-get -qq -y install docker-ce docker-ce-cli containerd.io
+
+
+# https://www.raspberrypi.org/forums/viewtopic.php?t=203128
+# This is for limiting the memory consumption of some containers
+# and not only
+
+sed -i " 1 s/.*/& cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1/" "${BOOT_DIR}/cmdline.txt"
+```
 
 ## Memorable mentions
 

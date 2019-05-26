@@ -12,5 +12,6 @@
     - [ceph-mds](persistent_storage/ceph-mds.md)
     - [Mounting CephFS](persistent_storage/mounting_clients.md)
   - [Virtual IP](swarm/keepalived.md)
+  - [Swarm mode](swarm/swarm.md)
 
 

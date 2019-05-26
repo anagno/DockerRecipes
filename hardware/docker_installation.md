@@ -16,8 +16,24 @@ So just execute in each node:
 sudo update-alternatives --config iptables
 # and choose iptables-legacy
 
-sudo apt-get install curl
-sudo curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
+# https://docs.docker.com/install/linux/docker-ce/debian/
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg2 \
+    software-properties-common
+
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+
+# Change your arch to match your machine
+sudo add-apt-repository \
+   "deb [arch=arm64] https://download.docker.com/linux/debian \
+   $(lsb_release -cs) \
+   stable"
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
 ```
 
 ## Joining the swarm 
@@ -31,3 +47,15 @@ docker swarm join --token (token_received_from_manager)
 ```
 
 !> **Important**  Use the correct token provided from your token manager.
+
+
+## Mounting the ceph file system
+
+?> **Tip** See [mounting_clients]() section
+
+
+
+
+
+## Resources 
+* https://docs.docker.com/install/linux/docker-ce/debian/
