@@ -1,0 +1,46 @@
+site_name: Kubernetes Recipes
+repo_url: https://github.com/anagno/DockerRecipes
+
+nav:
+- Getting started: index.md
+- Hardware: 00_hardware.md
+- Preparation: 01_node_preparation.md
+- Cluster Initialization: 02_cluster_initialization.md
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.tracking
+    - navigation.expand
+    - navigation.top
+    - toc.integrate
+
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+
+copyright: Copyright &#x1f12f; 2021 Vasileios Anagnostopoulos -- This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/anagno/
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/vasanagnos
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/vanagnos/
