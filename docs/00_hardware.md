@@ -16,6 +16,8 @@ The hardware I am currently using is:
 * 4 x [4TB WD Red Plus](https://www.digitec.ch/en/s1/product/wd-red-plus-4tb-35-cmr-hard-drives-634541)
 * 1 x [StarTech 2-POST DESKTOP RACK - 8U](https://www.digitec.ch/en/s1/product/startech-2-post-desktop-rack-8u-server-cabinets-10147900)
 * 1 x [StarTech SERVER RACK SHELF VENTED 1U ST](https://www.galaxus.ch/de/s1/product/startech-server-rack-shelf-vented-1u-st-serverschrank-10164244)
+* 1 x [UCTRONICS 19 inch 3U Rack Mount](https://www.uctronics.com/19-server-rack-mounts-for-rpi-jetson-nano/uctronics-19-inch-3u-rack-mount-for-raspberry-pi-4-with-8-mounting-plates.html)
+* 1 x [Raspberry Pi 19 inch Rack Mount 1U](https://www.myelectronics.nl/us/19-inch-rack-mount-1u-for-1-4-raspberry-pi.html)
 * 1 x [Roline Steckdosenleiste (Rack)](https://www.digitec.ch/en/s1/product/roline-steckdosenleiste-rack-2m-socket-strips-14215745)
 * 1 x [Netgear GS116PP: 16 Port Smart Switch](https://www.digitec.ch/en/s1/product/netgear-gs116pp-16-port-smart-switch-16ports-network-switches-8984850)
 * 1 x [Buffalo 11ac 1166 Gigabit Wireless Dual Band Router](https://www.amazon.de/Buffalo-WZR-1166DHP-EU-Wireless-Gigabit-Parental/dp/B00EZI13D6)
