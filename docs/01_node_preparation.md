@@ -41,6 +41,13 @@ make
 sudo make install
 ```
 
+!!! note
+    To print the current temperature of the node, we can use
+    ```
+    cpu=$(</sys/class/thermal/thermal_zone0/temp)
+    echo "$((cpu/1000)) c"
+    ```
+
 ## Enable cgroups limit support
 
 For better control of the resources of the nodes we need to activate the cgroups
