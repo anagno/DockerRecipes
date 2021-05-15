@@ -1,0 +1,42 @@
+# https://github.com/bitnami/charts/blob/master/bitnami/metallb/values.yaml
+
+configInline:
+  address-pools:
+  - name: default
+    protocol: layer2
+    addresses:
+    - 192.168.???.???-192.168.???.???
+
+rbac:
+  create: true
+
+prometheus:
+  enabled: false
+
+controller:
+  image:
+    registry: docker.io
+    repository: metallb/controller
+    tag: v0.9
+    pullPolicy: IfNotPresent
+  resources: 
+    limits:
+      #cpu: 25m
+      memory: 25Mi
+    requests:
+      memory: 25Mi
+      cpu: 25m
+
+speaker:
+  image:
+    registry: docker.io
+    repository: metallb/speaker
+    tag: v0.9
+    pullPolicy: IfNotPresent
+  resources: 
+    limits:
+      #cpu: 50m
+      memory: 25Mi
+    requests:
+      memory: 25Mi
+      cpu: 50m

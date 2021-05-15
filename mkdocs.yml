@@ -6,6 +6,7 @@ nav:
 - Hardware: 00_hardware.md
 - Preparation: 01_node_preparation.md
 - Cluster Initialization: 02_cluster_initialization.md
+- Load balancer: 03_load_balancer/03_load_balancer.md
 
 theme:
   name: material
@@ -30,6 +31,8 @@ theme:
         name: Switch to light mode
 
 markdown_extensions:
+  - pymdownx.snippets:
+      check_paths: true
   - admonition
   - toc:
       permalink: true

@@ -20,7 +20,7 @@ the cluster.
     [documentation](https://github.com/kube-vip/kube-vip/blob/main/docs/hybrid/static/index.md#additional-nodes)
     we have first to join the cluster and afterwards generate the vip.yaml
 
-```
+``` bash
 sudo docker run --network host \
 --rm plndr/kube-vip:v0.3.4 manifest pod \
 --interface eth0 \
@@ -34,7 +34,7 @@ The default configuration always downloads the image (even if it is present).
 To reduce the amount of data that we download from docker hub we will change it
 by setting the pull policy to ```IfNotPresent``` in:
 
-```
+``` bash
 sudo nano /etc/kubernetes/manifests/vip.yaml
 ```
 !!! note
@@ -44,7 +44,7 @@ sudo nano /etc/kubernetes/manifests/vip.yaml
 
 Afterwards we can initialize the cluster:
 
-```
+``` bash
 TOKEN=$(sudo kubeadm token generate)
 echo $TOKEN
 
@@ -56,7 +56,8 @@ sudo kubeadm init --token=${TOKEN} \
 ```
 
 We should see something like:
-```
+
+``` bash
 Your Kubernetes control-plane has initialized successfully!
 
 To start using your cluster, you need to run the following as a regular user:
@@ -92,7 +93,7 @@ Now that the first node is initialized we can also install our [CNI add-on](http
 
 I went with flannel:
 
-```
+``` bash
 kubectl apply -f https://github.com/coreos/flannel/raw/v0.14.0-rc1/Documentation/kube-flannel.yml
 ```
 
@@ -108,7 +109,7 @@ Now we can continue with the rest of the nodes
 
 Just follow the instructions that were printed in the previous steps.
 
-```
+``` bash
 sudo kubeadm join REDACTED --control-plane
     
 sudo docker run --network host \
@@ -130,7 +131,7 @@ sudo reboot
 
 Similary
 
-```
+``` bash
 sudo kubeadm join REDACTED
 ```
 
@@ -140,7 +141,7 @@ sudo kubeadm join REDACTED
 
 Just install ``kubectl`` to the other computer and copy the necessary files
 
-```
+``` bash
 sudo snap install kubectl
 # Copy the config file to the local computer in .kube folder
 ```
@@ -150,7 +151,7 @@ sudo snap install kubectl
 If a master node fails, we will have also to update the etcd nodes, to remove it
 from the etcd cluster
 
-```
+``` bash
 kubectl delete node <name>
 
 kubectl -n kube-system exec -it etcd-melpomene -- etcdctl --endpoints https://127.0.0.1:2379 \
@@ -170,7 +171,17 @@ manually edit /tmp/conf.yml to remove the old server
 kubectl -n kube-system apply -f /tmp/conf.yml
 ```
 
+### General problems with limits
 
+I think these issues:
+
+- https://github.com/kubernetes/kubernetes/pull/75682
+- https://github.com/kubernetes/kubernetes/issues/51135
+- https://github.com/dotnet/aspnetcore/issues/29150
+
+are still valid because I saw thottling when I monitored the cluster. 
+So I deactivated the limits for the CPU. Theoretically it should not cause problems, 
+only some throttling if the cpu is overused in the node.
 
 ## Resources
 * https://github.com/kubernetes/kubeadm/issues/1300#issuecomment-464955084

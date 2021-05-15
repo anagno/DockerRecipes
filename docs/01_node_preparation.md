@@ -24,7 +24,7 @@ The raspberry pi 4 have the tendancy to get warm. So it is wise to have a fan. I
 using PWN fans, so I can enable the fans based on the temperature. But to achieve that
 we need to install and compile some libraries.
 
-```
+``` bash
 sudo apt-get install build-essential
 cd
 wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.68.tar.gz
@@ -52,7 +52,7 @@ sudo make install
 
 For better control of the resources of the nodes we need to activate the cgroups
 
-```
+``` bash
 # Append the cgroups and swap options to the kernel command line
 # Note the space before "cgroup_enable=cpuset", to add a space after the last existing item on the line
 sudo sed -i '$ s/$/ cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1 swapaccount=1/' /boot/firmware/cmdline.txt
@@ -70,7 +70,7 @@ sudo reboot
 
 ## Install and configure Docker 
 
-```
+``` bash
 sudo apt install -y docker.io
 
 # Create or replace the contents of /etc/docker/daemon.json to enable the systemd cgroup driver
@@ -94,7 +94,7 @@ sudo reboot
 
 ## Install kubernetes
 
-```
+``` bash
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 
 # Add the Kubernetes repo
