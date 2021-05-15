@@ -1,5 +1,6 @@
 site_name: Kubernetes Recipes
 repo_url: https://github.com/anagno/DockerRecipes
+edit_uri: tree/main/docs/
 
 nav:
 - Getting started: index.md
@@ -7,6 +8,8 @@ nav:
 - Preparation: 01_node_preparation.md
 - Cluster Initialization: 02_cluster_initialization.md
 - Load balancer: 03_load_balancer/03_load_balancer.md
+- Dynamic IP: 04_ddns.md
+- Secret Management: 05_secret_management.md
 
 theme:
   name: material
