@@ -94,12 +94,14 @@ Now that the first node is initialized we can also install our [CNI add-on](http
 I went with flannel:
 
 ``` bash
-kubectl apply -f https://github.com/coreos/flannel/raw/v0.14.0-rc1/Documentation/kube-flannel.yml
+kubectl apply -f https://github.com/coreos/flannel/raw/v0.14.0/Documentation/kube-flannel.yml
 ```
 
 !!! note
-    At the moment of the writing, because I used the latest release of kubernetes,
-    I had to use the release candidate of the kube-flannel
+    Flannel default network is not enrcypted. So the communication
+    between the pods is unencrypted. There is an experimental 
+    backend that supports IPSec (https://github.com/flannel-io/flannel/blob/master/Documentation/backends.md#ipsec). Be aware of that 
+    limitation during deployment of services/pods
 
 ## Joining the rest of the nodes
 
