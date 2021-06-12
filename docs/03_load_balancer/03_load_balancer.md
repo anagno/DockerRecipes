@@ -10,9 +10,9 @@ to update the kube-vip instance and activate the `--service` parameter.
 Metallb provides a helm chart. So the installation is quite simple:
 
 ``` bash
-helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add metallb https://metallb.github.io/metallb
 kubectl create namespace load-balancer
-helm install --namespace load-balancer load-balancer bitnami/metallb -f values.yaml --version 2.3.5
+helm install --namespace load-balancer load-balancer metallb/metallb -f values.yaml --version 0.10.2
 ```
 
 The `values.yaml` I used is:

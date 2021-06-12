@@ -10,14 +10,13 @@ configInline:
 rbac:
   create: true
 
+# For monitoring later the metallb deployment
 prometheus:
-  enabled: false
+  podMonitor:
+    enabled: true
 
 controller:
   image:
-    registry: docker.io
-    repository: metallb/controller
-    tag: v0.9
     pullPolicy: IfNotPresent
   resources: 
     limits:
@@ -29,9 +28,6 @@ controller:
 
 speaker:
   image:
-    registry: docker.io
-    repository: metallb/speaker
-    tag: v0.9
     pullPolicy: IfNotPresent
   resources: 
     limits:
