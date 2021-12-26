@@ -1,0 +1,157 @@
+---
+
+# strongswan-swanctl
+# charon-systemd
+
+- name: Prerequisites 
+  hosts: all
+  tasks:
+    - name: Iptables to see bridged traffic
+      copy:
+        src: "k3s.conf"
+        dest: "/etc/sysctl.d/k3s.conf"
+        owner: root
+        group: root
+        mode: 0644
+      become: true
+
+    - name: Install the necessary packages
+      package:
+        name:
+          - wireguard
+        state: present
+      become: true
+
+- name: Initialize k3s cluster
+  hosts: masters[0]
+  tasks:
+    - name: Include common variables
+      include_vars: common_vars.yaml
+
+    - name: Check services (to see if k3s is present)
+      service_facts:
+
+    - name: Create kube-vip manifests directory on first master
+      file:
+        path: /var/lib/rancher/k3s/server/manifests
+        state: directory
+      become: true
+      when: "'k3s.service' not in ansible_facts.services"
+
+    - name: Copy kube-vip manifest to first master
+      copy:
+        src: "kube-vip-manifest.yaml"
+        dest: "/var/lib/rancher/k3s/server/manifests/vip.yaml"
+        owner: root
+        group: root
+        mode: 0644
+      become: true
+      when: "'k3s.service' not in ansible_facts.services"
+      # Take a look in the appendix for more details on how the manifests were generated
+      # We can not generate the manifest on the host, because for the generation we need docker (or containerd)
+      # and that will be installed with k3s. But the manifest is needed before the installation ...
+
+    - name: Install and start k3s
+      shell: 'curl -sfL https://get.k3s.io |  sh -s - server --cluster-init --tls-san zeus.intra {{ k3s_initialization_parameters }}'
+      when: "'k3s.service' not in ansible_facts.services"
+      # the tls-san parameter allows to specify the domain name that will be used for the control-plane
+      # https://rancher.com/docs/k3s/latest/en/installation/ha/#3-configure-the-fixed-registration-address
+
+    - name: Wait for port the vip to start
+      wait_for:
+        host: zeus.intra
+        port: 6443
+        state: started
+      when: "'k3s.service' not in ansible_facts.services"
+
+    - name: Reboot
+      shell: "sleep 5 && reboot"
+      async: 1
+      poll: 0
+      when: "'k3s.service' not in ansible_facts.services"
+
+    - name: Wait for the reboot to complete
+      wait_for_connection:
+        connect_timeout: 20
+        sleep: 5
+        delay: 5
+        timeout: 300
+      when: "'k3s.service' not in ansible_facts.services"
+
+    - name: Get token
+      shell: 'cat /var/lib/rancher/k3s/server/node-token'
+      become: true
+      register: cluster_token
+
+    - name: Create facts
+      set_fact:
+        cluster_token: '{{ cluster_token.stdout }}'
+
+- name: Start the rest of the master nodes
+  hosts: masters
+  serial: 1
+  tasks:
+
+    - name: Include common variables
+      include_vars: common_vars.yaml
+
+    - name: Check services (to see if k3s is present)
+      service_facts:
+
+    - name: Wait for port the vip to start
+      wait_for:
+        host: zeus.intra
+        port: 6443
+        state: started
+
+    - name: Install and start k3s
+      shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=\"{{ hostvars[groups['masters'][0]]['cluster_token'] }}\" sh -s - server --server https://zeus.intra:6443 {{ k3s_initialization_parameters }}"
+      when: "'k3s.service' not in ansible_facts.services"
+
+    - name: Reboot
+      shell: "sleep 5 && reboot"
+      async: 1
+      poll: 0
+      when: "'k3s.service' not in ansible_facts.services"
+
+    - name: Wait for the reboot to complete
+      wait_for_connection:
+        connect_timeout: 20
+        sleep: 5
+        delay: 5
+        timeout: 300
+      when: "'k3s.service' not in ansible_facts.services"
+
+- name: Starting workers
+  hosts: workers
+  tasks:
+    - name: Check services (to see if k3s is present)
+      service_facts:
+
+    - name: Wait for port the vip to start
+      wait_for:
+        host: zeus.intra
+        port: 6443
+        state: started
+
+    - name: Start cluster worker node
+      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC=\"agent\" K3S_URL=https://zeus.intra:6443 K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }} sh"
+      when: "'k3s.service' not in ansible_facts.services"
+
+    - name: Reboot
+      shell: "sleep 5 && reboot"
+      async: 1
+      poll: 0
+      when: "'k3s.service' not in ansible_facts.services"
+
+    - name: Wait for the reboot to complete
+      wait_for_connection:
+        connect_timeout: 20
+        sleep: 5
+        delay: 5
+        timeout: 300
+      when: "'k3s.service' not in ansible_facts.services"
+
+
+
+# ansible all -b -m shell -a "/usr/local/bin/k3s-uninstall.sh"

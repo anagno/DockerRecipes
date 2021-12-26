@@ -1,0 +1,41 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: directory.anagno.me
+  namespace: authentication
+spec:
+  commonName: directory.anagno.me
+  secretName: directory.anagno.me
+  dnsNames:
+    - directory.anagno.me
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: directory-route
+  namespace: authentication
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`directory.anagno.me`)
+      kind: Rule
+      services:
+        - name: phpldapadmin-service
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+      - name: security-headers
+        namespace: proxy
+      - name: authorization
+        namespace: authentication
+  tls:
+    secretName: directory.anagno.me
+    options:
+      name: tls-security-headers
+      namespace: proxy

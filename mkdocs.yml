@@ -1,15 +1,28 @@
 site_name: Kubernetes Recipes
 repo_url: https://github.com/anagno/DockerRecipes
-edit_uri: tree/main/docs/
+edit_uri: tree/main/
+docs_dir: '.'
+
+plugins:
+  - search
+  # https://github.com/mkdocs/mkdocs/issues/1276
+  - same-dir
 
 nav:
-- Getting started: index.md
-- Hardware: 00_hardware.md
-- Preparation: 01_node_preparation.md
-- Cluster Initialization: 02_cluster_initialization.md
-- Load balancer: 03_load_balancer/03_load_balancer.md
-- Dynamic IP: 04_ddns.md
-- Secret Management: 05_secret_management.md
+- Getting started: README.md
+- Hardware: hardware/index.md
+- Nodes: node_setup/index.md
+- Kuberentes: cluster_setup/index.md
+- Networking: networking/index.md
+- Load Balancer: load_balancer/index.md
+- Dynamic IP: ddns/index.md
+- Secret Management: secrets/index.md
+- Proxy: proxy/index.md
+- Storage: storage/index.md
+- Authentication: authentication/index.md
+- Torrents: torrents/index.md
+- Maintance: update_node/index.md
+- Appendix: appendix/index.md
 
 theme:
   name: material

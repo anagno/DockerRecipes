@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openldap-backup
+  namespace: authentication
+spec:
+  storageClassName: replicated
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openldap-database
+  namespace: authentication
+  labels:
+    app: openldap
+spec:
+  storageClassName: replicated
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: openldap-config
+  namespace: authentication
+  labels:
+    app: openldap
+spec:
+  storageClassName: replicated
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Mi

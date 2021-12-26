@@ -1,0 +1,41 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: torrents.anagno.me
+  namespace: torrents
+spec:
+  commonName: torrents.anagno.me
+  secretName: torrents.anagno.me
+  dnsNames:
+    - torrents.anagno.me
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: torrents.anagno.me
+  namespace: torrents
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`torrents.anagno.me`)
+      kind: Rule
+      services:
+        - name: transmission-server-service
+          port: 9091
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+      - name: security-headers
+        namespace: proxy
+      - name: authorization-basic
+        namespace: authentication
+  tls:
+    secretName: torrents.anagno.me
+    options:
+      name: tls-security-headers
+      namespace: proxy

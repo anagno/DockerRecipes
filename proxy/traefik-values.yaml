@@ -1,0 +1,51 @@
+# https://github.com/traefik/traefik-helm-chart/blob/master/traefik/values.yaml
+
+image:
+  name: traefik
+  tag: "v2.5.6"
+  pullPolicy: IfNotPresent
+
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+
+# We will create our IngressRoute for the dashboard
+ingressRoute:
+  dashboard:
+    enabled: False
+
+providers:
+  kubernetesCRD:
+    enabled: true
+    allowCrossNamespace: true
+    allowExternalNameServices: true
+  kubernetesIngress:
+    enabled: true
+
+additionalArguments:
+  # Used for the generation of the certificates
+  - "--providers.kubernetesIngress.ingressClass=traefik-cert-manager"
+  - "--providers.kubernetesingress.allowexternalnameservices=true"
+  - "--metrics.prometheus=true"
+  
+# TLS Options are created as TLSOption CRDs
+# https://doc.traefik.io/traefik/https/tls/#tls-options
+# Example:
+tlsOptions:
+  default:
+    sniStrict: true
+    preferServerCipherSuites: true
+    cipherSuites:
+      - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+      - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+      - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+    curvePreferences:
+      - CurveP521
+      - CurveP384
+
+service:
+  enabled: true
+  type: LoadBalancer
+  spec: 
+    externalTrafficPolicy: Local
+    loadBalancerIP: "192.168.179.240"

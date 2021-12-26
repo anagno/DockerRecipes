@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-issuer
+  namespace: cert-manager
+spec:
+  acme:
+    email: anagnwstopoulos@hotmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-account-key
+    solvers:
+    - http01:
+        ingress:
+          ingressTemplate:
+            metadata:
+              annotations:
+                kubernetes.io/ingress.class: "traefik-cert-manager"
+        # https://dev.to/lboix/upgrade-cert-manager-from-old-version-v010-to-v161-1i8f
+        # https://github.com/jetstack/cert-manager/issues/2538
+        #ingress:
+        #  class: traefik-cert-manager

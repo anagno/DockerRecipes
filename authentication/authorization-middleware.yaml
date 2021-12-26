@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: authorization
+  namespace: authentication
+spec:
+  forwardAuth:
+    address: http://authelia-service.authentication.svc.cluster.local:9091/api/verify?rd=https://login.anagno.me
+    trustForwardHeader: true
+    authResponseHeaders: 
+      - "X-Auth-User"
+      - "X-Auth-Header" 
+      - "X-Forwarded-User"
+      - "Remote-User"
+      - "Remote-Groups"

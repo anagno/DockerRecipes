@@ -1,0 +1,25 @@
+---
+# All my raspberries have fans installed, so I am not filtering any nodes
+# Be carefull if not all the nodes have PWN fans
+# Check the Appendix for more details
+
+- name: Copy the PWN fans executable in the raspberries
+  copy:
+    src: fans/pi_fan_hwpwm
+    dest: /usr/local/sbin/pi_fan_hwpwm
+    force: False
+    mode: '777'
+  register: pwn_fan_binary
+
+- name: Copy the PWN fans service file
+  copy:
+    src: fans/pi_fan_hwpwm.service
+    dest: /etc/systemd/system/pi_fan_hwpwm.service
+  when: pwn_fan_binary is changed
+
+- name: Start service pi_fan_hwpwm
+  service:
+    name: pi_fan_hwpwm
+    state: started
+    enabled: yes
+  when: pwn_fan_binary is changed

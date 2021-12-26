@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpldapadmin
+  namespace: authentication  
+  labels:
+    app: phpldapadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpldapadmin
+  template:
+    metadata:
+      labels:
+        app: phpldapadmin
+    spec:
+      containers:
+        - name: phpldapadmin
+          image: osixia/phpldapadmin:0.9.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: phpldapadmin
+          env:
+            - name: PHPLDAPADMIN_LDAP_HOSTS
+              value: "ldap-service"
+            - name: PHPLDAPADMIN_HTTPS
+              value: "false"
+            - name: PHPLDAPADMIN_TRUST_PROXY_SSL
+              value: "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpldapadmin-service
+  namespace: authentication  
+  labels:
+    app: phpldapadmin
+spec:
+  selector:
+    app: phpldapadmin
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: users.intra
+  namespace: authentication
+spec:
+  commonName: users.intra
+  secretName: users.intra
+  dnsNames:
+    - users.intra
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: phpldapadmin-route
+  namespace: authentication
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`users.intra`)
+      kind: Rule
+      services:
+        - name: phpldapadmin-service
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: users.intra
+    options:
+      name: tls-security-headers
+      namespace: proxy

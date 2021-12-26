@@ -1,0 +1,11 @@
+k3s_initialization_parameters: "--disable servicelb --disable traefik --flannel-backend=wireguard"
+# the --disable servicelb is because the integrated load balancer does not allocate also virtual IPs. 
+# So I prefer to use metallb
+# I prefer to deploy traefik manually to have more control over it. And probably without a load balancer,
+# we will also have problems with the proxy deployment.
+# K3s is using flannel as CNI.
+# Flannel default network is not enrcypted. So the communication between the pods is unencrypted. 
+# There are experimental backend that supports [encryption](https://github.com/flannel-io/flannel/blob/master/Documentation/backends.md).
+# We can activate it in [k3s](https://rancher.com/docs/k3s/latest/en/installation/network-options/#flannel-options),
+# I had problems when I activated the ipsec. The communication between the nodes did not work
+# So I am now testing with wireguard

@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authelia-mariadb
+  namespace: authentication
+  labels:
+    app: authelia-mariadb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authelia-mariadb
+  template:
+    metadata:
+      labels:
+        app: authelia-mariadb
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb:10.7.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: authelia-mariadb
+                  key: root-password
+            - name: MYSQL_DATABASE
+              value: authelia
+            - name: MYSQL_USER
+              value: authelia
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: authelia-mariadb
+                  key: authelia-password
+          volumeMounts:
+            - name: data-volume
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: authelia-database
+            readOnly: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authelia-mariadb-service
+  namespace: authentication
+spec:
+  selector:
+    app: authelia-mariadb
+  ports:
+  - protocol: TCP
+    port: 3306
+

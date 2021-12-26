@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: authorization-basic
+  namespace: authentication
+spec:
+  forwardAuth:
+    address: http://authelia-service.authentication.svc.cluster.local:9091/api/verify?auth=basic
+    trustForwardHeader: true
+    authResponseHeaders: 
+      - "X-Auth-User"
+      - "X-Auth-Header" 
+      - "X-Forwarded-User"
+      - "Remote-User"
+      - "Remote-Groups"

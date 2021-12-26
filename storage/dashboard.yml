@@ -1,0 +1,39 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: storage.intra
+  namespace: longhorn-system
+spec:
+  commonName: storage.intra
+  secretName: storage.intra
+  dnsNames:
+    - storage.intra
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: longhorn-dashboard-route
+  namespace: longhorn-system
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`storage.intra`)
+      kind: Rule
+      services:
+        - name: longhorn-frontend
+          port: 80
+      middlewares:
+      - name: security-headers
+        namespace: proxy
+      - name: https-redirect
+        namespace: proxy
+  tls:
+    secretName: storage.intra
+    options:
+      name: tls-security-headers
+      namespace: proxy

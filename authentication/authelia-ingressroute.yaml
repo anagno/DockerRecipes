@@ -1,0 +1,39 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: login.anagno.me
+  namespace: authentication
+spec:
+  commonName: login.anagno.me
+  secretName: login-anagno-me-cert
+  dnsNames:
+    - login.anagno.me
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: authelia-route
+  namespace: authentication
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`login.anagno.me`)
+      kind: Rule
+      services:
+        - name: authelia-service
+          port: 9091
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: login-anagno-me-cert
+    options:
+      name: tls-security-headers
+      namespace: proxy

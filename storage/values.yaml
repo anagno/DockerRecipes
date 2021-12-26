@@ -1,0 +1,18 @@
+# https://github.com/longhorn/charts/blob/master/charts/longhorn/values.yaml
+
+service:
+  ui:
+    type: ClusterIP
+
+persistence:
+  defaultClassReplicaCount: 3
+  reclaimPolicy: Delete
+
+defaultSettings:
+  defaultDataPath: /media/storage/
+  createDefaultDiskLabeledNodes: false
+  StorageOverProvisioningPercentage: 0
+  replicaAutoBalance: "least-effort"
+  defaultDataLocality: "disabled"
+  nodeDownPodDeletionPolicy: "delete-both-statefulset-and-deployment-pod"
+  storageMinimalAvailablePercentage: 15

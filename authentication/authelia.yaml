@@ -1,0 +1,205 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authelia
+  namespace: authentication
+  labels:
+    app: authelia
+data:
+  configuration.yaml: |
+    ---
+    server:
+      host: 0.0.0.0
+      port: 9091
+    log:
+      level: error
+    totp:
+      issuer: anagno.me
+      algorithm: sha1
+      digits: 6
+      period: 30
+      skew: 1
+    authentication_backend:
+      ldap:
+        url: ldap://ldap-service
+        base_dn: dc=anagno,dc=me
+        username_attribute: uid
+        additional_users_dn: ou=users
+        users_filter: (&({username_attribute}={input})(objectClass=inetOrgPerson))
+        additional_groups_dn: ou=groups
+        groups_filter: (&(objectClass=groupOfUniqueNames)(uniqueMember={dn}))
+        group_name_attribute: cn
+        mail_attribute: mail
+        display_name_attribute: givenName
+        user: cn=admin,dc=anagno,dc=me
+    session:
+      name: anagno_authentication_session
+      domain: anagno.me
+      expiration: 3600
+      inactivity: 300
+      redis:
+        host: authelia-redis-service
+        port: 6379
+    regulation: 
+      max_retries: 10
+      find_time: 120
+      ban_time: 300
+    storage:
+      mysql:
+        host: authelia-mariadb-service
+        port: 3306
+        database: authelia
+        username: authelia
+    notifier:
+      smtp:
+        host: mail.gandi.net
+        port: 587
+        timeout: 5s
+        username: no-reply@anagno.me
+        sender: no-reply@anagno.me
+    ntp:
+      address: "ch.pool.ntp.org:123"
+      version: 3
+      max_desync: 3s
+    access_control: 
+        default_policy: bypass
+        rules:
+         - domain: directory.anagno.me
+           subject: group:caretakers
+           policy: two_factor
+         - domain: storage.anagno.me
+           subject: group:caretakers
+           policy: two_factor
+         - domain: pantheon.anagno.me
+           subject: group:caretakers
+           policy: two_factor
+         - domain: monitoring.anagno.me
+           subject: group:caretakers
+           policy: two_factor
+         - domain: library.anagno.me
+           subject: group:library
+           policy: one_factor
+         - domain: torrents.anagno.me
+           subject: group:torrents
+           policy: one_factor
+         - domain: torrents.anagno.me
+           policy: bypass
+           networks:
+              - 192.168.179.0/24
+         - domain: watchdog.anagno.me
+           subject: group:watchdogs
+           policy: one_factor
+         - domain: news.anagno.me
+           subject: group:news
+           policy: one_factor
+    ...
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authelia
+  namespace: authentication
+  labels:
+    app: authelia
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authelia
+  template:
+    metadata:
+      labels:
+        app: authelia
+    spec:
+      # https://github.com/authelia/authelia/blob/5b3fa1fffb82cf7a5f4ba11ce151e16b929a6e34/docs/configuration/index.md#environment
+      enableServiceLinks: false
+      containers:
+        - name: authelia
+          image: authelia/authelia:4.33.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9091
+          volumeMounts:
+          - name: config
+            mountPath: /config
+            readOnly: true
+          - name: authelia-secrets
+            mountPath: /app/authelia-secrets
+            readOnly: true
+          - name: ldap-secrets
+            mountPath: /app/ldap-secrets
+            readOnly: true
+          - name: mariadb-secrets
+            mountPath: /app/mariadb-secrets
+            readOnly: true
+          - name: mail-secrets
+            mountPath: /app/mail-secrets
+            readOnly: true
+          command: ["authelia"]
+          args:
+          - --config=/config/configuration.yaml              
+          env:
+            - name: AUTHELIA_JWT_SECRET_FILE
+              value: /app/authelia-secrets/jwt 
+            - name: AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE
+              value: /app/authelia-secrets/encryption
+            - name: AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE
+              value: /app/ldap-secrets/ldap_password
+            - name: AUTHELIA_SESSION_SECRET_FILE
+              value: /app/authelia-secrets/session
+            - name: AUTHELIA_STORAGE_MYSQL_PASSWORD_FILE
+              value: /app/mariadb-secrets/sql_password
+            - name: AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE
+              value: /app/mail-secrets/mail_password
+      volumes:
+        - name: config
+          configMap:
+            name: authelia
+            items:
+              - key: configuration.yaml
+                path: configuration.yaml
+                
+        - name: authelia-secrets
+          secret:
+            secretName: authelia
+            items:
+              - key: jwt-secret
+                path: jwt
+              - key: session
+                path: session
+              - key: encryption-key
+                path: encryption
+        - name: ldap-secrets
+          secret:
+            secretName: openldap-admin
+            items:
+              - key: admin-password
+                path: ldap_password
+        - name: mariadb-secrets
+          secret:
+            secretName: authelia-mariadb
+            items:
+              - key: authelia-password
+                path: sql_password
+        - name: mail-secrets
+          secret:
+            secretName: no-reply-mail
+            items:
+              - key: password
+                path: mail_password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authelia-service
+  namespace: authentication
+spec:
+  selector:
+    app: authelia
+  ports:
+  - protocol: TCP
+    port: 9091
+    targetPort: 9091
+ 
+# Resources:
+# https://stackoverflow.com/questions/13160514/how-to-find-all-the-ldap-groups-that-a-user-is-part-of-when-groupofuniquenames      

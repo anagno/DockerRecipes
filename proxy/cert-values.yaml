@@ -1,0 +1,12 @@
+#https://github.com/jetstack/cert-manager/blob/master/deploy/charts/cert-manager/values.yaml
+
+installCRDs: true
+replicaCount: 1
+
+#https://github.com/jetstack/cert-manager/issues/959
+podDnsPolicy: "Default"
+
+#prometheus:
+#  enabled: true
+#  servicemonitor:
+#    enabled: true
