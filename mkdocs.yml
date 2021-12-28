@@ -20,6 +20,7 @@ nav:
 - Proxy: proxy/index.md
 - Storage: storage/index.md
 - Authentication: authentication/index.md
+- Monitoring: monitoring/index.md
 - Torrents: torrents/index.md
 - Maintance: update_node/index.md
 - Appendix: appendix/index.md

@@ -76,11 +76,15 @@ kubectl apply -f authorization-middleware.yaml
 kubectl apply -f authorization-basic-middleware.yaml
 ```
 
-And now we can also make publicly available phpLDAPAadmin from the interenet
+And now we can also make publicly from the interenet some dashboards,
+now that we can limit their access
 
 ```
 kubectl apply -f users-public.yaml
+kubectl apply -f proxy-public.yaml
+kubectl apply -f storage-public.yaml
 ```
+
 
 Resources:
 

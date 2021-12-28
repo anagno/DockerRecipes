@@ -78,7 +78,8 @@ So we will have to make it [bootable](https://forums.raspberrypi.com/viewtopic.p
 
 !!!Note
     Using the latest version (as of the writting 21.10) is not possible because the `open-iscsi` was broken.
-    The kernel did not have the `iscsi_tcp` module. 
+    The kernel did not have the `iscsi_tcp` module. This could be related to the fact that Ubuntu
+    moved some upstream packages to a [seperate package](https://github.com/k3s-io/k3s/issues/4188#issuecomment-982503626)
 
 ### Upgrade the firmware (if necessary)
 

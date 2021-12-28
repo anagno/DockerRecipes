@@ -1,13 +1,13 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: storage.intra
-  namespace: longhorn-system
+  name: monitoring.intra
+  namespace: monitoring
 spec:
-  commonName: storage.intra
-  secretName: storage.intra
+  commonName: monitoring.intra
+  secretName: monitoring.intra
   dnsNames:
-    - storage.intra
+    - monitoring.intra
   issuerRef:
     name: selfsigned-issuer
     kind: ClusterIssuer
@@ -15,17 +15,16 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: storage.intra
-  namespace: longhorn-system
+  name: monitoring-route
+  namespace: monitoring
 spec:
   entryPoints:
-    - web
     - websecure
   routes:
-    - match: Host(`storage.intra`)
+    - match: Host(`monitoring.intra`)
       kind: Rule
       services:
-        - name: longhorn-frontend
+        - name: monitoring-grafana
           port: 80
       middlewares:
       - name: security-headers
@@ -33,7 +32,7 @@ spec:
       - name: https-redirect
         namespace: proxy
   tls:
-    secretName: storage.intra
+    secretName: monitoring.intra
     options:
       name: tls-security-headers
       namespace: proxy

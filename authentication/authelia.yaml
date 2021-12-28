@@ -70,6 +70,9 @@ data:
          - domain: storage.anagno.me
            subject: group:caretakers
            policy: two_factor
+         - domain: proxy.anagno.me
+           subject: group:caretakers
+           policy: two_factor
          - domain: pantheon.anagno.me
            subject: group:caretakers
            policy: two_factor

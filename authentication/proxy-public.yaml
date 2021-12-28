@@ -1,13 +1,13 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: directory.anagno.me
-  namespace: authentication
+  name: proxy.anagno.me
+  namespace: proxy
 spec:
-  commonName: directory.anagno.me
-  secretName: directory.anagno.me
+  commonName: proxy.anagno.me
+  secretName: proxy.anagno.me
   dnsNames:
-    - directory.anagno.me
+    - proxy.anagno.me
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer
@@ -15,18 +15,18 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: directory.anagno.me
-  namespace: authentication
+  name: proxy.anagno.me
+  namespace: proxy
 spec:
   entryPoints:
     - web
     - websecure
   routes:
-    - match: Host(`directory.anagno.me`)
+    - match: Host(`proxy.anagno.me`)
       kind: Rule
       services:
-        - name: phpldapadmin-service
-          port: 80
+        - name: api@internal
+          kind: TraefikService
       middlewares:
       - name: https-redirect
         namespace: proxy
@@ -35,7 +35,7 @@ spec:
       - name: authorization
         namespace: authentication
   tls:
-    secretName: directory.anagno.me
+    secretName: proxy.anagno.me
     options:
       name: tls-security-headers
       namespace: proxy
@@ -43,17 +43,18 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: directory.anagno.me-http
-  namespace: authentication
+  name: proxy.anagno.me-http
+  namespace: proxy
 spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`directory.anagno.me`)
+    - match: Host(`proxy.anagno.me`)
       kind: Rule
       services:
-        - name: phpldapadmin-service
-          port: 80
+        - name: api@internal
+          kind: TraefikService
       middlewares:
       - name: https-redirect
         namespace: proxy
+

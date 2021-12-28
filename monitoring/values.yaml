@@ -1,0 +1,156 @@
+# https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+# https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md
+
+
+alertmanager:
+  alertmanagerSpec:
+    storage:
+     volumeClaimTemplate:
+       spec:
+         storageClassName: replicated
+         accessModes: ["ReadWriteOnce"]
+         resources:
+           requests:
+             storage: 1Gi
+
+# https://github.com/k3s-io/k3s/issues/3619
+kubeControllerManager:
+  enabled: true
+  endpoints:
+   - 192.168.179.100
+   - 192.168.179.101
+   - 192.168.179.102
+  service:
+    enabled: true
+    port: 10257
+    targetPort: 10257
+  serviceMonitor:
+    enabled: true
+    https: true
+    insecureSkipVerify: true
+
+kubeScheduler:
+  enabled: true
+  endpoints:
+   - 192.168.179.100
+   - 192.168.179.101
+   - 192.168.179.102
+  service:
+    enabled: true
+    port: 10259
+    targetPort: 10259
+  serviceMonitor:
+    enabled: true
+    https: true
+    insecureSkipVerify: true
+
+kubeProxy:
+  enabled: true
+  endpoints:
+   - 192.168.179.100
+   - 192.168.179.101
+   - 192.168.179.102
+  service:
+    enabled: true
+    port: 10249
+    targetPort: 10249
+
+kubeEtcd:
+  enabled: true
+  endpoints:
+   - 192.168.179.100
+   - 192.168.179.101
+   - 192.168.179.102
+  service:
+    enabled: true
+    port: 2381
+    targetPort: 2381
+
+
+grafana:
+  enabled: true
+
+  plugins:
+    # https://grafana.com/grafana/plugins/camptocamp-prometheus-alertmanager-datasource/
+    - camptocamp-prometheus-alertmanager-datasource
+    - grafana-piechart-panel
+
+  grafana.ini:
+    paths:
+      data: /var/lib/grafana/data
+      logs: /var/log/grafana
+      plugins: /var/lib/grafana/plugins
+      provisioning: /etc/grafana/provisioning
+    analytics:
+      check_for_updates: true
+    log:
+      mode: console
+    grafana_net:
+      url: https://grafana.net
+    users:
+      allow_sign_up: false
+      auto_assign_org: true
+      auto_assign_org_role: Editor
+    auth.proxy:
+      enabled: true
+      header_name: Remote-User
+      header_property: username
+      auto_sign_up: true
+
+  sidecar:
+    # For adding dashboards and datasources via ConfigMaps
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      annotations: 
+        monitoring-sidecar-dashboard-directory: "/tmp/dashboards/kubernetes"
+    datasources:
+      enabled: true
+      defaultDatasourceEnabled: true
+      createPrometheusReplicasDatasources: false
+      label: grafana_datasource
+      annotations: 
+        monitoring-sidecar-datasource-directory: "/tmp/datasource/kubernetes"
+
+  additionalDataSources:
+    - name: Prometheus AlertManager
+      orgId: 1
+      type: camptocamp-prometheus-alertmanager-datasource
+      url: http://{{ printf "%s-alertmanager" (include "kube-prometheus-stack.fullname" .)  }}:9093
+      version: 1
+
+prometheus:
+  enabled: true
+  service:
+    clusterIP: ""
+    port: 9090
+    externalIPs: []
+    type: ClusterIP
+
+  prometheusSpec:
+    # It is a chunky pod. We limit it, so if it really needs a lot of memory
+    # It will not take the node with it. 
+    resources:
+      limits:
+        #cpu: 200m
+        memory: 4000Mi
+      requests:
+        cpu: 100m
+        memory: 4000Mi
+
+    # https://github.com/rook/rook/issues/6680
+    # This was necessary to be able to scrap the data for the Kubernetes/Compute Resources/* databoards
+    # We need to be able to scrap the data from all the namespaces
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    podMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelector: {}
+    retention: 10d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: replicated
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi

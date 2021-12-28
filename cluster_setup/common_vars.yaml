@@ -1,4 +1,4 @@
-k3s_initialization_parameters: "--disable servicelb --disable traefik --flannel-backend=wireguard"
+k3s_initialization_parameters: "--disable servicelb --disable traefik --flannel-backend=wireguard --etcd-expose-metrics=true --kube-controller-manager-arg=\"bind-address=0.0.0.0\" --kube-proxy-arg=\"metrics-bind-address=0.0.0.0\" --kube-scheduler-arg=\"bind-address=0.0.0.0\" "
 # the --disable servicelb is because the integrated load balancer does not allocate also virtual IPs. 
 # So I prefer to use metallb
 # I prefer to deploy traefik manually to have more control over it. And probably without a load balancer,
@@ -9,3 +9,6 @@ k3s_initialization_parameters: "--disable servicelb --disable traefik --flannel-
 # We can activate it in [k3s](https://rancher.com/docs/k3s/latest/en/installation/network-options/#flannel-options),
 # I had problems when I activated the ipsec. The communication between the nodes did not work
 # So I am now testing with wireguard
+# The last 4 parameters are for exposing the metrics from the cluster
+# https://github.com/k3s-io/k3s/issues/3619#issuecomment-993977516
+# They are necessary if we want to monitor the services with prometheus

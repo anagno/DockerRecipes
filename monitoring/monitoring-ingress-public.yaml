@@ -1,13 +1,13 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: directory.anagno.me
-  namespace: authentication
+  name: monitoring.anagno.me
+  namespace: monitoring
 spec:
-  commonName: directory.anagno.me
-  secretName: directory.anagno.me
+  commonName: monitoring.anagno.me
+  secretName: monitoring.anagno.me
   dnsNames:
-    - directory.anagno.me
+    - monitoring.anagno.me
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer
@@ -15,27 +15,24 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: directory.anagno.me
-  namespace: authentication
+  name: monitoring.anagno.me
+  namespace: monitoring
 spec:
   entryPoints:
-    - web
     - websecure
   routes:
-    - match: Host(`directory.anagno.me`)
+    - match: Host(`monitoring.anagno.me`)
       kind: Rule
       services:
-        - name: phpldapadmin-service
+        - name: monitoring-grafana
           port: 80
       middlewares:
-      - name: https-redirect
-        namespace: proxy
       - name: security-headers
         namespace: proxy
       - name: authorization
         namespace: authentication
   tls:
-    secretName: directory.anagno.me
+    secretName: monitoring.anagno.me
     options:
       name: tls-security-headers
       namespace: proxy
@@ -43,16 +40,16 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: directory.anagno.me-http
-  namespace: authentication
+  name: monitoring.anagno.me-http
+  namespace: monitoring
 spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`directory.anagno.me`)
+    - match: Host(`monitoring.anagno.me`)
       kind: Rule
       services:
-        - name: phpldapadmin-service
+        - name: monitoring-grafana
           port: 80
       middlewares:
       - name: https-redirect

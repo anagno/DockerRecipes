@@ -1,5 +1,9 @@
 ## DNS resolution
 
+!!!Note
+    On updates it resets (e.g updating the k3s). FIX IT!!!
+    https://github.com/k3s-io/k3s/issues/1797
+
 By default kubernetes uses it is internal dns, which is only aware of the internal services.
 During the deployement of a pod we can set the `dnsPolicy`. In my network, I have my internal
 DNS server, which I prefer to be used after the internal resolution of the services. So I will

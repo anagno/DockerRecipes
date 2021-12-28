@@ -15,7 +15,7 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: authelia-route
+  name: login.anagno.me
   namespace: authentication
 spec:
   entryPoints:
@@ -37,3 +37,21 @@ spec:
     options:
       name: tls-security-headers
       namespace: proxy
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: login.anagno.me-http
+  namespace: authentication
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`login.anagno.me`)
+      kind: Rule
+      services:
+        - name: authelia-service
+          port: 9091
+      middlewares:
+      - name: https-redirect
+        namespace: proxy

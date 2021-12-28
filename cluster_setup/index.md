@@ -34,9 +34,9 @@ Then replace “localhost” with the IP or name of your K3s server. kubectl can
     have the `node-role.kubernetes.io/master=true:NoSchedule`. To re-introduce it (if we see that the 
     master nodes are being influenced) we can execute 
     `kubectl taint nodes myserver node-role.kubernetes.io/master=true:NoSchedule`
+    We can see the taints with `kubectl get nodes -o json | jq '.items[].spec.taints'`
 
-
-Resouces:
+## Resources
 
 * https://rancher.com/docs/k3s/latest/en/cluster-access/#accessing-the-cluster-from-outside-with-kubectl
 * https://rpi4cluster.com/k3s/k3s-kube-setting/

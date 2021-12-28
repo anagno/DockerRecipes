@@ -62,6 +62,43 @@ mkdocs build
 sudo k3s crictl ps
 ```
 
+## Removing failed nodes from the etcd cluster
+
+If a node fails it is not as simple to remove it and re-add it. Sometimes the failed node 
+will remain part of the etcd cluster. So will we have first to remove it from the etcd cluster.
+
+
+```bash
+kubectl delete node failed_node
+```
+If the master nodes are tainted we will have to remove the taint for the moment to be able
+to schedule a pod:
+
+```bash
+kubectl taint nodes other_master_node node-role.kubernetes.io/master=true:NoSchedule-
+```
+
+Then we can create a pod to manipulate the etcd cluster
+
+```bash
+# https://github.com/k3s-io/k3s/issues/2732#issuecomment-749484037
+kubectl run --rm --tty --stdin --image quay.io/coreos/etcd:v3.5.1 etcdctl --overrides='{"apiVersion":"v1","kind":"Pod","spec":{"hostNetwork":true,"restartPolicy":"Never","securityContext":{"runAsUser":0,"runAsGroup":0},"containers":[{"command":["/bin/sh"],"image":"docker.io/rancher/coreos-etcd:v3.4.13-arm64","name":"etcdctl","stdin":true,"stdinOnce":true,"tty":true,"volumeMounts":[{"mountPath":"/var/lib/rancher","name":"var-lib-rancher"}]}],"volumes":[{"name":"var-lib-rancher","hostPath":{"path":"/var/lib/rancher","type":"Directory"}}],"nodeSelector":{"node-role.kubernetes.io/etcd":"true"}}}'
+etcdctl --key /var/lib/rancher/k3s/server/tls/etcd/client.key --cert /var/lib/rancher/k3s/server/tls/etcd/client.crt --cacert /var/lib/rancher/k3s/server/tls/etcd/server-ca.crt member list
+etcdctl --key /var/lib/rancher/k3s/server/tls/etcd/client.key --cert /var/lib/rancher/k3s/server/tls/etcd/client.crt --cacert /var/lib/rancher/k3s/server/tls/etcd/server-ca.crt member remove 1234567890ABCDEF
+```
+
+and the we re-taint the node
+
+```bash
+kubectl taint nodes other_master_node node-role.kubernetes.io/master=true:NoSchedule
+```
+
+Finally we can use the cluster_setup/setup_cluster.yml to re-populate the node.
+
+!!!Note
+    Remember to change the invetory if necessary
+
+
 ## Updating the raspberry pi firmware
 
 If you have already an installed ubuntu on the Raspberry Pi you can execute:
