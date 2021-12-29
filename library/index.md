@@ -14,6 +14,9 @@ kubectl apply -f smb.yaml
     a way to automate it. Furthermore the proxy authentication is not perfect.
     We have to first create manually the users in the database of 
     [calibre-web](https://github.com/janeczku/calibre-web/wiki/Setup-Reverse-Proxy/#traefik--241-with-authelia-forward-auth)
+    Furthermore, for the opds catalogue to work, we have to activate the anonymous
+    browsing from the menu. Probably a bug in the calibre-web.
+    Theoretically it should not be a problem, since we are behind our proxy and authentication
 
 
 ## Usefull commands 

@@ -91,3 +91,9 @@ Resources:
 * https://github.com/osixia/docker-openldap/issues/347
 * https://github.com/osixia/docker-openldap/issues/303
 * https://tobru.ch/openldap-password-policy-overlay/
+* https://github.com/osixia/docker-openldap/pull/333
+* How to add organisazations units, etc: https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-a-basic-ldap-server-on-an-ubuntu-12-04-vps#AddOrganizationalUnits,Groups,andUsers 
+* http://www.zytrax.com/books/ldap/
+* http://www.openldap.org/doc/admin24/
+* https://github.com/osixia/docker-openldap
+* https://geek-cookbook.funkypenguin.co.nz/recipes/openldap/

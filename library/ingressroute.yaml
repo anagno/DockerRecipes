@@ -16,6 +16,32 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
+  name: library.anagno.me-opds
+  namespace: library
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: "Host(`library.anagno.me`) && PathPrefix(`/opds`)"
+      kind: Rule
+      priority: 10 
+      services:
+        - name: calibre-service
+          port: 80
+      middlewares:
+      - name: security-headers
+        namespace: proxy
+      - name: authorization-basic
+        namespace: authentication
+  tls:
+    secretName: library.anagno.me
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
   name: library.anagno.me
   namespace: library
 spec:
@@ -24,6 +50,7 @@ spec:
   routes:
     - match: Host(`library.anagno.me`)
       kind: Rule
+      priority: 1 
       services:
         - name: calibre-service
           port: 80
