@@ -1,13 +1,14 @@
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: torrents.anagno.me
-  namespace: torrents
+  name: news.anagno.me
+  namespace: news
 spec:
-  commonName: torrents.anagno.me
-  secretName: torrents.anagno.me
+  commonName: news.anagno.me
+  secretName: news.anagno.me
   dnsNames:
-    - torrents.anagno.me
+    - news.anagno.me
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer
@@ -15,24 +16,24 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: torrents.anagno.me
-  namespace: torrents
+  name: news.anagno.me
+  namespace: news
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`torrents.anagno.me`)
+    - match: Host(`news.anagno.me`)
       kind: Rule
       services:
-        - name: transmission-server-service
-          port: 9091
+        - name: freshrss-service
+          port: 80
       middlewares:
       - name: security-headers
         namespace: proxy
-      - name: authorization-basic
+      - name: authorization
         namespace: authentication
   tls:
-    secretName: torrents.anagno.me
+    secretName: news.anagno.me
     options:
       name: tls-security-headers
       namespace: proxy
@@ -40,17 +41,18 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: torrents.anagno.me-http
-  namespace: torrents
+  name: news.anagno.me-http
+  namespace: news
 spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`torrents.anagno.me`)
+    - match: Host(`news.anagno.me`)
       kind: Rule
       services:
-        - name: transmission-server-service
-          port: 9091
+        - name: freshrss-service
+          port: 80
       middlewares:
       - name: https-redirect
         namespace: proxy
+---  

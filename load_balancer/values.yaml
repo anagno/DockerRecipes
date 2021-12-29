@@ -7,15 +7,22 @@ configInline:
     addresses:
     - 192.168.179.230-192.168.179.250
 
-# For monitoring later the metallb deployment
-#prometheus:
-#  podMonitor:
-#    enabled: true
+prometheus:
+  podMonitor:
+    enabled: true
 
 controller:
   image:
     pullPolicy: IfNotPresent
+  # For monitoring later the metallb deployment
+  prometheus:
+    serviceMonitor:
+      enabled: true
 
 speaker:
   image:
     pullPolicy: IfNotPresent
+# For monitoring later the metallb deployment
+  prometheus:
+    serviceMonitor:
+      enabled: true

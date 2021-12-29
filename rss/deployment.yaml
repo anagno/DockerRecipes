@@ -1,0 +1,62 @@
+# https://github.com/FreshRSS/FreshRSS/issues/3613
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apache-config
+  namespace: news
+  labels:
+    app: freshrss-server
+data:
+  .htaccess: |
+    SetEnvIf Remote-User (.*) saved_http_remote_user=$1
+    RequestHeader set X-WebAuth-User "%{saved_http_remote_user}e"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: freshrss
+  namespace: news
+  labels:
+    app: freshrss-server
+spec:
+  selector:
+    matchLabels:
+      app: freshrss-server
+  replicas: 1
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: freshrss-server
+    spec:
+      dnsPolicy: Default
+      containers:
+      - name: freshrss-server
+        image: freshrss/freshrss:1.18.1-arm
+        imagePullPolicy: IfNotPresent
+        args:
+          - /bin/sh
+          - -c
+          - |
+            . /etc/apache2/envvars \
+            && exec apache2 -D FOREGROUND
+        ports:
+          - name: http
+            containerPort: 80
+        volumeMounts:
+          - mountPath: /var/www/FreshRSS/data
+            name: data
+            readOnly: false
+          - mountPath: /var/www/FreshRSS/p/i/.htaccess
+            name: apache-config
+            subPath: .htaccess
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: news-data
+            readOnly: false
+        - name: apache-config
+          configMap:
+            name: apache-config
+---

@@ -22,6 +22,7 @@ nav:
 - Authentication: authentication/index.md
 - Monitoring: monitoring/index.md
 - Torrents: torrents/index.md
+- Rss: rss/index.md
 - Maintance: update_node/index.md
 - Appendix: appendix/index.md
 

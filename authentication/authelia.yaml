@@ -62,7 +62,7 @@ data:
       version: 3
       max_desync: 3s
     access_control: 
-        default_policy: bypass
+        default_policy: deny
         rules:
          - domain: directory.anagno.me
            subject: group:caretakers
