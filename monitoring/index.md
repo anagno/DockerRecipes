@@ -51,10 +51,16 @@ kubectl apply -f dashboards/node-overview.yaml
 
 ```
 
+* Load-balancer dashboard (if it has been activated in the helm chart): 
+
 ```bash
-# kubectl delete -f dashboards/cluster-metrics-dashboard.yaml
+kubectl apply -f dashboards/metallb-dashboard.yaml
+```
+
+* Certificates dashboard (if it has been activated in the helm chart): 
+
+```bash
 kubectl apply -f dashboards/cert-manager-dashboard.yaml
-# You might need to issue a certificate to refresh the dashboard
 ```
 
 ## Usefull commands:

@@ -6,7 +6,7 @@ replicaCount: 1
 #https://github.com/jetstack/cert-manager/issues/959
 podDnsPolicy: "Default"
 
-#prometheus:
-#  enabled: true
-#  servicemonitor:
-#    enabled: true
+prometheus:
+  enabled: true
+  servicemonitor:
+    enabled: true
