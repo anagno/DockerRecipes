@@ -13,3 +13,5 @@ spec:
       - "X-Forwarded-User"
       - "Remote-User"
       - "Remote-Groups"
+      - "Remote-Name"
+      - "Remote-Email"

@@ -1,13 +1,14 @@
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: login.anagno.me
-  namespace: authentication
+  name: library.anagno.me
+  namespace: library
 spec:
-  commonName: login.anagno.me
-  secretName: login-anagno-me-cert
+  commonName: library.anagno.me
+  secretName: library.anagno.me
   dnsNames:
-    - login.anagno.me
+    - library.anagno.me
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer
@@ -15,24 +16,24 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: login.anagno.me
-  namespace: authentication
+  name: library.anagno.me
+  namespace: library
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`login.anagno.me`)
+    - match: Host(`library.anagno.me`)
       kind: Rule
       services:
-        - name: authelia-service
-          port: 9091
+        - name: calibre-service
+          port: 80
       middlewares:
-      - name: https-redirect
-        namespace: proxy
       - name: security-headers
         namespace: proxy
+      - name: authorization
+        namespace: authentication
   tls:
-    secretName: login-anagno-me-cert
+    secretName: library.anagno.me
     options:
       name: tls-security-headers
       namespace: proxy
@@ -40,17 +41,18 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: login.anagno.me-http
-  namespace: authentication
+  name: library.anagno.me-http
+  namespace: library
 spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`login.anagno.me`)
+    - match: Host(`library.anagno.me`)
       kind: Rule
       services:
-        - name: authelia-service
-          port: 9091
+        - name: calibre-service
+          port: 80
       middlewares:
       - name: https-redirect
         namespace: proxy
+---  

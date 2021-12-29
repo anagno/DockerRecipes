@@ -19,7 +19,6 @@ metadata:
   namespace: longhorn-system
 spec:
   entryPoints:
-    - web
     - websecure
   routes:
     - match: Host(`storage.anagno.me`)

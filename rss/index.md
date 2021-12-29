@@ -20,6 +20,10 @@ scp ubuntu@old_freshrss:/home/ubuntu/freshrss/www/freshrss/data/users/anagno/db.
 kubectl cp db.sqlite news/freshrss-6fb94cb5d-gzsnr:/var/www/FreshRSS/data/users/anagno/db.sqlite
 ```
 
+!!!Note
+    The first time configuration must be done automatically. I could not locate
+    a way to automate it
+
 
 ## Resources:
 
