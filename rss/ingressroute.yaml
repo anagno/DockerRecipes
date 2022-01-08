@@ -16,6 +16,30 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
+  name: news.anagno.me-api
+  namespace: news
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: "Host(`news.anagno.me`) && PathPrefix(`/api`)"
+      kind: Rule
+      priority: 10 
+      services:
+        - name: freshrss-service
+          port: 80
+      middlewares:
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: news.anagno.me
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
   name: news.anagno.me
   namespace: news
 spec:
@@ -24,6 +48,7 @@ spec:
   routes:
     - match: Host(`news.anagno.me`)
       kind: Rule
+      priority: 1 
       services:
         - name: freshrss-service
           port: 80

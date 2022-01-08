@@ -22,7 +22,7 @@ kubectl cp db.sqlite news/freshrss-6fb94cb5d-gzsnr:/var/www/FreshRSS/data/users/
 
 !!!Note
     The first time configuration must be done automatically. I could not locate
-    a way to automate it
+    a way to automate it. Remember also to activate the api
 
 
 ## Resources:
