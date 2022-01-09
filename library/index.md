@@ -22,7 +22,13 @@ kubectl apply -f smb.yaml
 ## Usefull commands 
 
 ```bash
-nohup rsync -avh --progress --bwlimit=10000 /mnt/storage/images/ /mnt/newStorage/to_delete/images4 > nohup2.out 2>nohup2.err < /dev/null &
+nohup rsync -avh --progress --bwlimit=10000 /home/anagno/Books/ . > nohup2.out 2>nohup2.err < /dev/null &
+mount -t cifs -o username=anagno,password=anagno //192.168.179.236/books/ smb_books/
+sudo mount -t cifs -o username=anagno,password=anagno //192.168.179.236/books/ smb_books/
+cd smb_books/
+sudo rsync -avh --progress --bwlimit=10000 /home/anagno/Books/ .
+sudo umount smb_books 
+rm -R smb_books/
 ```
 
 
