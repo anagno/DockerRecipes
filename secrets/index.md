@@ -1,15 +1,15 @@
 # Sharing secrets accross namespaces
 
-## Kubed
+## Config Syncer
 
 Kubernets does not share secrets accross namespaces. But some times it is 
 usefull to be able to share secrets accross namespaces. For that purpose 
-we use the [kubed service](https://appscode.com/products/kubed/v0.12.0/guides/config-syncer/intra-cluster/)
+we use the [Config Syncer service](https://appscode.com/products/kubed/v0.12.0/guides/config-syncer/intra-cluster/)
 
 ``` bash
 helm repo add appscode https://charts.appscode.com/stable/
 helm repo update
-helm install kubed appscode/kubed -f values.yaml --version v0.12.0 --namespace kube-system
+helm install kubed appscode/kubed -f values.yaml --version v0.13.0 --namespace kube-system
 ```
 
 The `values.yaml` I used is:
