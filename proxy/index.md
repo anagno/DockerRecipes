@@ -103,6 +103,10 @@ To test that everything works, we can deploy a testing whoami service:
 kubectl apply -f whoami.yaml
 # Check that everything works and the delete the service
 kubectl delete -f whoami.yaml
+# Forcing renew. Good practice when updating the cert-manager to make sure that
+# everything still works
+kubectl cert-manager status certificate login.anagno.me -n authentication
+kubectl cert-manager renew login.anagno.me -n authentication
 ```
 
 Resources:
@@ -111,3 +115,4 @@ Resources:
 * https://traefik.io/blog/install-and-configure-traefik-with-helm/
 * https://kubernetes.github.io/ingress-nginx/deploy/baremetal/
 * https://www.thebookofjoel.com/k3s-cert-manager-letsencrypt
+* https://cert-manager.io/docs/usage/kubectl-plugin/
