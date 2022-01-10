@@ -35,8 +35,8 @@ data:
     session:
       name: anagno_authentication_session
       domain: anagno.me
-      expiration: 3600
-      inactivity: 300
+      expiration: 1h
+      inactivity: 5m
       redis:
         host: authelia-redis-service
         port: 6379
@@ -81,6 +81,9 @@ data:
            policy: two_factor
          - domain: library.anagno.me
            subject: group:library
+           policy: one_factor
+         - domain: media.anagno.me
+           subject: group:media
            policy: one_factor
          - domain: torrents.anagno.me
            subject: group:torrents
