@@ -133,10 +133,10 @@ prometheus:
     resources:
       limits:
         #cpu: 200m
-        memory: 4000Mi
+        memory: 5000Mi
       requests:
         cpu: 100m
-        memory: 4000Mi
+        memory: 5000Mi
 
     # https://github.com/rook/rook/issues/6680
     # This was necessary to be able to scrap the data for the Kubernetes/Compute Resources/* databoards
