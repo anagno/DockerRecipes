@@ -1,0 +1,42 @@
+# https://github.com/kubernetes-sigs/descheduler/blob/master/charts/descheduler/values.yaml
+
+# CronJob or Deployment
+kind: CronJob
+
+image:
+  repository: k8s.gcr.io/descheduler/descheduler
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 256Mi
+
+schedule: "*/30 * * * *"
+suspend: false
+
+deschedulerPolicy:
+  strategies:
+    RemoveDuplicates:
+      enabled: true
+    RemovePodsViolatingNodeTaints:
+      enabled: true
+    RemovePodsViolatingNodeAffinity:
+      enabled: true
+      params:
+        nodeAffinityType:
+        - requiredDuringSchedulingIgnoredDuringExecution
+    RemovePodsViolatingInterPodAntiAffinity:
+      enabled: true
+    LowNodeUtilization:
+      enabled: true
+      params:
+        nodeResourceUtilizationThresholds:
+          thresholds:
+            cpu: 20
+            memory: 20
+            pods: 20
+          targetThresholds:
+            cpu: 50
+            memory: 50
+            pods: 50

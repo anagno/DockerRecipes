@@ -16,6 +16,7 @@ nav:
 - Networking: networking/index.md
 - Load Balancer: load_balancer/index.md
 - Dynamic IP: ddns/index.md
+- Descheduler: descheduler/index.md
 - Secret Management: secrets/index.md
 - Proxy: proxy/index.md
 - Storage: storage/index.md
