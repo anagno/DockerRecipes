@@ -15,6 +15,7 @@ helm install descheduler descheduler/descheduler -f values.yaml --namespace kube
 
 ```bash
 kubectl -n kube-system logs -f -l "app.kubernetes.io/instance=descheduler"
+kubectl -n kube-system create job --from=cronjob/descheduler descheduler-im
 ```
 
 

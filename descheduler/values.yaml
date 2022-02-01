@@ -33,10 +33,10 @@ deschedulerPolicy:
       params:
         nodeResourceUtilizationThresholds:
           thresholds:
-            cpu: 20
-            memory: 20
-            pods: 20
-          targetThresholds:
             cpu: 50
             memory: 50
+            pods: 30
+          targetThresholds:
+            cpu: 70
+            memory: 70
             pods: 50
