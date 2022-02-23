@@ -1,4 +1,4 @@
-# https://github.com/bitnami/charts/blob/master/bitnami/metallb/values.yaml
+# https://github.com/metallb/metallb/blob/main/charts/metallb/values.yaml
 
 configInline:
   address-pools:
@@ -8,21 +8,15 @@ configInline:
     - 192.168.179.230-192.168.179.250
 
 prometheus:
+  serviceAccount: "prometheus-k8s"
+  namespace: "monitoring"
   podMonitor:
     enabled: true
 
 controller:
   image:
     pullPolicy: IfNotPresent
-  # For monitoring later the metallb deployment
-  prometheus:
-    serviceMonitor:
-      enabled: true
 
 speaker:
   image:
     pullPolicy: IfNotPresent
-# For monitoring later the metallb deployment
-  prometheus:
-    serviceMonitor:
-      enabled: true
