@@ -1,8 +1,6 @@
 # https://github.com/traefik/traefik-helm-chart/blob/master/traefik/values.yaml
 
 image:
-  name: traefik
-  tag: "v2.5.6"
   pullPolicy: IfNotPresent
 
 ingressClass:
