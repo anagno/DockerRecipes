@@ -14,9 +14,9 @@ nav:
 - Nodes: node_setup/index.md
 - Kuberentes: cluster_setup/index.md
 - Networking: networking/index.md
+- Descheduler: descheduler/index.md
 - Load Balancer: load_balancer/index.md
 - Dynamic IP: ddns/index.md
-- Descheduler: descheduler/index.md
 - Secret Management: secrets/index.md
 - Proxy: proxy/index.md
 - Storage: storage/index.md
