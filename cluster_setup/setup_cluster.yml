@@ -51,6 +51,18 @@
       # We can not generate the manifest on the host, because for the generation we need docker (or containerd)
       # and that will be installed with k3s. But the manifest is needed before the installation ...
 
+    - name: Copy coredns manifest to first master
+      copy:
+        src: "coredns.yaml"
+        dest: "/var/lib/rancher/k3s/server/manifests/coredns-local.yaml"
+        owner: root
+        group: root
+        mode: 0644
+      become: true
+      #when: "'k3s.service' not in ansible_facts.services"
+      # This is a workaround the limitations of the coredns deployed with k3s. 
+      # For more details look in the common_vars.yaml where I explained why
+
     - name: Install and start k3s
       shell: 'curl -sfL https://get.k3s.io |  sh -s - server --cluster-init --tls-san zeus.intra {{ k3s_initialization_parameters }}'
       when: "'k3s.service' not in ansible_facts.services"
@@ -103,6 +115,18 @@
         host: zeus.intra
         port: 6443
         state: started
+
+    - name: Copy coredns manifest to master
+      copy:
+        src: "coredns.yaml"
+        dest: "/var/lib/rancher/k3s/server/manifests/coredns-local.yaml"
+        owner: root
+        group: root
+        mode: 0644
+      become: true
+      #when: "'k3s.service' not in ansible_facts.services"
+      # This is a workaround the limitations of the coredns deployed with k3s. 
+      # For more details look in the common_vars.yaml where I explained why
 
     - name: Install and start k3s
       shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=\"{{ hostvars[groups['masters'][0]]['cluster_token'] }}\" sh -s - server --server https://zeus.intra:6443 {{ k3s_initialization_parameters }}"
