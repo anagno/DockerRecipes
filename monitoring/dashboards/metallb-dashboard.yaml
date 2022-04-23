@@ -36,8 +36,8 @@ data:
       "fiscalYearStartMonth": 0,
       "gnetId": 14127,
       "graphTooltip": 1,
-      "id": 36,
-      "iteration": 1640764332078,
+      "id": 42,
+      "iteration": 1650747610674,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -48,7 +48,7 @@ data:
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "description": "",
           "fill": 1,
@@ -77,7 +77,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -133,7 +133,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -173,7 +173,7 @@ data:
             "showThresholdLabels": false,
             "showThresholdMarkers": true
           },
-          "pluginVersion": "8.3.3",
+          "pluginVersion": "8.4.5",
           "targets": [
             {
               "expr": "sum(metallb_k8s_client_config_stale_bool)",
@@ -194,7 +194,7 @@ data:
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "fill": 1,
           "fillGradient": 0,
@@ -222,7 +222,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -291,7 +291,7 @@ data:
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "fill": 1,
           "fillGradient": 0,
@@ -319,7 +319,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -372,7 +372,7 @@ data:
           }
         }
       ],
-      "schemaVersion": 34,
+      "schemaVersion": 35,
       "style": "dark",
       "tags": [
         "metallb ",
@@ -388,7 +388,7 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "PBFA97CFB590B2093"
+              "uid": "prometheus"
             },
             "definition": "label_values(metallb_layer2_gratuitous_sent,instance)",
             "hide": 0,

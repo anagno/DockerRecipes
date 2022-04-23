@@ -16,7 +16,7 @@ data:
         "list": [
           {
             "builtIn": 1,
-            "datasource": "Prometheus",
+            "datasource": "prometheus",
             "enable": true,
             "hide": true,
             "iconColor": "rgba(0, 211, 255, 1)",
@@ -32,15 +32,15 @@ data:
       "fiscalYearStartMonth": 0,
       "gnetId": 12541,
       "graphTooltip": 0,
-      "id": 29,
-      "iteration": 1640707392805,
+      "id": 38,
+      "iteration": 1650746892762,
       "links": [],
       "liveNow": false,
       "panels": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "gridPos": {
             "h": 1,
@@ -59,7 +59,7 @@ data:
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -96,7 +96,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -157,7 +157,7 @@ data:
           },
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "fontSize": "80%",
           "format": "short",
@@ -202,7 +202,7 @@ data:
           },
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "description": "",
           "fontSize": "80%",
@@ -247,7 +247,7 @@ data:
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "description": "",
           "fieldConfig": {
@@ -285,7 +285,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -342,7 +342,7 @@ data:
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -379,7 +379,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -433,7 +433,7 @@ data:
           "collapsed": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "gridPos": {
             "h": 1,
@@ -449,7 +449,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -508,7 +508,7 @@ data:
             },
             "textMode": "auto"
           },
-          "pluginVersion": "8.3.3",
+          "pluginVersion": "8.4.5",
           "targets": [
             {
               "expr": "sum(traefik_service_request_duration_seconds_sum{exported_service=~\"$service-[a-f0-9]*@.*\"}) / sum(traefik_service_requests_total{exported_service=~\"$service-[a-f0-9]*@.*\"}) * 1000",
@@ -531,7 +531,7 @@ data:
           },
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "fontSize": "80%",
           "format": "short",
@@ -575,7 +575,7 @@ data:
           "dashes": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -612,7 +612,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "8.3.3",
+          "pluginVersion": "8.4.5",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -661,8 +661,8 @@ data:
           }
         }
       ],
-      "refresh": "10s",
-      "schemaVersion": 34,
+      "refresh": "5s",
+      "schemaVersion": 35,
       "style": "dark",
       "tags": [
         "prometheus",
@@ -674,12 +674,12 @@ data:
           {
             "current": {
               "selected": false,
-              "text": "authentication-authelia-route",
-              "value": "authentication-authelia-route"
+              "text": "authentication-login-anagno-me",
+              "value": "authentication-login-anagno-me"
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "PBFA97CFB590B2093"
+              "uid": "prometheus"
             },
             "definition": "label_values(traefik_service_request_duration_seconds_sum, exported_service)",
             "hide": 0,
@@ -708,7 +708,7 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "PBFA97CFB590B2093"
+              "uid": "prometheus"
             },
             "definition": "",
             "hide": 0,
