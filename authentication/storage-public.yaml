@@ -6,6 +6,8 @@ metadata:
 spec:
   commonName: storage.anagno.me
   secretName: storage.anagno.me
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - storage.anagno.me
   issuerRef:

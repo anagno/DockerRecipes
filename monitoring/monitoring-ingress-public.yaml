@@ -6,6 +6,8 @@ metadata:
 spec:
   commonName: monitoring.anagno.me
   secretName: monitoring.anagno.me
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - monitoring.anagno.me
   issuerRef:

@@ -53,6 +53,8 @@ metadata:
 spec:
   commonName: users.intra
   secretName: users.intra
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - users.intra
   issuerRef:

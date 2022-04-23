@@ -7,6 +7,8 @@ metadata:
 spec:
   commonName: news.anagno.me
   secretName: news.anagno.me
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - news.anagno.me
   issuerRef:

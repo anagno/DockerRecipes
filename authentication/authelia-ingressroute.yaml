@@ -6,6 +6,8 @@ metadata:
 spec:
   commonName: login.anagno.me
   secretName: login-anagno-me-cert
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - login.anagno.me
   issuerRef:

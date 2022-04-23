@@ -6,6 +6,8 @@ metadata:
 spec:
   commonName: proxy.anagno.me
   secretName: proxy.anagno.me
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - proxy.anagno.me
   issuerRef:

@@ -5,6 +5,8 @@ metadata:
 spec:
   commonName: www.intra
   secretName: www.intra
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - www.intra
   issuerRef:

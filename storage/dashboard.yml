@@ -6,6 +6,8 @@ metadata:
 spec:
   commonName: storage.intra
   secretName: storage.intra
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - storage.intra
   issuerRef:

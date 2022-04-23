@@ -6,6 +6,8 @@ metadata:
 spec:
   commonName: monitoring.intra
   secretName: monitoring.intra
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - monitoring.intra
   issuerRef:

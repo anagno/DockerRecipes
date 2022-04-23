@@ -6,6 +6,8 @@ metadata:
 spec:
   commonName: torrents.anagno.me
   secretName: torrents.anagno.me
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - torrents.anagno.me
   issuerRef:

@@ -7,6 +7,8 @@ metadata:
 spec:
   commonName: library.anagno.me
   secretName: library.anagno.me
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - library.anagno.me
   issuerRef:
