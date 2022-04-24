@@ -618,7 +618,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "prometheus"
               },
               "exemplar": true,
               "expr": "node_hwmon_temp_celsius",
@@ -631,7 +631,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "prometheus"
               },
               "hide": false,
               "refId": "B"
