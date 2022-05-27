@@ -8,7 +8,7 @@ To keep the load on the nodes balanced we will use the
 ``` bash
 helm repo add descheduler https://kubernetes-sigs.github.io/descheduler/
 helm repo update
-helm upgrade descheduler descheduler/descheduler -f values.yaml --namespace kube-system --version v0.23.2
+helm install descheduler descheduler/descheduler -f values.yaml --namespace kube-system --version v0.24.0
 ```
 
 ## Usefull commands:
