@@ -1,4 +1,19 @@
 ---
+
+# TODO: Refactor because of duplication from setup_cluster
+- name: Retrieve cluster token
+  hosts: masters[0]
+  tasks:
+    - name: Get token
+      shell: 'cat /var/lib/rancher/k3s/server/node-token'
+      become: true
+      register: cluster_token
+
+    - name: Create facts
+      set_fact:
+        cluster_token: '{{ cluster_token.stdout }}'
+
+
 - name: Update node
   hosts: all
   any_errors_fatal: true
@@ -30,6 +45,21 @@
         update_cache: yes
         upgrade: dist
       become: yes
+
+    - name: Include common variables
+      include_vars: "../cluster_setup/common_vars.yaml"
+
+    # TODO: Refactor because of duplication from setup_cluster
+    - name: Updating and starting k3s on main nodes
+      shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=\"{{ hostvars[groups['masters'][0]]['cluster_token'] }}\" sh -s - server --server https://zeus.intra:6443 {{ k3s_initialization_parameters }}"
+      become: true
+      when: inventory_hostname in groups['masters']
+
+    # TODO: Refactor because of duplication from setup_cluster
+    - name: Updating and starting k3s on workers
+      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC=\"agent\" K3S_URL=https://zeus.intra:6443 K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }} sh"
+      become: true
+      when: inventory_hostname in groups['workers']
 
     - name: Check if reboot required
       stat:
