@@ -1,12 +1,5 @@
 # https://github.com/metallb/metallb/blob/main/charts/metallb/values.yaml
 
-configInline:
-  address-pools:
-  - name: default
-    protocol: layer2
-    addresses:
-    - 192.168.179.230-192.168.179.250
-
 prometheus:
   serviceAccount: "prometheus-k8s"
   namespace: "monitoring"
