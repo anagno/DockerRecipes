@@ -11,7 +11,7 @@ helm repo update
 kubectl create namespace monitoring
 
 helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
-    --version v36.0.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+    --version v39.1.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress.yaml
 kubectl apply -f monitoring-ingress-public.yaml
 ```
@@ -76,6 +76,7 @@ kubectl -n monitoring port-forward service/monitoring-kube-prometheus-prometheus
 
 
 * https://grafana.com/grafana/dashboards/15398
+* https://grafana.com/grafana/dashboards/15761
 
 
 
