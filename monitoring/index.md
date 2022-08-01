@@ -45,6 +45,8 @@ kubectl apply -f proxy/traefik-dashboard-2.yaml
 ```bash
 kubectl apply -f dashboards/alerts-2-dashboard.yaml
 kubectl apply -f dashboards/cluster-details-dashboard.yaml
+kubectl apply -f dashboards/cluster-details-namespaces.yaml
+kubectl apply -f dashboards/cluster-details-nodes.yaml
 kubectl apply -f dashboards/volumes-dashboard.yaml
 kubectl apply -f dashboards/node-exporter.yaml
 kubectl apply -f dashboards/node-overview.yaml
