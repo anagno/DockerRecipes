@@ -4,8 +4,13 @@
 # https://github.com/rancher/rancher/issues/29939#issuecomment-1193125841
 defaultRules:
   disabled:
+    # https://etcd.io/docs/v3.5/faq/#what-does-the-etcd-warning-apply-entries-took-too-long-mean
+    # My disks are too slow. It should have 25ms, but I am putting on 50ms because there is too much noise
+    # and it is not usefull. So let`s give a warning only when it is really high
+    etcdHighCommitDurations: true
     # the results of this rule are not accurate: https://github.com/rancher/rancher/issues/29939
     etcdHighNumberOfFailedGRPCRequests: true
+    Watchdog: true
   
 additionalPrometheusRulesMap:
   additional-rules:
@@ -13,6 +18,15 @@ additionalPrometheusRulesMap:
       # fix etcdHighNumberOfFailedGRPCRequests alerting rules from above, adapted from: https://github.com/etcd-io/etcd/pull/13127
       - name: etcd-additional
         rules:
+          - alert: etcdHighCommitDurationsWarning
+            annotations:
+              message: >-
+                etcd cluster "{{ $labels.job }}": 99th percentile commit durations {{ $value }}s on etcd instance {{ $labels.instance }}.
+            expr: >-
+              histogram_quantile(0.99, rate(etcd_disk_backend_commit_duration_seconds_bucket{job=~".*etcd.*"}[5m])) > 0.50
+            for: 10m
+            labels:
+              severity: warning
           - alert: etcdHighNumberOfFailedGRPCRequestsWarning
             annotations:
               message: >-
