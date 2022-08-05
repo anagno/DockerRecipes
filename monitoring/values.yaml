@@ -1,6 +1,48 @@
 # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
 # https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md
 
+# https://github.com/rancher/rancher/issues/29939#issuecomment-1193125841
+defaultRules:
+  disabled:
+    # the results of this rule are not accurate: https://github.com/rancher/rancher/issues/29939
+    etcdHighNumberOfFailedGRPCRequests: true
+  
+additionalPrometheusRulesMap:
+  additional-rules:
+    groups:
+      # fix etcdHighNumberOfFailedGRPCRequests alerting rules from above, adapted from: https://github.com/etcd-io/etcd/pull/13127
+      - name: etcd-additional
+        rules:
+          - alert: etcdHighNumberOfFailedGRPCRequestsWarning
+            annotations:
+              message: >-
+                etcd cluster "{{ $labels.job }}": {{ $value }}% of requests for {{
+                $labels.grpc_method }} failed on etcd instance {{ $labels.instance
+                }}.
+            expr: >-
+              100 * sum(rate(grpc_server_handled_total{job=~".*etcd.*",
+                grpc_code=~"Unknown|FailedPrecondition|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded"}[5m])) 
+              / 
+              sum(rate(grpc_server_handled_total{job=~".*etcd.*"}[5m]))
+              > 1
+            for: 10m
+            labels:
+              severity: warning
+          - alert: etcdHighNumberOfFailedGRPCRequestsCritical
+            annotations:
+              message: >-
+                etcd cluster "{{ $labels.job }}": {{ $value }}% of requests for {{
+                $labels.grpc_method }} failed on etcd instance {{ $labels.instance
+                }}.
+            expr: >-
+              100 * sum(rate(grpc_server_handled_total{job=~".*etcd.*",
+                grpc_code=~"Unknown|FailedPrecondition|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded"}[5m])) 
+              / 
+              sum(rate(grpc_server_handled_total{job=~".*etcd.*"}[5m]))
+              > 5
+            for: 5m
+            labels:
+              severity: critical
 
 alertmanager:
   alertmanagerSpec:
