@@ -212,3 +212,13 @@ prometheus:
           resources:
             requests:
               storage: 30Gi
+
+prometheusOperator:
+  enabled: true
+  prometheusConfigReloader:
+    # resource config for prometheusConfigReloader
+    # The default ones are causing some throttling
+    # because the Raspberry pi is not powerfull enough
+    resources:
+      limits:
+        cpu: 500m
