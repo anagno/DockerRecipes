@@ -78,7 +78,7 @@ ansible-playbook storage/setup_storage.yml
 helm repo add longhorn https://charts.longhorn.io
 helm repo update
 kubectl create namespace longhorn-system
-helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.3.0
+helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.3.1
 
 
 kubectl apply -f dashboard.yml
@@ -119,4 +119,7 @@ kubectl -n longhorn-system logs -f -l "app=longhorn-manager" --max-log-requests 
 * https://www.jericdy.com/blog/installing-k3s-with-longhorn-and-usb-storage-on-raspberry-pi
 * https://longhorn.io/docs/1.2.2/advanced-resources/volume-encryption/
 
+
+Take a look at https://longhorn.io/kb/troubleshooting-volume-with-multipath/
+I had to do it in homados and aretusa, and I have to examine if it has to be done to all nodes ...
 
