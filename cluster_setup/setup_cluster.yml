@@ -133,9 +133,9 @@
       when: "'k3s.service' not in ansible_facts.services"
 
     - name: Reboot
-      shell: "sleep 5 && reboot"
-      async: 1
-      poll: 0
+      ansible.builtin.reboot:
+        reboot_timeout: 600
+      become: true
       when: "'k3s.service' not in ansible_facts.services"
 
     - name: Wait for the reboot to complete
@@ -163,9 +163,9 @@
       when: "'k3s.service' not in ansible_facts.services"
 
     - name: Reboot
-      shell: "sleep 5 && reboot"
-      async: 1
-      poll: 0
+      ansible.builtin.reboot:
+        reboot_timeout: 600
+      become: true
       when: "'k3s.service' not in ansible_facts.services"
 
     - name: Wait for the reboot to complete
