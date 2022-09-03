@@ -19,7 +19,7 @@
     # https://longhorn.io/docs/1.2.2/deploy/install/#using-the-environment-check-script
     - name: Run check script
       shell:
-        cmd: curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.2.2/scripts/environment_check.sh | bash
+        cmd: curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/scripts/environment_check.sh | bash
 
     - name: Start service iscsid
       service:
