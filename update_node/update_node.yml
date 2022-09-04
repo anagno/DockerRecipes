@@ -4,6 +4,14 @@
 - name: Retrieve cluster token
   hosts: masters[0]
   tasks:
+    - name: install pre-requisites
+      pip:
+        name:
+          - openshift
+          - pyyaml
+          - kubernetes 
+      become: yes
+
     - name: Get token
       shell: 'cat /var/lib/rancher/k3s/server/node-token'
       become: true
@@ -84,6 +92,13 @@
       shell: 'lsblk | grep /media/storage'
       when: inventory_hostname in groups['disks']
 
+    # Necessary for longhorn to function without problems
+    - name: Start service iscsid
+      service:
+        name: iscsid
+        state: started
+        enabled: yes
+
     - name: Restore node to cluster
       kubernetes.core.k8s_drain:
         kubeconfig: /etc/rancher/k3s/k3s.yaml
@@ -97,3 +112,6 @@
         timeout: 600
       delegate_to: localhost
       when: inventory_hostname in groups['disks']
+      # https://github.com/longhorn/website/issues/346
+      # https://github.com/longhorn/longhorn-manager/pull/710
+      # https://github.com/longhorn/longhorn/issues/307
