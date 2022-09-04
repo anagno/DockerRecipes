@@ -57,6 +57,12 @@ ansible-galaxy collection install community.general
 ansible-playbook storage/setup_storage.yml
 ```
 
+!!!Warning
+    I have no idea why, but if I connect the Sata to USB3 cable I have
+    to the USB3 ports, after a reboot the drive will not re-connect.
+    To reconnect I have to power completely the raspberry pi (unplug
+    and replug the PoE cable). Needs investigation.
+
 !!!Note
     Be carefull to use the correct partition
 
