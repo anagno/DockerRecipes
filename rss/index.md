@@ -18,6 +18,9 @@ echo "<?php phpinfo();" >> p/i/phpinfo.php
 # To move the subscriptions 
 scp ubuntu@old_freshrss:/home/ubuntu/freshrss/www/freshrss/data/users/anagno/db.sqlite db.sqlite
 kubectl cp db.sqlite news/freshrss-6fb94cb5d-gzsnr:/var/www/FreshRSS/data/users/anagno/db.sqlite
+
+# To copy a local config.php to the container
+kubectl cp config.php news/freshrss-7495bcb86b-5wtd7:/var/www/FreshRSS/data/config.php
 ```
 
 !!!Note
