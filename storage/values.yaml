@@ -11,8 +11,13 @@ persistence:
 defaultSettings:
   defaultDataPath: /media/storage/
   createDefaultDiskLabeledNodes: false
-  StorageOverProvisioningPercentage: 0
+  storageOverProvisioningPercentage: 100
+  storageMinimalAvailablePercentage: 15
   replicaAutoBalance: "least-effort"
   defaultDataLocality: "disabled"
+  autoSalvage: "true"
+  disableSchedulingOnCordonedNode: "false"
   nodeDownPodDeletionPolicy: "delete-both-statefulset-and-deployment-pod"
-  storageMinimalAvailablePercentage: 15
+  allowNodeDrainWithLastHealthyReplica: "false"
+  replicaReplenishmentWaitInterval: 7200
+  orphanAutoDeletion: "true"
