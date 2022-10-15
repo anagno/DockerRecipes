@@ -15,8 +15,6 @@ defaultSettings:
   storageMinimalAvailablePercentage: 15
   replicaAutoBalance: "least-effort"
   defaultDataLocality: "disabled"
-  autoSalvage: "true"
-  disableSchedulingOnCordonedNode: "false"
   nodeDownPodDeletionPolicy: "delete-both-statefulset-and-deployment-pod"
   allowNodeDrainWithLastHealthyReplica: "false"
   replicaReplenishmentWaitInterval: 7200

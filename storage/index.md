@@ -84,7 +84,7 @@ ansible-playbook storage/setup_storage.yml
 helm repo add longhorn https://charts.longhorn.io
 helm repo update
 kubectl create namespace longhorn-system
-helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.3.1
+helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.3.2
 
 
 kubectl apply -f dashboard.yml
@@ -129,3 +129,11 @@ kubectl -n longhorn-system logs -f -l "app=longhorn-manager" --max-log-requests 
 Take a look at https://longhorn.io/kb/troubleshooting-volume-with-multipath/
 I had to do it in homados and aretusa, and I have to examine if it has to be done to all nodes ...
 
+
+```sh
+# https://github.com/longhorn/longhorn/issues/1826#issuecomment-1200005051
+kubectl get snapshots.longhorn.io -n longhorn-system -l longhornvolume=pvc-1c16f507-ff8d-4b8b-aed4-7b108214618c | awk '/library-books-/{print $1}' | xargs kubectl -n longhorn-system delete snapshots.longhorn.io
+
+qemu-img convert -f raw e5ec5a95 -O vmdk torrents-settings.img
+sudo mount -o loop torrents-settings mount/
+```
