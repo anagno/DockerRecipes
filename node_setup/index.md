@@ -75,12 +75,6 @@ only available for aarch64 not the arm4vl (which is the 32 bit version).
 Ubuntu is bootable from a usb [from Ubuntu 20.10](https://forums.raspberrypi.com/viewtopic.php?t=295609)
 So we will have to make it [bootable](https://forums.raspberrypi.com/viewtopic.php?f=131&t=278791):
 
-
-!!!Note
-    Using the latest version (as of the writting 21.10) is not possible because the `open-iscsi` was broken.
-    The kernel did not have the `iscsi_tcp` module. This could be related to the fact that Ubuntu
-    moved some upstream packages to a [seperate package](https://github.com/k3s-io/k3s/issues/4188#issuecomment-982503626)
-
 ### Upgrade the firmware (if necessary)
 
 We are going to use USB disk, instead of SD cards. But the firmware of Raspberry Pi

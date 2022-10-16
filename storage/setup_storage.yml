@@ -14,6 +14,8 @@
           # For enabling encryption in the disks
           # https://longhorn.io/docs/1.2.2/advanced-resources/volume-encryption/#requirements
           - cryptsetup
+          # https://github.com/k3s-io/k3s/issues/4188#issuecomment-982503626
+          - linux-modules-extra-raspi
         state: present
       become: true
     # https://longhorn.io/docs/1.2.2/deploy/install/#using-the-environment-check-script
