@@ -13,5 +13,5 @@ spec:
     port: 9100
     name: metrics
   selector:
-    app.kubernetes.io/instance: traefik
+    app.kubernetes.io/instance: traefik-proxy
     app.kubernetes.io/name: traefik

@@ -19,8 +19,13 @@ Similarly, to deploy Traefik we have to execute:
 kubectl create namespace proxy
 helm repo add traefik https://helm.traefik.io/traefik
 helm repo update
-helm install -n proxy traefik traefik/traefik -f traefik-values.yaml --version 15.3.1
+helm install -n proxy traefik traefik/traefik -f traefik-values.yaml --version 18.1.0
 ```
+
+!!! note
+    In the logs we might have a warning and we might have to increase the rmeem_max
+    `ansible all -b -m shell -a "sysctl -w net.core.rmem_max=2500000"`. To retrieve
+    the logs do `kubectl -n proxy logs -f -l "app.kubernetes.io/name=traefik"`
 
 ``` yaml
 --8<-- "proxy/traefik-values.yaml"
