@@ -121,7 +121,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: authelia
-          image: ghcr.io/authelia/authelia:4.36.9
+          image: ghcr.io/authelia/authelia:4.37.2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9091
