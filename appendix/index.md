@@ -213,7 +213,7 @@ curl https://kube-vip.io/manifests/rbac.yaml > kube-vip-manifest.yaml
 ### Append --- in the file
 
 sudo docker run --network host \
---rm plndr/kube-vip:v0.5.5 manifest daemonset \
+--rm plndr/kube-vip:v0.5.6 manifest daemonset \
 --interface eth0 \
 --address zeus.intra \
 --inCluster \
@@ -225,6 +225,8 @@ sudo docker run --network host \
 # The default configuration always downloads the image (even if it is present). 
 # To reduce the amount of data that we download from docker hub we will change it by setting the pull policy to IfNotPresent in:
 ```
+
+To update it in the nodes `ansible masters -b -m copy -a "src=cluster_setup/kube-vip-manifest.yaml dest=/var/lib/rancher/k3s/server/manifests/vip.yaml"`
 
 ## Drain a node
 
