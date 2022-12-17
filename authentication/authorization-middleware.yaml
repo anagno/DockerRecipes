@@ -1,7 +1,7 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
-  name: authorization
+  name: authorization-forward-auth
   namespace: authentication
 spec:
   forwardAuth:
@@ -15,3 +15,29 @@ spec:
       - "Remote-Groups"
       - "Remote-Name"
       - "Remote-Email"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: authorization-headers
+  namespace: authentication
+spec:
+  headers:
+    browserXssFilter: true
+    customFrameOptionsValue: "SAMEORIGIN"
+    customResponseHeaders:
+      Cache-Control: "no-store"
+      Pragma: "no-cache"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: authorization
+  namespace: authentication
+spec:
+  chain:
+    middlewares:
+      - name: authorization-headers
+        namespace: authentication
+      - name: authorization-forward-auth
+        namespace: authentication
