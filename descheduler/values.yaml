@@ -37,6 +37,6 @@ deschedulerPolicy:
             memory: 50
             pods: 30
           targetThresholds:
-            cpu: 70
-            memory: 70
-            pods: 50
+            cpu: 85
+            memory: 85
+            pods: 60
