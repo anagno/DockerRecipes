@@ -18,7 +18,7 @@ spec:
       dnsPolicy: Default    
       containers:
       - name: transmission-server
-        image: linuxserver/transmission
+        image: lscr.io/linuxserver/transmission:latest
         imagePullPolicy: IfNotPresent   
         env:
           - name: PUID
