@@ -236,6 +236,20 @@ ansible <node name> -b -m community.general.shutdown
 kubectl uncordon <node name>
 ```
 
+## Security benchmark 
+
+We can use the:
+
+* [kube-bench](https://github.com/aquasecurity/kube-bench)
+
+    ```sh
+    curl https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job.yaml > kube-bench-job.yaml
+    kubectl apply -f kube-bench-job.yaml
+    kubectl logs kube-bench-kp8sv
+    kubectl delete pod kube-bench-kp8sv
+    kubectl delete -f kube-bench-job.yaml
+    rm kube-bench-job.yaml
+    ```
 
 ## Resources:
 
