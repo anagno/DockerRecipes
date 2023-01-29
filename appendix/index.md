@@ -213,7 +213,7 @@ curl https://kube-vip.io/manifests/rbac.yaml > kube-vip-manifest.yaml
 ### Append --- in the file
 
 sudo docker run --network host \
---rm plndr/kube-vip:v0.5.7 manifest daemonset \
+--rm plndr/kube-vip:v0.5.8 manifest daemonset \
 --interface eth0 \
 --address zeus.intra \
 --inCluster \
@@ -227,6 +227,7 @@ sudo docker run --network host \
 ```
 
 To update it in the nodes `ansible masters -b -m copy -a "src=cluster_setup/kube-vip-manifest.yaml dest=/var/lib/rancher/k3s/server/manifests/vip.yaml"`
+To retrieve the logs `kubectl -n kube-system logs -f -l "app.kubernetes.io/name=kube-vip-ds"`
 
 ## Drain a node
 
