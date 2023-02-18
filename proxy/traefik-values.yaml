@@ -1,8 +1,7 @@
 # https://github.com/traefik/traefik-helm-chart/blob/master/traefik/values.yaml
 
 image:
-  name: traefik
-  #tag: "v2.9.5"
+  tag: "v2.9.8"
   pullPolicy: IfNotPresent
 
 deployment:
