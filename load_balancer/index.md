@@ -14,7 +14,7 @@ Metallb provides a helm chart. So the installation is quite simple:
 ``` bash
 helm repo add metallb https://metallb.github.io/metallb
 kubectl create namespace load-balancer
-helm install --namespace load-balancer load-balancer metallb/metallb -f values.yaml --version 0.13.7
+helm install --namespace load-balancer load-balancer metallb/metallb -f values.yaml --version 0.13.9
 # Wait for the full deployment of the services
 kubectl apply -f IPAddressPool.yaml
 ```
