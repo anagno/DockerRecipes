@@ -33,7 +33,7 @@ spec:
       dnsPolicy: Default
       containers:
       - name: freshrss-server
-        image: freshrss/freshrss:1.20.2-arm
+        image: freshrss/freshrss:1.21.0-arm
         imagePullPolicy: IfNotPresent
         args:
           - /bin/sh
