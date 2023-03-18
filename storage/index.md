@@ -84,7 +84,7 @@ ansible-playbook storage/setup_storage.yml
 helm repo add longhorn https://charts.longhorn.io
 helm repo update
 kubectl create namespace longhorn-system
-helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.4.0
+helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.4.1
 
 
 kubectl apply -f dashboard.yml
@@ -136,4 +136,10 @@ kubectl get snapshots.longhorn.io -n longhorn-system -l longhornvolume=pvc-1c16f
 
 qemu-img convert -f raw e5ec5a95 -O vmdk torrents-settings.img
 sudo mount -o loop torrents-settings mount/
+
+# https://edoceo.com/sys/qemu
+modprobe nbd
+qemu-nbd --connect=/dev/nbd0 disk.qcow2
+
+qemu-nbd -d /dev/nbd0
 ```
