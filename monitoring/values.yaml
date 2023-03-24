@@ -126,6 +126,13 @@ kubeEtcd:
 grafana:
   enabled: true
 
+  extraSecretMounts:
+    - name: auth-generic-oauth-secret-mount
+      secretName: authentik-secret
+      defaultMode: 0440
+      mountPath: /etc/secrets/auth_generic_oauth
+      readOnly: true
+
   plugins:
     # https://grafana.com/grafana/plugins/camptocamp-prometheus-alertmanager-datasource/
     - camptocamp-prometheus-alertmanager-datasource
@@ -156,8 +163,8 @@ grafana:
       auto_sign_up: true
       enabled: true
       # https://github.com/helm/charts/issues/22473#issuecomment-662361020
-      client_id: #replace with id 
-      client_secret: #replace with secret
+      client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
+      client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
       scopes: openid email profile
       auth_url: https://auth.anagno.dev/application/o/authorize/
       token_url: https://auth.anagno.dev/application/o/token/

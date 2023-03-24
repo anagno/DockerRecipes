@@ -10,6 +10,13 @@ helm repo update
 
 kubectl create namespace monitoring
 
+# Follow the instructions for goauthentik
+# https://goauthentik.io/integrations/services/grafana/
+
+kubectl create secret generic authentik-secret --namespace monitoring \
+  --from-literal=client_id=ID_FROM_AUTHENTIK \
+  --from-literal=client_secret=SECRET_FROM_AUTHENTIK
+
 helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
     --version v45.7.1 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress-public.yaml
