@@ -1,0 +1,71 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cyberlocker.anagno.dev
+  namespace: cyberlocker
+spec:
+  commonName: cyberlocker.anagno.dev
+  secretName: cyberlocker-anagno-dev-cert
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - cyberlocker.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: dav
+  namespace: cyberlocker
+spec:
+  redirectRegex:
+    regex: https://(.*)/.well-known/(card|cal)dav
+    replacement: https://$1/remote.php/dav/
+    permanent: true
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cyberlocker.anagno.dev
+  namespace: cyberlocker
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`cyberlocker.anagno.dev`)
+      kind: Rule
+      services:
+        - name: cyberlocker-nextcloud
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+      - name: security-headers
+        namespace: proxy
+      - name: dav
+        namespace: cyberlocker
+  tls:
+    secretName: cyberlocker-anagno-dev-cert
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cyberlocker.anagno.dev-http
+  namespace: cyberlocker
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`cyberlocker.anagno.dev`)
+      kind: Rule
+      services:
+        - name: cyberlocker-nextcloud
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy

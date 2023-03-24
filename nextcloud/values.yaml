@@ -1,0 +1,158 @@
+# https://github.com/nextcloud/helm/blob/master/charts/nextcloud/values.yaml
+
+image:
+  repository: nextcloud
+  #tag: 25.0.2-apache
+  pullPolicy: IfNotPresent
+
+ingress:
+  enabled: false
+
+phpClientHttpsFix:
+  enabled: false
+  protocol: https
+
+nextcloud:
+  host: cyberlocker.anagno.dev
+  existingSecret:
+    enabled: true
+    secretName: nextcloud
+    usernameKey: admin-username
+    passwordKey: admin-password
+    tokenKey: serverinfo_token
+    smtpUsernameKey: smtp_username
+    smtpPasswordKey: smtp_password
+  mail:
+    enabled: true
+    fromAddress: no-reply
+    domain: anagno.me
+    smtp:
+      host: mail.gandi.net
+      secure: tls
+      port: 587
+      authtype: LOGIN
+  # PHP Configuration files
+  # Will be injected in /usr/local/etc/php/conf.d for apache image and in /usr/local/etc/php-fpm.d when nginx.enabled: true
+  phpConfigs: {}
+  # Default config files
+  # IMPORTANT: Will be used only if you put extra configs, otherwise default will come from nextcloud itself
+  # Default confgurations can be found here: https://github.com/nextcloud/docker/tree/master/25/apache/config
+  defaultConfigs:
+    # To protect /var/www/html/config
+    .htaccess: true
+    # Redis default configuration
+    redis.config.php: true
+    # Apache configuration for rewrite urls
+    apache-pretty-urls.config.php: true
+    # Define APCu as local cache
+    apcu.config.php: true
+    # Apps directory configs
+    apps.config.php: true
+    # Used for auto configure database
+    autoconfig.php: true
+    # SMTP default configuration
+    smtp.config.php: true
+  # Extra config files created in /var/www/html/config/
+  # ref: https://docs.nextcloud.com/server/15/admin_manual/configuration_server/config_sample_php_parameters.html#multiple-config-php-file
+  configs: 
+    proxy.config.php: |-
+      <?php
+      $CONFIG = array (
+        'trusted_proxies' => array(
+          0 => '127.0.0.1',
+          1 => '10.0.0.0/8',
+        ),
+        'forwarded_for_headers' => array('HTTP_X_FORWARDED_FOR'),
+      );
+
+  extraEnv:
+    - name: SMTP_NAME
+      value: no-reply@anagno.me
+    - name: SMTP_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: no-reply-mail
+          key: password
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: nextcloud-database
+          key: postgresql-password
+    - name: REDIS_HOST_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: nextcloud-redis
+          key: redis-password
+
+
+resources:
+  limits:
+   memory: 3000Mi
+  requests:
+   cpu: 1000m
+   memory: 1000Mi
+
+livenessProbe:
+  #enabled: false
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 60
+  timeoutSeconds: 15
+readinessProbe:
+  #enabled: false
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 60
+  timeoutSeconds: 15
+startupProbe:
+  enabled: false
+
+nginx:
+  enabled: false
+
+internalDatabase:
+  enabled: false
+externalDatabase:
+  enabled: false
+mariadb:
+  enabled: false
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        database: nextcloud
+        existingSecret: "nextcloud-database"
+        secretKeys:
+          adminPasswordKey: "postgresql-postgres-password"
+          userPasswordKey: "postgresql-password"
+  primary:
+    persistence:
+      enabled: true
+      existingClaim: "nextcloud-database"
+  image:
+    tag: 11.19.0-debian-11-r4
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    existingSecret: "nextcloud-redis"
+  master:
+    persistence:
+      enabled: true
+      existingClaim: nextcloud-redis
+  image:
+    tag: 6.2.10-debian-11-r13
+
+cronjob:
+  enabled: true
+
+service:
+  type: ClusterIP
+  port: 80
+  loadBalancerIP: nil
+  nodePort: nil
+
+persistence:
+  enabled: true
+  existingClaim: nextcloud-pvc

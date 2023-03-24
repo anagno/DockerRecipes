@@ -21,6 +21,7 @@ nav:
 - Storage: storage/index.md
 - Authorization: authentication/index.md
 - Monitoring: monitoring/index.md
+- Nextcloud: nextcloud/index.md
 - Torrents: torrents/index.md
 - Rss: rss/index.md
 - Library: library/index.md
