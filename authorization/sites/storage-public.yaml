@@ -1,0 +1,60 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: storage.anagno.dev
+  namespace: longhorn-system
+spec:
+  commonName: storage.anagno.dev
+  secretName: storage.anagno.dev
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - storage.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: storage.anagno.dev
+  namespace: longhorn-system
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`storage.anagno.dev`)
+      kind: Rule
+      services:
+        - name: longhorn-frontend
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+      - name: security-headers
+        namespace: proxy
+      - name: ak-outpost-authentik-embedded-outpost
+        namespace: authorization
+  tls:
+    secretName: storage.anagno.dev
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: storage.anagno.dev-http
+  namespace: longhorn-system
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`storage.anagno.dev`)
+      kind: Rule
+      services:
+        - name: longhorn-frontend
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy

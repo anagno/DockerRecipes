@@ -19,7 +19,7 @@ nav:
 - Secret Management: secrets/index.md
 - Proxy: proxy/index.md
 - Storage: storage/index.md
-- Authentication: authentication/index.md
+- Authorization: authentication/index.md
 - Monitoring: monitoring/index.md
 - Torrents: torrents/index.md
 - Rss: rss/index.md

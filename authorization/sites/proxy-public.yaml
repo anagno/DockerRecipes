@@ -1,0 +1,62 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: proxy.anagno.dev
+  namespace: proxy
+spec:
+  commonName: proxy.anagno.dev
+  secretName: proxy.anagno.dev
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - proxy.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: proxy.anagno.dev
+  namespace: proxy
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`proxy.anagno.dev`)
+      kind: Rule
+      priority: 10
+      services:
+        - name: api@internal
+          kind: TraefikService
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+      - name: security-headers
+        namespace: proxy
+      - name: ak-outpost-authentik-embedded-outpost
+        namespace: authorization
+  tls:
+    secretName: proxy.anagno.dev
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: proxy.anagno.dev-http
+  namespace: proxy
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`proxy.anagno.dev`)
+      kind: Rule
+      services:
+        - name: api@internal
+          kind: TraefikService
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+

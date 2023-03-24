@@ -1,0 +1,58 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: auth.anagno.dev
+  namespace: authorization
+spec:
+  commonName: auth.anagno.dev
+  secretName: auth-anagno-dev-cert
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - auth.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: auth.anagno.dev
+  namespace: authorization
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`auth.anagno.dev`)
+      kind: Rule
+      services:
+        - name: authentik
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: auth-anagno-dev-cert
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: auth.anagno.dev-http
+  namespace: authorization
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`auth.anagno.dev`)
+      kind: Rule
+      services:
+        - name: authentik
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
