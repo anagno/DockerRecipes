@@ -12,7 +12,6 @@ kubectl create namespace monitoring
 
 helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
     --version v45.7.1 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
-kubectl apply -f monitoring-ingress.yaml
 kubectl apply -f monitoring-ingress-public.yaml
 ```
 

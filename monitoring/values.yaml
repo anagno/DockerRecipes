@@ -147,11 +147,22 @@ grafana:
       allow_sign_up: false
       auto_assign_org: true
       auto_assign_org_role: Editor
-    auth.proxy:
-      enabled: true
-      header_name: Remote-User
-      header_property: username
+    server:
+      root_url: "https://monitoring.anagno.dev"
+    auth:
+      oauth_auto_login: true
+    auth.generic_oauth:
+      name: auth.anagno.dev
       auto_sign_up: true
+      enabled: true
+      # https://github.com/helm/charts/issues/22473#issuecomment-662361020
+      client_id: #replace with id 
+      client_secret: #replace with secret
+      scopes: openid email profile
+      auth_url: https://auth.anagno.dev/application/o/authorize/
+      token_url: https://auth.anagno.dev/application/o/token/
+      api_url: https://auth.anagno.dev/application/o/userinfo/
+      role_attribute_path: contains(groups[*], 'caretakers') && 'Admin' || 'Viewer'
 
   sidecar:
     # For adding dashboards and datasources via ConfigMaps
