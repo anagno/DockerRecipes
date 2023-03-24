@@ -2,15 +2,15 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: library.anagno.me
+  name: library.anagno.dev
   namespace: library
 spec:
-  commonName: library.anagno.me
-  secretName: library.anagno.me
+  commonName: library.anagno.dev
+  secretName: library.anagno.dev
   privateKey:
     rotationPolicy: Always
   dnsNames:
-    - library.anagno.me
+    - library.anagno.dev
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer
@@ -18,39 +18,13 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: library.anagno.me-opds
+  name: library.anagno.dev
   namespace: library
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: "Host(`library.anagno.me`) && PathPrefix(`/opds`)"
-      kind: Rule
-      priority: 10 
-      services:
-        - name: calibre-service
-          port: 80
-      middlewares:
-      - name: security-headers
-        namespace: proxy
-      - name: authorization-basic
-        namespace: authentication
-  tls:
-    secretName: library.anagno.me
-    options:
-      name: tls-security-headers
-      namespace: proxy
----
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: library.anagno.me
-  namespace: library
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`library.anagno.me`)
+    - match: Host(`library.anagno.dev`)
       kind: Rule
       priority: 1 
       services:
@@ -59,10 +33,10 @@ spec:
       middlewares:
       - name: security-headers
         namespace: proxy
-      - name: authorization
-        namespace: authentication
+      - name: forward-auth-remote-user-headers
+        namespace: authorization
   tls:
-    secretName: library.anagno.me
+    secretName: library.anagno.dev
     options:
       name: tls-security-headers
       namespace: proxy
@@ -70,13 +44,13 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: library.anagno.me-http
+  name: library.anagno.dev-http
   namespace: library
 spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`library.anagno.me`)
+    - match: Host(`library.anagno.dev`)
       kind: Rule
       services:
         - name: calibre-service
