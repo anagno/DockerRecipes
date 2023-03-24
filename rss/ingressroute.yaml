@@ -2,15 +2,15 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: news.anagno.me
+  name: news.anagno.dev
   namespace: news
 spec:
-  commonName: news.anagno.me
-  secretName: news.anagno.me
+  commonName: news.anagno.dev
+  secretName: news.anagno.dev
   privateKey:
     rotationPolicy: Always
   dnsNames:
-    - news.anagno.me
+    - news.anagno.dev
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer
@@ -18,13 +18,13 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: news.anagno.me-api
+  name: news.anagno.dev-api
   namespace: news
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: "Host(`news.anagno.me`) && PathPrefix(`/api`)"
+    - match: "Host(`news.anagno.dev`) && PathPrefix(`/api`)"
       kind: Rule
       priority: 10 
       services:
@@ -34,7 +34,7 @@ spec:
       - name: security-headers
         namespace: proxy
   tls:
-    secretName: news.anagno.me
+    secretName: news.anagno.dev
     options:
       name: tls-security-headers
       namespace: proxy
@@ -42,13 +42,13 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: news.anagno.me
+  name: news.anagno.dev
   namespace: news
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`news.anagno.me`)
+    - match: Host(`news.anagno.dev`)
       kind: Rule
       priority: 1 
       services:
@@ -57,10 +57,10 @@ spec:
       middlewares:
       - name: security-headers
         namespace: proxy
-      - name: authorization
-        namespace: authentication
+      - name: forward-auth-remote-user-headers
+        namespace: authorization
   tls:
-    secretName: news.anagno.me
+    secretName: news.anagno.dev
     options:
       name: tls-security-headers
       namespace: proxy
@@ -68,13 +68,13 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: news.anagno.me-http
+  name: news.anagno.dev-http
   namespace: news
 spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`news.anagno.me`)
+    - match: Host(`news.anagno.dev`)
       kind: Rule
       services:
         - name: freshrss-service
