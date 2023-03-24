@@ -1,15 +1,15 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: torrents.anagno.me
+  name: torrents.anagno.dev
   namespace: torrents
 spec:
-  commonName: torrents.anagno.me
-  secretName: torrents.anagno.me
+  commonName: torrents.anagno.dev
+  secretName: torrents.anagno.dev
   privateKey:
     rotationPolicy: Always
   dnsNames:
-    - torrents.anagno.me
+    - torrents.anagno.dev
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer
@@ -17,13 +17,13 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: torrents.anagno.me
+  name: torrents.anagno.dev
   namespace: torrents
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`torrents.anagno.me`)
+    - match: Host(`torrents.anagno.dev`)
       kind: Rule
       services:
         - name: transmission-server-service
@@ -31,10 +31,10 @@ spec:
       middlewares:
       - name: security-headers
         namespace: proxy
-      - name: authorization-basic
-        namespace: authentication
+      - name: ak-outpost-authentik-embedded-outpost
+        namespace: authorization
   tls:
-    secretName: torrents.anagno.me
+    secretName: torrents.anagno.dev
     options:
       name: tls-security-headers
       namespace: proxy
@@ -42,13 +42,13 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: torrents.anagno.me-http
+  name: torrents.anagno.dev-http
   namespace: torrents
 spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`torrents.anagno.me`)
+    - match: Host(`torrents.anagno.dev`)
       kind: Rule
       services:
         - name: transmission-server-service
