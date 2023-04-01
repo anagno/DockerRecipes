@@ -116,6 +116,12 @@
         port: 6443
         state: started
 
+    - name: ensures /var/lib/rancher/k3s/server/manifests/ dir exists
+      file: 
+        path: "/var/lib/rancher/k3s/server/manifests/"
+        state: directory
+      become: true
+
     - name: Copy coredns manifest to master
       copy:
         src: "coredns.yaml"
