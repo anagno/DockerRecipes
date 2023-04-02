@@ -1,4 +1,4 @@
-k3s_initialization_parameters: "--disable coredns --disable servicelb --disable traefik --flannel-backend=wireguard --etcd-expose-metrics=true --kube-controller-manager-arg=\"bind-address=0.0.0.0\" --kube-proxy-arg=\"metrics-bind-address=0.0.0.0\" --kube-scheduler-arg=\"bind-address=0.0.0.0\" "
+k3s_initialization_parameters: "--disable coredns --disable servicelb --disable traefik --flannel-backend=wireguard-native --etcd-expose-metrics=true --kube-controller-manager-arg=\"bind-address=0.0.0.0\" --kube-proxy-arg=\"metrics-bind-address=0.0.0.0\" --kube-scheduler-arg=\"bind-address=0.0.0.0\" "
 # the --disable servicelb is because the integrated load balancer does not allocate also virtual IPs. 
 # So I prefer to use metallb
 # I prefer to deploy traefik manually to have more control over it. And probably without a load balancer,

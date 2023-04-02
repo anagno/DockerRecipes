@@ -4,6 +4,13 @@
 - name: Retrieve cluster token
   hosts: masters[0]
   tasks:
+    - name: Install the necessary packages
+      package:
+        name:
+          - pip
+        state: present
+      become: true
+
     - name: install pre-requisites
       pip:
         name:
