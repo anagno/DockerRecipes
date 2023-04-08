@@ -1,0 +1,25 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: cyberlocker-redis-master-vpa
+  namespace: cyberlocker
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: StatefulSet
+    name: cyberlocker-redis-master
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: cyberlocker-postgresql-vpa
+  namespace: cyberlocker
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: StatefulSet
+    name: cyberlocker-postgresql
+  updatePolicy:
+    updateMode: "Auto"

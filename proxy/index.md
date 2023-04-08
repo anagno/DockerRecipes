@@ -60,6 +60,7 @@ kubectl create namespace cert-manager
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
 helm install cert-manager jetstack/cert-manager --namespace cert-manager -f cert-values.yaml --version v1.11.0
+kubectl apply -f cert-vpa.yaml
 ```
 
 

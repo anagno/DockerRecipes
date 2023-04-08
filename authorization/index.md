@@ -43,6 +43,7 @@ can deploy the ingress routes.
 
 
 ```
+kubectl apply -f vpa.yaml
 kubectl apply -f sites/proxy-public.yaml
 kubectl apply -f sites/storage-public.yaml
 ```

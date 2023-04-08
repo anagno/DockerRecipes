@@ -1,0 +1,820 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vpa-dashbaord
+  namespace: monitoring  
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    monitoring-sidecar-dashboard-directory: "/tmp/dashboards/[FODLER]"
+data:
+  # https://grafana.com/grafana/dashboards/14568
+  # https://grafana.com/grafana/dashboards/14588
+  vpa-dashbaord.json: |
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": "-- Grafana --",
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "target": {
+              "limit": 100,
+              "matchAny": false,
+              "tags": [],
+              "type": "dashboard"
+            },
+            "type": "dashboard"
+          }
+        ]
+      },
+      "description": "A dashboard for Vertical Pod Autoscaler metrics.",
+      "editable": true,
+      "fiscalYearStartMonth": 0,
+      "gnetId": 14568,
+      "graphTooltip": 0,
+      "id": 39,
+      "iteration": 1642271941436,
+      "links": [],
+      "liveNow": false,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "The update mode of the VPA.",
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 2,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "id": 8,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "last"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "name"
+          },
+          "pluginVersion": "8.3.3",
+          "targets": [
+            {
+              "expr": "kube_verticalpodautoscaler_spec_updatepolicy_updatemode{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\"} > 0",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "{{ update_mode }}",
+              "refId": "A"
+            }
+          ],
+          "title": "Update Mode",
+          "transparent": true,
+          "type": "stat"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Shows the memory recommendation (target). \nThe graph also shows the actual average usage of each container, the lower and upper bounds of the VPA, and the min and max allowed values. ",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 0,
+            "y": 2
+          },
+          "hiddenSeries": false,
+          "id": 3,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.3.3",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Recommendation",
+              "color": "#8F3BB8"
+            },
+            {
+              "alias": "UpperBound",
+              "color": "#C4162A"
+            },
+            {
+              "alias": "LowerBound",
+              "color": "#1F60C4"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(container_memory_working_set_bytes{namespace=\"$namespace\", pod=~\"$targetName(.+)\", container!=\"POD\"}) / count(count(container_memory_working_set_bytes{namespace=\"$namespace\", pod=~\"$targetName(.+)\", container!=\"POD\"}) by(pod))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Avg Usage",
+              "refId": "D"
+            },
+            {
+              "expr": "sum(kube_verticalpodautoscaler_status_recommendation_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"}) by (pod)",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Recommendation",
+              "refId": "C"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_spec_resourcepolicy_container_policies_minallowed{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"}",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "MinAllowed",
+              "refId": "E"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_spec_resourcepolicy_container_policies_maxallowed{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"}",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "MaxAllowed",
+              "refId": "F"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"}",
+              "interval": "",
+              "legendFormat": "LowerBound",
+              "refId": "A"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"}",
+              "interval": "",
+              "legendFormat": "UpperBound",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "Memory Recommendation vs Memory Usage",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "label": "Bytes",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Shows the memory recommendation (target), and the current request and limit of the container.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 12,
+            "y": 2
+          },
+          "hiddenSeries": false,
+          "id": 6,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.3.3",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Recommendation",
+              "color": "#8F3BB8"
+            },
+            {
+              "alias": "MinAllowed",
+              "color": "#1F60C4"
+            },
+            {
+              "alias": "MaxAllowed",
+              "color": "#C4162A"
+            },
+            {
+              "alias": "Requests",
+              "color": "#37872D"
+            },
+            {
+              "alias": "Limits",
+              "color": "#96D98D"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(kube_verticalpodautoscaler_status_recommendation_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"})",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Recommendation",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$targetName(.+)\", resource=\"memory\"}) / count(count(kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$targetName(.+)\", resource=\"memory\"}) by(pod))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Requests",
+              "refId": "B"
+            },
+            {
+              "expr": "sum(container_spec_memory_limit_bytes{namespace=\"$namespace\", pod=~\"$targetName(.+)\"}) / count(count(container_spec_memory_limit_bytes{namespace=\"$namespace\", pod=~\"$targetName(.+)\"}) by(pod))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Limits",
+              "refId": "C"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"}",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "LowerBound",
+              "refId": "D"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"}",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "UpperBound",
+              "refId": "E"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_spec_resourcepolicy_container_policies_minallowed{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"}",
+              "interval": "",
+              "legendFormat": "MinAllowed",
+              "refId": "F"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_spec_resourcepolicy_container_policies_maxallowed{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"}",
+              "interval": "",
+              "legendFormat": "MaxAllowed",
+              "refId": "G"
+            },
+            {
+              "expr": "sum(container_memory_working_set_bytes{namespace=\"$namespace\", pod=~\"$targetName(.+)\", container!=\"POD\"}) / count(count(container_memory_working_set_bytes{namespace=\"$namespace\", pod=~\"$targetName(.+)\", container!=\"POD\"}) by(pod))",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "AvgUsage",
+              "refId": "H"
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "VPA Memory Recommendations vs Requests and Limits",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "bytes",
+              "label": "Bytes",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "decimals": 3,
+          "description": "Shows the cpu recommendation (target). \nThe graph also shows the actual average usage of each container, the lower and upper bounds of the VPA, and the min and max allowed values. ",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 0,
+            "y": 9
+          },
+          "hiddenSeries": false,
+          "id": 2,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.3.3",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Recommendation",
+              "color": "#8F3BB8"
+            },
+            {
+              "alias": "LowerBound",
+              "color": "#1F60C4"
+            },
+            {
+              "alias": "UpperBound",
+              "color": "#C4162A"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$targetName-(.+)\", container!=\"POD\"}[2m])) / count(count(container_cpu_usage_seconds_total{namespace=\"$namespace\", pod=~\"$targetName(.+)\", container!=\"POD\"}) by(pod))",
+              "format": "time_series",
+              "hide": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Avg Usage",
+              "refId": "D"
+            },
+            {
+              "expr": "sum(kube_verticalpodautoscaler_status_recommendation_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}) by (pod)",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Recommendation",
+              "refId": "C"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_spec_resourcepolicy_container_policies_minallowed{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "MinAllowed",
+              "refId": "E"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_spec_resourcepolicy_container_policies_maxallowed{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "MaxAllowed",
+              "refId": "F"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}",
+              "interval": "",
+              "legendFormat": "LowerBound",
+              "refId": "A"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}",
+              "interval": "",
+              "legendFormat": "UpperBound",
+              "refId": "B"
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "CPU Recommendation vs CPU Usage",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "Millicores",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Shows the cpu recommendation (target), and the current request and limit of the container.\n\n**Requests and/or limits may not reflect useful values if they are not defined for each container in a pod.",
+          "fill": 0,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 12,
+            "y": 9
+          },
+          "hiddenSeries": false,
+          "id": 5,
+          "legend": {
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "8.3.3",
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Recommendation",
+              "color": "#8F3BB8"
+            },
+            {
+              "alias": "MinAllowed",
+              "color": "#1F60C4"
+            },
+            {
+              "alias": "MaxAllowed",
+              "color": "#C4162A"
+            },
+            {
+              "alias": "Requests",
+              "color": "#37872D"
+            },
+            {
+              "alias": "Limits",
+              "color": "#96D98D"
+            }
+          ],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum(kube_verticalpodautoscaler_status_recommendation_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}) ",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Recommendation",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$targetName(.+)\", resource=\"cpu\"}) / count(count(kube_pod_container_resource_requests{namespace=\"$namespace\", pod=~\"$targetName(.+)\", resource=\"cpu\"}) by(pod))",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Requests",
+              "refId": "B"
+            },
+            {
+              "expr": "sum(kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$targetName(.+)\", resource=\"cpu\"}) / count(count(kube_pod_container_resource_limits{namespace=\"$namespace\", pod=~\"$targetName(.+)\", resource=\"cpu\"}) by(pod))",
+              "format": "time_series",
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Limits",
+              "refId": "C"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "LowerBound",
+              "refId": "D"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}",
+              "hide": true,
+              "interval": "",
+              "legendFormat": "UpperBound",
+              "refId": "E"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_spec_resourcepolicy_container_policies_minallowed{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}",
+              "interval": "",
+              "legendFormat": "MinAllowed",
+              "refId": "F"
+            },
+            {
+              "expr": "kube_verticalpodautoscaler_spec_resourcepolicy_container_policies_maxallowed{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}",
+              "interval": "",
+              "legendFormat": "MaxAllowed",
+              "refId": "G"
+            }
+          ],
+          "thresholds": [],
+          "timeRegions": [],
+          "title": "VPA CPU Recommendations vs Requests and Limits",
+          "tooltip": {
+            "shared": true,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "decimals": 2,
+              "format": "short",
+              "label": "Millicores",
+              "logBase": 1,
+              "show": true
+            },
+            {
+              "format": "short",
+              "logBase": 1,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false
+          }
+        }
+      ],
+      "refresh": "",
+      "schemaVersion": 34,
+      "style": "dark",
+      "tags": [
+        "Autoscaling"
+      ],
+      "templating": {
+        "list": [
+          {
+            "current": {
+              "selected": false,
+              "text": "Deployment",
+              "value": "Deployment"
+            },
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "definition": "label_values(kube_verticalpodautoscaler_spec_updatepolicy_updatemode, target_kind)",
+            "hide": 0,
+            "includeAll": false,
+            "label": "Kind",
+            "multi": false,
+            "name": "targetKind",
+            "options": [],
+            "query": {
+              "query": "label_values(kube_verticalpodautoscaler_spec_updatepolicy_updatemode, target_kind)",
+              "refId": "Prometheus-targetKind-Variable-Query"
+            },
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          },
+          {
+            "current": {
+              "selected": true,
+              "text": "news",
+              "value": "news"
+            },
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "definition": "label_values(kube_verticalpodautoscaler_spec_updatepolicy_updatemode{target_kind=~\"$targetKind\"}, namespace)",
+            "hide": 0,
+            "includeAll": false,
+            "multi": false,
+            "name": "namespace",
+            "options": [],
+            "query": {
+              "query": "label_values(kube_verticalpodautoscaler_spec_updatepolicy_updatemode{target_kind=~\"$targetKind\"}, namespace)",
+              "refId": "Prometheus-namespace-Variable-Query"
+            },
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          },
+          {
+            "current": {
+              "selected": true,
+              "text": "freshrss",
+              "value": "freshrss"
+            },
+            "datasource": {
+              "type": "prometheus",
+              "uid": "prometheus"
+            },
+            "definition": "label_values(kube_verticalpodautoscaler_spec_updatepolicy_updatemode{target_kind=~\"$targetKind\", namespace=\"$namespace\"}, target_name)",
+            "hide": 0,
+            "includeAll": false,
+            "label": "Target",
+            "multi": false,
+            "name": "targetName",
+            "options": [],
+            "query": {
+              "query": "label_values(kube_verticalpodautoscaler_spec_updatepolicy_updatemode{target_kind=~\"$targetKind\", namespace=\"$namespace\"}, target_name)",
+              "refId": "Prometheus-targetName-Variable-Query"
+            },
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          }
+        ]
+      },
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "timepicker": {
+        "refresh_intervals": [
+          "5s",
+          "10s",
+          "30s",
+          "1m",
+          "5m",
+          "15m",
+          "30m",
+          "1h"
+        ],
+        "time_options": [
+          "5m",
+          "15m",
+          "1h",
+          "3h",
+          "6h",
+          "12h",
+          "24h",
+          "2d",
+          "7d",
+          "14d"
+        ]
+      },
+      "timezone": "browser",
+      "title": "Vertical Pod Autoscaler Recommendations",
+      "uid": "vpa-recommendations",
+      "version": 1,
+      "weekStart": ""
+    }

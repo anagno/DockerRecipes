@@ -144,6 +144,31 @@ spec:
     app: transmission-server
   sessionAffinity: None
 ---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: torrents-vpa
+  namespace: torrents
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: transmission
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: torrents-vpa-samba
+  namespace: torrents
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: samba-server
+  updatePolicy:
+    updateMode: "Auto"
 
 # Referemces:
 # https://github.com/ehough/docker-nfs-server/issues/25

@@ -27,4 +27,16 @@ spec:
               name: gandi
               key: API_KEY
       dnsPolicy: Default
-
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: ddns-updater-anagno-dev-vpa
+  namespace: general
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: ddns-updater-anagno-dev
+  updatePolicy:
+    updateMode: "Auto"

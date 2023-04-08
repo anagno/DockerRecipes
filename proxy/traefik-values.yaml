@@ -66,5 +66,15 @@ service:
     externalTrafficPolicy: Local
     loadBalancerIP: "192.168.179.240"
 
+resources:
+  requests:
+    cpu: "100m"
+    memory: "50Mi"
+  limits:
+    cpu: "500m"
+    memory: "150Mi"
+
 autoscaling:
-  enabled: false
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5

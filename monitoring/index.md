@@ -20,6 +20,7 @@ kubectl create secret generic authentik-secret --namespace monitoring \
 helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
     --version v45.9.1 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress-public.yaml
+kubectl apply -f vpa.yaml
 ```
 
 To get the password:
@@ -58,7 +59,8 @@ kubectl apply -f dashboards/cluster-details-nodes.yaml
 kubectl apply -f dashboards/volumes-dashboard.yaml
 kubectl apply -f dashboards/node-exporter.yaml
 kubectl apply -f dashboards/node-overview.yaml
-
+kubectl apply -f dashboards/hpa-dashboard.yaml
+kubectl apply -f dashboards/vpa-dashboard.yaml
 ```
 
 * Load-balancer dashboard (if it has been activated in the helm chart): 

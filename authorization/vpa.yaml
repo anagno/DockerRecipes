@@ -1,0 +1,51 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: authentik-worker-vpa
+  namespace: authorization
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: authentik-worker
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: authentik-server-vpa
+  namespace: authorization
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: authentik-server
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: authentik-postgresql-vpa
+  namespace: authorization
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: StatefulSet
+    name: authentik-postgresql
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: authentik-redis-master-vpa
+  namespace: authorization
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: StatefulSet
+    name: authentik-redis-master
+  updatePolicy:
+    updateMode: "Auto"

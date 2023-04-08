@@ -86,26 +86,33 @@ nextcloud:
 
 
 resources:
-  limits:
-   memory: 3000Mi
   requests:
-   cpu: 1000m
-   memory: 1000Mi
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+hpa:
+  enabled: true
+  cputhreshold: 80
+  minPods: 1
+  maxPods: 2
 
 livenessProbe:
-  enabled: false
-  #enabled: true
-  #initialDelaySeconds: 60
-  #periodSeconds: 60
-  #timeoutSeconds: 15
+  #enabled: false
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 60
+  timeoutSeconds: 15
 readinessProbe:
-  enabled: false
-  #enabled: true
-  #initialDelaySeconds: 60
-  #periodSeconds: 60
-  #timeoutSeconds: 15
+  #enabled: false
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 60
+  timeoutSeconds: 15
 startupProbe:
-  enabled: false
+  enabled: true
 
 nginx:
   enabled: false

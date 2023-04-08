@@ -10,6 +10,7 @@ we use the [Config Syncer service](https://appscode.com/products/kubed/v0.12.0/g
 helm repo add appscode https://charts.appscode.com/stable/
 helm repo update
 helm install kubed appscode/kubed -f values.yaml --version v0.13.2 --namespace kube-system
+kubectl apply -f vpa.yaml
 ```
 
 The `values.yaml` I used is:

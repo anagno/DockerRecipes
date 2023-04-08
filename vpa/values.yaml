@@ -1,0 +1,18 @@
+# https://github.com/cowboysysop/charts/blob/master/charts/vertical-pod-autoscaler/values.yaml
+
+recommender:
+  extraArgs:
+    pod-recommendation-min-memory-mb: 50
+    target-cpu-percentile: 0.5
+    # prometheus-address: "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
+    # prometheus-cadvisor-job-name: kubernetes-cadvisor
+    # prometheus-query-timeout: 5m
+    # history-length: 8d
+    # history-resolution: 1h
+    recommender-interval: 30s
+    v: 2
+
+updater:
+  extraArgs:
+    min-replicas: 1
+    v: 2
