@@ -28,13 +28,6 @@ spec:
         ports:
           - name: webgui
             containerPort: 9091
-        resources:
-          requests:
-            cpu: 100m
-            memory: 100Mi
-          limits:
-            #cpu: 500m
-            memory: 100Mi
         volumeMounts:
           - mountPath: /downloads
             name: transmission-storage
@@ -89,13 +82,6 @@ spec:
             containerPort: 139
           - name: smb
             containerPort: 445
-        resources:
-          requests:
-            cpu: 500m
-            memory: 512Mi
-          limits:
-            #cpu: 500m
-            memory: 512Mi
         volumeMounts:
           - mountPath: /data
             name: samba-storage
@@ -156,6 +142,12 @@ spec:
     name: transmission
   updatePolicy:
     updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 500m
+          memory: 250Mi
 ---
 apiVersion: "autoscaling.k8s.io/v1"
 kind: VerticalPodAutoscaler
@@ -169,6 +161,12 @@ spec:
     name: samba-server
   updatePolicy:
     updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 500m
+          memory: 250Mi
 
 # Referemces:
 # https://github.com/ehough/docker-nfs-server/issues/25

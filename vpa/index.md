@@ -20,6 +20,12 @@ helm install vpa cowboysysop/vertical-pod-autoscaler --namespace scaler -f value
     to retrieve data
 
 
+For the reason for not defining limits, take a look at: 
+* https://www.linkedin.com/pulse/kubernetes-make-your-services-faster-removing-cpu-limits-eric-khun/
+* https://home.robusta.dev/blog/stop-using-cpu-limits
+
+
+
 ## Resources:
 
 * https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler
@@ -29,3 +35,4 @@ helm install vpa cowboysysop/vertical-pod-autoscaler --namespace scaler -f value
 * https://povilasv.me/vertical-pod-autoscaling-the-definitive-guide/
 * https://goldilocks.docs.fairwinds.com/
 * https://www.youtube.com/watch?v=UE7QX98-kO0
+* https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-default-namespace/#create-a-limitrange-and-a-pod

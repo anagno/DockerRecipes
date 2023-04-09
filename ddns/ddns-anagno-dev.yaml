@@ -40,3 +40,9 @@ spec:
     name: ddns-updater-anagno-dev
   updatePolicy:
     updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 100m
+          memory: 100Mi

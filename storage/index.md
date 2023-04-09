@@ -86,7 +86,7 @@ helm repo update
 kubectl create namespace longhorn-system
 helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.4.1
 
-
+kubectl apply -f vpa.yml
 kubectl apply -f dashboard.yml
 
 # Apply our storage classes 

@@ -72,4 +72,10 @@ spec:
     name: freshrss
   updatePolicy:
     updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 1
+          memory: 512Mi
 ---

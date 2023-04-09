@@ -3,7 +3,7 @@
 recommender:
   extraArgs:
     pod-recommendation-min-memory-mb: 50
-    target-cpu-percentile: 0.5
+    target-cpu-percentile: 0.90
     # prometheus-address: "http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
     # prometheus-cadvisor-job-name: kubernetes-cadvisor
     # prometheus-query-timeout: 5m
