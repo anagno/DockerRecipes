@@ -73,7 +73,7 @@ alertmanager:
 kubeControllerManager:
   enabled: true
   endpoints:
-   - 192.168.179.100
+   - 192.168.179.103
    - 192.168.179.101
    - 192.168.179.120
   service:
@@ -88,7 +88,7 @@ kubeControllerManager:
 kubeScheduler:
   enabled: true
   endpoints:
-   - 192.168.179.100
+   - 192.168.179.103
    - 192.168.179.101
    - 192.168.179.120
   service:
@@ -103,7 +103,7 @@ kubeScheduler:
 kubeProxy:
   enabled: true
   endpoints:
-   - 192.168.179.100
+   - 192.168.179.103
    - 192.168.179.101
    - 192.168.179.120
   service:
@@ -114,7 +114,7 @@ kubeProxy:
 kubeEtcd:
   enabled: true
   endpoints:
-   - 192.168.179.100
+   - 192.168.179.103
    - 192.168.179.101
    - 192.168.179.120
   service:
@@ -231,7 +231,9 @@ prometheusOperator:
     # resource config for prometheusConfigReloader
     # The default ones are causing some throttling
     # because the Raspberry pi is not powerfull enough
-    resources: {}
+    resources:
+      limits:
+        cpu: 1000m
   # Enable vertical pod autoscaler support for prometheus-operator
   verticalPodAutoscaler:
     enabled: yes
