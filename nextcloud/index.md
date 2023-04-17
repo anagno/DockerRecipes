@@ -24,7 +24,7 @@ kubectl apply -f storage.yaml
 
 helm repo add nextcloud https://nextcloud.github.io/helm/
 helm repo update
-helm install cyberlocker nextcloud/nextcloud -f values.yaml --namespace cyberlocker --version 3.5.5
+helm install cyberlocker nextcloud/nextcloud -f values.yaml --namespace cyberlocker --version 3.5.9
 
 kubectl apply -f ingressroute.yaml
 kubectl apply -f vpa.yaml
