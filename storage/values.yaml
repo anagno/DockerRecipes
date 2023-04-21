@@ -17,6 +17,10 @@ defaultSettings:
   defaultDataLocality: "disabled"
   snapshotDataIntegrity: "enabled"
   nodeDownPodDeletionPolicy: "delete-both-statefulset-and-deployment-pod"
+  concurrentReplicaRebuildPerNodeLimit: 1
   allowNodeDrainWithLastHealthyReplica: "false"
-  replicaReplenishmentWaitInterval: 7200
   orphanAutoDeletion: "true"
+  # https://longhorn.io/kb/troubleshooting-volume-readonly-or-io-error/
+  # https://github.com/longhorn/longhorn/issues/1691
+  guaranteedEngineManagerCPU: 20
+  guaranteedReplicaManagerCPU: 20
