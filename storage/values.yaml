@@ -22,5 +22,5 @@ defaultSettings:
   orphanAutoDeletion: "true"
   # https://longhorn.io/kb/troubleshooting-volume-readonly-or-io-error/
   # https://github.com/longhorn/longhorn/issues/1691
-  guaranteedEngineManagerCPU: 20
-  guaranteedReplicaManagerCPU: 20
+  guaranteedEngineManagerCPU: 12
+  guaranteedReplicaManagerCPU: 12
