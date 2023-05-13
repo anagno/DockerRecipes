@@ -18,7 +18,7 @@ kubectl create secret generic authentik-secret --namespace monitoring \
   --from-literal=client_secret=SECRET_FROM_AUTHENTIK
 
 helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
-    --version v45.23.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+    --version v45.27.2 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress-public.yaml
 kubectl apply -f vpa.yaml
 ```
@@ -73,6 +73,11 @@ kubectl apply -f dashboards/metallb-dashboard.yaml
 
 ```bash
 kubectl apply -f dashboards/cert-manager-dashboard.yaml
+```
+
+```bash
+helm repo add kuberhealthy https://kuberhealthy.github.io/kuberhealthy/helm-repos
+helm install -n monitoring kuberhealthy kuberhealthy/kuberhealthy -f kuberhealthy-values.yaml --version 92
 ```
 
 ## Usefull commands:
