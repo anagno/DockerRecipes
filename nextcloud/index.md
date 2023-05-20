@@ -41,6 +41,8 @@ Usefull commands:
 kubectl -n cyberlocker exec -it box-nextcloud-88858c579-mq7sv -- /bin/bash
 su -s /bin/bash www-data
 php occ app:update --all
+php occ config:system:set overwrite.cli.url --value="https://cyberlocker.anagnoo.dev"
+
 kubectl -n cyberlocker get secret nextcloud -o jsonpath="{.data.admin-password}" | base64 -d
 kubectl -n cyberlocker exec -it cyberlocker-postgresql-0 -- psql -d nextcloud -U nextcloud
 ```
