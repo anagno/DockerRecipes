@@ -24,7 +24,7 @@ kubectl apply -f storage.yaml
 
 helm repo add nextcloud https://nextcloud.github.io/helm/
 helm repo update
-helm install cyberlocker nextcloud/nextcloud -f values.yaml --namespace cyberlocker --version 3.5.12
+helm install cyberlocker nextcloud/nextcloud -f values.yaml --namespace cyberlocker --version 3.5.13
 
 kubectl apply -f ingressroute.yaml
 kubectl apply -f vpa.yaml
@@ -41,6 +41,7 @@ Usefull commands:
 kubectl -n cyberlocker exec -it box-nextcloud-88858c579-mq7sv -- /bin/bash
 su -s /bin/bash www-data
 php occ app:update --all
+php occ maintenance:mode --off 
 php occ config:system:set overwrite.cli.url --value="https://cyberlocker.anagnoo.dev"
 
 kubectl -n cyberlocker get secret nextcloud -o jsonpath="{.data.admin-password}" | base64 -d
