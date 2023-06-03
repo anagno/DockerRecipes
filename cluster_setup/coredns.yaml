@@ -1,4 +1,4 @@
-# https://github.com/k3s-io/k3s/blob/v1.24.3+k3s1/manifests/coredns.yaml
+# https://github.com/k3s-io/k3s/blob/v1.26.3+k3s1/manifests/coredns.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -80,7 +80,7 @@ metadata:
     k8s-app: kube-dns
     kubernetes.io/name: "CoreDNS"
 spec:
-  #replicas: 1
+  revisionHistoryLimit: 0
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -105,7 +105,7 @@ spec:
           operator: "Exists"
           effect: "NoSchedule"
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
@@ -115,7 +115,7 @@ spec:
               k8s-app: kube-dns
       containers:
       - name: coredns
-        image: rancher/mirrored-coredns-coredns:1.9.1
+        image: rancher/mirrored-coredns-coredns:1.9.4
         imagePullPolicy: IfNotPresent
         resources:
           limits:
