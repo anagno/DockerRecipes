@@ -3,10 +3,6 @@
 # CronJob or Deployment
 kind: CronJob
 
-image:
-  repository: k8s.gcr.io/descheduler/descheduler
-  pullPolicy: IfNotPresent
-
 resources:
   requests:
     cpu: 500m
