@@ -42,11 +42,11 @@ volumeMounts:
 envValueFrom:
   AUTHENTIK_SECRET_KEY:
     secretKeyRef:
-      name: authentik
+      name: authentik-generall
       key: secret-key
   AK_ADMIN_PASS:
     secretKeyRef:
-      name: authentik
+      name: authentik-generall
       key: ak-admin-pass
   AUTHENTIK_EMAIL__PASSWORD:
     secretKeyRef:

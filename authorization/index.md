@@ -7,7 +7,7 @@ user and to protect better our services.
 ```
 kubectl create namespace authorization
 
-kubectl create secret generic authentik --namespace authorization \
+kubectl create secret generic authentik-generall --namespace authorization \
   --from-literal=secret-key=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) \
   --from-literal=ak-admin-pass=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
@@ -27,7 +27,7 @@ kubectl apply -f authentik-ingressroute.yaml
 
 helm repo add authentik https://charts.goauthentik.io
 helm repo update
-helm install --namespace authorization authentik authentik/authentik -f values.yaml --version 2023.5.1
+helm install --namespace authorization authentik authentik/authentik -f values.yaml --version 2023.5.3
 ```
 
 After the initialization we should also deploy the `recovery-email-verification.yaml` and the  
