@@ -1,4 +1,4 @@
-# https://github.com/k3s-io/k3s/blob/v1.26.3+k3s1/manifests/coredns.yaml
+# https://github.com/k3s-io/k3s/blob/v1.27.3+k3s1/manifests/coredns.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -115,7 +115,7 @@ spec:
               k8s-app: kube-dns
       containers:
       - name: coredns
-        image: rancher/mirrored-coredns-coredns:1.9.4
+        image: rancher/mirrored-coredns-coredns:1.10.1
         imagePullPolicy: IfNotPresent
         resources:
           limits:
