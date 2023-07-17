@@ -11,7 +11,7 @@ an unofficial one
 kubectl create namespace scaler
 helm repo add cowboysysop https://cowboysysop.github.io/charts/
 helm repo update
-helm install vpa cowboysysop/vertical-pod-autoscaler --namespace scaler -f values.yaml --version v7.2.0
+helm install vpa cowboysysop/vertical-pod-autoscaler --namespace scaler -f values.yaml --version v8.1.0
 ```
 
 !!!Note
