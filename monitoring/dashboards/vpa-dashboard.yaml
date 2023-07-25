@@ -11,6 +11,8 @@ metadata:
 data:
   # https://grafana.com/grafana/dashboards/14568
   # https://grafana.com/grafana/dashboards/14588
+  # TODO This is broken because of https://github.com/kubernetes/kube-state-metrics/issues/2041
+  # Eventually fully fix it.
   vpa-dashbaord.json: |
     {
       "annotations": {
@@ -171,7 +173,7 @@ data:
               "refId": "D"
             },
             {
-              "expr": "sum(kube_verticalpodautoscaler_status_recommendation_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"}) by (pod)",
+              "expr": "sum(kube_customresource_vpa_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"}) by (pod)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -305,7 +307,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kube_verticalpodautoscaler_status_recommendation_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"})",
+              "expr": "sum(kube_customresource_vpa_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"memory\"})",
               "format": "time_series",
               "hide": false,
               "interval": "",
@@ -467,7 +469,7 @@ data:
               "refId": "D"
             },
             {
-              "expr": "sum(kube_verticalpodautoscaler_status_recommendation_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}) by (pod)",
+              "expr": "sum(kube_customresource_vpa_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}) by (pod)",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,
@@ -601,7 +603,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(kube_verticalpodautoscaler_status_recommendation_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}) ",
+              "expr": "sum(kube_customresource_vpa_containerrecommendations_target{namespace=\"$namespace\", target_kind=\"$targetKind\", target_name=\"$targetName\", resource=\"cpu\"}) ",
               "format": "time_series",
               "interval": "",
               "intervalFactor": 1,

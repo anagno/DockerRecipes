@@ -18,7 +18,7 @@ kubectl create secret generic authentik-secret --namespace monitoring \
   --from-literal=client_secret=SECRET_FROM_AUTHENTIK
 
 helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
-    --version v46.6.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+    --version v48.2.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress-public.yaml
 kubectl apply -f vpa.yaml
 ```
@@ -99,5 +99,10 @@ kubectl -n monitoring port-forward service/monitoring-kube-prometheus-prometheus
 
 Important issues:
 * https://github.com/kubernetes/kube-state-metrics/pull/1237
+
+
+
+https://github.com/kubernetes/kube-state-metrics/issues/2041
+https://github.com/prometheus-community/helm-charts/blob/c8d79dbef2b93fad69e458da2ecd09920fb786a7/charts/kube-state-metrics/values.yaml#L338
 
 
