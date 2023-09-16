@@ -37,7 +37,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kube-vip-ds
-    app.kubernetes.io/version: v0.6.0
+    app.kubernetes.io/version: v0.6.2
   name: kube-vip-ds
   namespace: kube-system
 spec:
@@ -49,7 +49,7 @@ spec:
       creationTimestamp: null
       labels:
         app.kubernetes.io/name: kube-vip-ds
-        app.kubernetes.io/version: v0.6.0
+        app.kubernetes.io/version: v0.6.2
     spec:
       affinity:
         nodeAffinity:
@@ -81,6 +81,8 @@ spec:
           value: "false"
         - name: vip_leaderelection
           value: "true"
+        - name: vip_leasename
+          value: plndr-cp-lock
         - name: vip_leaseduration
           value: "5"
         - name: vip_renewdeadline
@@ -91,7 +93,7 @@ spec:
           value: zeus.intra
         - name: prometheus_server
           value: :2112
-        image: ghcr.io/kube-vip/kube-vip:v0.6.0
+        image: ghcr.io/kube-vip/kube-vip:v0.6.2
         imagePullPolicy: IfNotPresent
         name: kube-vip
         resources: {}
