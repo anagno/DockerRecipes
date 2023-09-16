@@ -76,8 +76,8 @@ nextcloud:
     - name: POSTGRES_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: nextcloud-database
-          key: postgresql-password
+          name: nextcloud-postgresql-database
+          key: password
     - name: REDIS_HOST_PASSWORD
       valueFrom:
         secretKeyRef:
@@ -126,16 +126,11 @@ postgresql:
     postgresql:
       auth:
         database: nextcloud
-        existingSecret: "nextcloud-database"
-        secretKeys:
-          adminPasswordKey: "postgresql-postgres-password"
-          userPasswordKey: "postgresql-password"
+        existingSecret: "nextcloud-postgresql-database"
   primary:
     persistence:
       enabled: true
       existingClaim: "nextcloud-database"
-  image:
-    tag: 11.19.0-debian-11-r4
 redis:
   enabled: true
   architecture: standalone
@@ -146,8 +141,6 @@ redis:
     persistence:
       enabled: true
       existingClaim: nextcloud-redis
-  image:
-    tag: 6.2.10-debian-11-r13
 
 cronjob:
   enabled: true

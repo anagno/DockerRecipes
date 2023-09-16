@@ -12,9 +12,9 @@ kubectl create secret generic nextcloud --namespace cyberlocker \
   --from-literal=smtp_username= \
   --from-literal=smtp_password=
 
-kubectl create secret generic nextcloud-database --namespace cyberlocker \
-  --from-literal=postgresql-postgres-password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) \
-  --from-literal=postgresql-password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+kubectl create secret generic nextcloud-postgresql-database --namespace cyberlocker \
+  --from-literal=postgres-password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) \
+  --from-literal=password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
 kubectl create secret generic nextcloud-redis --namespace cyberlocker \
   --from-literal=redis-password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) 
@@ -24,7 +24,7 @@ kubectl apply -f storage.yaml
 
 helm repo add nextcloud https://nextcloud.github.io/helm/
 helm repo update
-helm install cyberlocker nextcloud/nextcloud -f values.yaml --namespace cyberlocker --version 3.5.22
+helm install cyberlocker nextcloud/nextcloud -f values.yaml --namespace cyberlocker --version 4.3.1
 
 kubectl apply -f ingressroute.yaml
 kubectl apply -f vpa.yaml
