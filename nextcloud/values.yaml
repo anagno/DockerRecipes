@@ -22,6 +22,7 @@ nextcloud:
     tokenKey: serverinfo_token
     smtpUsernameKey: smtp_username
     smtpPasswordKey: smtp_password
+    smtpHostKey: smtp_host
   mail:
     enabled: true
     fromAddress: no-reply
