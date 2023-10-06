@@ -103,12 +103,12 @@ Finally we can use the cluster_setup/setup_cluster.yml to re-populate the node.
 ## Defrag the etcd nodes 
 
 ```sh
-ansible erato -b -m ansible.builtin.shell -a 'curl -L https://github.com/etcd-io/etcd/releases/download/v3.5.4/etcd-v3.5.4-linux-arm64.tar.gz -o /tmp/etcd-v3.5.4-linux-arm64.tar.gz'
-ansible erato -b -m ansible.builtin.shell -a 'tar xzvf /tmp/etcd-v3.5.4-linux-arm64.tar.gz -C /tmp --strip-components=1'
-ansible erato -b -m ansible.builtin.shell -a '/tmp/etcdctl version' 
-ansible erato -b -m ansible.builtin.shell -a '/tmp/etcdctl --key /var/lib/rancher/k3s/server/tls/etcd/client.key --cert /var/lib/rancher/k3s/server/tls/etcd/client.crt --cacert /var/lib/rancher/k3s/server/tls/etcd/server-ca.crt member list' 
-ansible erato -b -m ansible.builtin.shell -a '/tmp/etcdctl --key /var/lib/rancher/k3s/server/tls/etcd/client.key --cert /var/lib/rancher/k3s/server/tls/etcd/client.crt --cacert /var/lib/rancher/k3s/server/tls/etcd/server-ca.crt defrag --endpoints=[192.168.179.101:2379] ' 
-ansible erato -b -m ansible.builtin.shell -a '/tmp/etcdctl --key /var/lib/rancher/k3s/server/tls/etcd/client.key --cert /var/lib/rancher/k3s/server/tls/etcd/client.crt --cacert /var/lib/rancher/k3s/server/tls/etcd/server-ca.crt defrag --cluster' 
+ansible amphitrite -b -m ansible.builtin.shell -a 'curl -L https://github.com/etcd-io/etcd/releases/download/v3.5.9/etcd-v3.5.9-linux-arm64.tar.gz -o /tmp/etcd-v3.5.9-linux-arm64.tar.gz'
+ansible amphitrite -b -m ansible.builtin.shell -a 'tar xzvf /tmp/etcd-v3.5.9-linux-arm64.tar.gz -C /tmp --strip-components=1'
+ansible amphitrite -b -m ansible.builtin.shell -a '/tmp/etcdctl version'
+ansible amphitrite -b -m ansible.builtin.shell -a '/tmp/etcdctl --key /var/lib/rancher/k3s/server/tls/etcd/client.key --cert /var/lib/rancher/k3s/server/tls/etcd/client.crt --cacert /var/lib/rancher/k3s/server/tls/etcd/server-ca.crt member list' 
+ansible amphitrite -b -m ansible.builtin.shell -a '/tmp/etcdctl --key /var/lib/rancher/k3s/server/tls/etcd/client.key --cert /var/lib/rancher/k3s/server/tls/etcd/client.crt --cacert /var/lib/rancher/k3s/server/tls/etcd/server-ca.crt defrag --endpoints=[192.168.179.100:2379] ' 
+ansible amphitrite -b -m ansible.builtin.shell -a '/tmp/etcdctl --key /var/lib/rancher/k3s/server/tls/etcd/client.key --cert /var/lib/rancher/k3s/server/tls/etcd/client.crt --cacert /var/lib/rancher/k3s/server/tls/etcd/server-ca.crt defrag --cluster' 
 ```
 
 Resources:
