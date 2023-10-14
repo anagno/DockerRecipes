@@ -229,6 +229,10 @@ sudo docker run --network host \
 To update it in the nodes `ansible masters -b -m copy -a "src=cluster_setup/kube-vip-manifest.yaml dest=/var/lib/rancher/k3s/server/manifests/vip.yaml"`
 To retrieve the logs `kubectl -n kube-system logs -f -l "app.kubernetes.io/name=kube-vip-ds"`
 
+## Pulling images to nodes using k3s ctr
+
+To pull an image that is too big before hand just execute `ansible workers -b -m ansible.builtin.shell -a 'k3s ctr image pull registry.hub.docker.com/library/nextcloud:27.1.2-apache'`
+
 ## Drain a node
 
 ```bash
