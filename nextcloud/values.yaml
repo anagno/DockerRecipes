@@ -25,10 +25,10 @@ nextcloud:
     smtpHostKey: smtp_host
   mail:
     enabled: true
-    fromAddress: no-reply
-    domain: anagno.me
+    fromAddress: no-reply-anagno-me
+    domain: outlook.com
     smtp:
-      host: mail.gandi.net
+      host: smtp-mail.outlook.com
       secure: tls
       port: 587
       authtype: LOGIN
@@ -70,7 +70,7 @@ nextcloud:
 
   extraEnv:
     - name: SMTP_NAME
-      value: no-reply@anagno.me
+      value: no-reply-anagno-me@outlook.com
     - name: SMTP_PASSWORD
       valueFrom:
         secretKeyRef:

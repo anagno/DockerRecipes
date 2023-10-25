@@ -11,13 +11,13 @@ ingress:
 authentik:
   avatars: none
   email:
-    host: "mail.gandi.net"
+    host: "smtp-mail.outlook.com"
     port: 587
-    username: "no-reply@anagno.me"
+    username: "no-reply-anagno-me@outlook.com"
     use_tls: true
     use_ssl: false
     timeout: 30
-    from: "no-reply@anagno.me"
+    from: "no-reply-anagno-me@outlook.com"
   postgresql:
     name: "authentik"
     user: "authentik"
