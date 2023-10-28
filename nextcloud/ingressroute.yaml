@@ -14,7 +14,7 @@ spec:
     name: letsencrypt-issuer
     kind: ClusterIssuer
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: dav
@@ -25,7 +25,7 @@ spec:
     replacement: https://$1/remote.php/dav/
     permanent: true
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: cyberlocker.anagno.dev
@@ -52,7 +52,7 @@ spec:
       name: tls-security-headers
       namespace: proxy
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: cyberlocker.anagno.dev-http

@@ -15,7 +15,7 @@ spec:
     name: letsencrypt-issuer
     kind: ClusterIssuer
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: news.anagno.dev-api
@@ -39,7 +39,7 @@ spec:
       name: tls-security-headers
       namespace: proxy
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: news.anagno.dev
@@ -65,7 +65,7 @@ spec:
       name: tls-security-headers
       namespace: proxy
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: news.anagno.dev-http
