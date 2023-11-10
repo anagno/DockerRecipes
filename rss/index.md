@@ -1,12 +1,11 @@
 A small rss server for keeping up with the rss feeds
 
-```
+```bash
 kubectl create namespace news
 kubectl apply -f pvc.yaml
 kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
 kubectl apply -f ingressroute.yaml
-kubectl apply -f cronjob.yaml
 ```
 
 # Usefull commands
