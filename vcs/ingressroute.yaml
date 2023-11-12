@@ -1,0 +1,58 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vcs.anagno.dev
+  namespace: vcs
+spec:
+  commonName: vcs.anagno.dev
+  secretName: vcs-anagno-dev-cert
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - vcs.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: vcs.anagno.dev
+  namespace: vcs
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`vcs.anagno.dev`)
+      kind: Rule
+      services:
+        - name: vcs-gitea-http
+          port: 3000
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: vcs-anagno-dev-cert
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: vcs.anagno.dev-http
+  namespace: vcs
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`vcs.anagno.dev`)
+      kind: Rule
+      services:
+        - name: vcs-gitea-http
+          port: 3000
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
