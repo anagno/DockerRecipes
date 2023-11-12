@@ -28,5 +28,6 @@ kubectl apply -f ingressroute.yaml
 
 
 ```
-Resources: 
+## Resources: 
+
 * https://gitea.com/gitea/helm-chart/issues/459

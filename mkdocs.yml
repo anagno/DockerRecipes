@@ -23,6 +23,7 @@ nav:
 - Authorization: authorization/index.md
 - Monitoring: monitoring/index.md
 - Nextcloud: nextcloud/index.md
+- Version Control System: vcs/index.md
 - Torrents: torrents/index.md
 - Rss: rss/index.md
 - Library: library/index.md
