@@ -30,6 +30,10 @@ kind: IngressRoute
 metadata:
   name: cyberlocker.anagno.dev
   namespace: cyberlocker
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: cyberlocker.anagno.dev
+    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    kubernetes.io/ingress.class: traefik
 spec:
   entryPoints:
     - websecure

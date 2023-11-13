@@ -19,6 +19,10 @@ kind: IngressRoute
 metadata:
   name: pantheon.anagno.dev
   namespace: pantheon
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: pantheon.anagno.dev
+    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    kubernetes.io/ingress.class: traefik
 spec:
   entryPoints:
     - websecure

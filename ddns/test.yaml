@@ -1,0 +1,80 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: general
+  name: whoami
+  labels:
+    app: whoami
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: whoami
+  template:
+    metadata:
+      labels:
+        app: whoami
+    spec:
+      containers:
+        - name: whoami
+          image: containous/whoami
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami
+  namespace: general
+spec:
+  ports:
+    - protocol: TCP
+      name: web
+      targetPort: 80
+      port: 80
+  selector:
+    app: whoami
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: test-ext.anagno.dev
+  namespace: general
+spec:
+  commonName: test-ext.anagno.dev
+  secretName: test-ext.anagno.dev-cert
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - test-ext.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: whoami
+  namespace: general
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: test-ext.anagno.dev
+    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    kubernetes.io/ingress.class: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`test-ext.anagno.dev`)
+      kind: Rule
+      services:
+        - name: whoami
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: test-ext.anagno.dev-cert
+    options:
+      name: tls-security-headers
+      namespace: proxy

@@ -16,9 +16,9 @@ nav:
 - Descheduler: descheduler/index.md
 - VPA: vpa/index.md
 - Load Balancer: load_balancer/index.md
-- Dynamic IP: ddns/index.md
 - Secret Management: secrets/index.md
 - Proxy: proxy/index.md
+- Dynamic IP: ddns/index.md
 - Storage: storage/index.md
 - Authorization: authorization/index.md
 - Monitoring: monitoring/index.md

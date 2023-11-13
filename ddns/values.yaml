@@ -1,0 +1,40 @@
+# https://github.com/kubernetes-sigs/external-dns/blob/master/charts/external-dns/values.yaml
+
+
+image:
+  tag: "v0.14.0"
+
+serviceMonitor:
+  enabled: true
+
+sources:
+  - service
+  - ingress
+  - traefik-proxy
+
+policy: sync
+
+registry: txt
+txtOwnerId: "k3s"
+txtPrefix: "k3s-"
+
+domainFilters:
+  - anagno.me
+  - anagno.dev
+
+# https://kubernetes-sigs.github.io/external-dns/v0.14.0/tutorials/gandi/
+provider: gandi
+
+env:
+  - name: GANDI_KEY
+    valueFrom:
+      secretKeyRef:
+        name: gandi
+        key: API_KEY
+
+extraArgs: 
+  # https://kubernetes-sigs.github.io/external-dns/v0.14.0/tutorials/traefik-proxy/
+  - --source=traefik-proxy
+
+deploymentStrategy:
+  type: Recreate

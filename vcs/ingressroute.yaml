@@ -19,6 +19,10 @@ kind: IngressRoute
 metadata:
   name: vcs.anagno.dev
   namespace: vcs
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: vcs.anagno.dev
+    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    kubernetes.io/ingress.class: traefik  
 spec:
   entryPoints:
     - websecure
