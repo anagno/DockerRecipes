@@ -23,11 +23,16 @@ helm repo add external-dns https://kubernetes-sigs.github.io/external-dns/
 helm repo update
 helm install external-dns external-dns/external-dns -f values.yaml --namespace general --version 1.13.1
 
+kubect apply -f vpa.yml
+
 kubectl apply -f test.yaml
 # test that everything works
 kubectl delete -f test.yaml
-
 ```
+
+!!!Note
+    Initially the prometheus monitoring should not be activate until we deploy the 
+    monitoring stack. Afterwards we can activate it.
 
 ## Usefull commands
 ```
