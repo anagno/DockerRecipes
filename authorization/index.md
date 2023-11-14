@@ -30,6 +30,10 @@ helm repo update
 helm install --namespace authorization authentik authentik/authentik -f values.yaml --version 2023.10.3
 ```
 
+!!!Note
+    Initially the prometheus monitoring should not be activate until we deploy the 
+    monitoring stack. Afterwards we can activate it.
+
 After the initialization we should also deploy the `recovery-email-verification.yaml` and the  
 the [two-factor login](https://goauthentik.io/docs/flow/examples/flows#two-factor-login). Pay attention to force it.
 

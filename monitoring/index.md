@@ -61,7 +61,6 @@ kubectl apply -f dashboards/node-exporter.yaml
 kubectl apply -f dashboards/node-overview.yaml
 kubectl apply -f dashboards/hpa-dashboard.yaml
 kubectl apply -f dashboards/vpa-dashboard.yaml
-kubectl apply -f dashboards/externa-dns-dashboard.yml
 ```
 
 * Load-balancer dashboard (if it has been activated in the helm chart): 
@@ -74,6 +73,18 @@ kubectl apply -f dashboards/metallb-dashboard.yaml
 
 ```bash
 kubectl apply -f dashboards/cert-manager-dashboard.yaml
+```
+
+* External-dns dashboard (if it has been activated in the helm chart): 
+
+```bash
+kubectl apply -f dashboards/externa-dns-dashboard.yml
+```
+
+* Authorization dashboard (if it has been activated in the helm chart): 
+
+```bash
+kubectl apply -f dashboards/authentik-dashboard.yaml
 ```
 
 ```bash

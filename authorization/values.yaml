@@ -70,11 +70,11 @@ service:
 
 prometheus:
   serviceMonitor:
-    create: false
+    create: true
     interval: 30s
     scrapeTimeout: 3s
   rules:
-    create: false
+    create: true
 
 postgresql:
   enabled: true
