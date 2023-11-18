@@ -33,7 +33,6 @@ data:
       "fiscalYearStartMonth": 0,
       "gnetId": 17501,
       "graphTooltip": 0,
-      "id": 46,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -134,7 +133,6 @@ data:
               "refId": "A"
             }
           ],
-          "timeFrom": "1h",
           "title": "Total requests  ",
           "transformations": [],
           "transparent": true,
@@ -196,7 +194,6 @@ data:
               "refId": "A"
             }
           ],
-          "timeFrom": "3h",
           "title": "Requests per status code",
           "transformations": [],
           "transparent": true,
@@ -267,7 +264,6 @@ data:
               "refId": "A"
             }
           ],
-          "timeFrom": "1h",
           "title": "% of  4/5xx ",
           "transparent": true,
           "type": "stat"
@@ -338,7 +334,6 @@ data:
             }
           ],
           "thresholds": [],
-          "timeFrom": "3h",
           "timeRegions": [],
           "title": " 4/5xx  Services",
           "tooltip": {
@@ -428,7 +423,6 @@ data:
               "refId": "A"
             }
           ],
-          "timeFrom": "5m",
           "title": "Users right now",
           "transformations": [],
           "transparent": true,
@@ -490,7 +484,6 @@ data:
               "refId": "A"
             }
           ],
-          "timeFrom": "5m",
           "title": "Total Bytes Sent",
           "transformations": [
             {
@@ -560,7 +553,6 @@ data:
               "refId": "A"
             }
           ],
-          "timeFrom": "1h",
           "title": "Requests Route",
           "transformations": [],
           "transparent": true,
@@ -601,7 +593,6 @@ data:
               "refId": "A"
             }
           ],
-          "timeFrom": "5m",
           "title": "Logs",
           "transparent": true,
           "type": "logs"
