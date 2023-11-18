@@ -9,9 +9,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - protocol: TCP
+  - name: metrics
     port: 9100
-    name: metrics
+    protocol: TCP
   selector:
     app.kubernetes.io/instance: traefik-proxy
     app.kubernetes.io/name: traefik

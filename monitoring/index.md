@@ -5,10 +5,12 @@ cluster has. So we will be using the prometheus stack to monitor the whole clust
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
 helm repo add stable https://charts.helm.sh/stable
 helm repo update
 
 kubectl create namespace monitoring
+
 
 # Follow the instructions for goauthentik
 # https://goauthentik.io/integrations/services/grafana/
@@ -21,6 +23,11 @@ helm install --namespace monitoring monitoring prometheus-community/kube-prometh
     --version v54.0.1 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress-public.yaml
 kubectl apply -f vpa.yaml
+
+helm install --namespace monitoring loki grafana/loki-stack -f loki-values.yaml --version 2.9.11
+
+helm install --namespace monitoring event-explorter bitnami/kubernetes-event-exporter -f event-exporter-values.yaml --version 2.8.2
+
 ```
 
 To get the password:
@@ -45,6 +52,7 @@ kubectl apply -f proxy/traefik-dashboard-service.yaml
 kubectl apply -f proxy/traefik-service-monitor.yaml
 kubectl apply -f proxy/traefik-dashboard-1.yaml
 kubectl apply -f proxy/traefik-dashboard-2.yaml
+kubectl apply -f proxy/traefik-dashboard-loki.yaml
 ```
 
 * General dashboards:
@@ -61,6 +69,9 @@ kubectl apply -f dashboards/node-exporter.yaml
 kubectl apply -f dashboards/node-overview.yaml
 kubectl apply -f dashboards/hpa-dashboard.yaml
 kubectl apply -f dashboards/vpa-dashboard.yaml
+kubectl apply -f dashboards/vpa-dashboard.yaml
+kubectl apply -f dashboards/event-exporter.yaml
+kubectl apply -f dashboards/loki-search.yaml
 ```
 
 * Load-balancer dashboard (if it has been activated in the helm chart): 

@@ -26,18 +26,31 @@ providers:
   kubernetesIngress:
     enabled: true
 
-#logs:
-#  general:
-#    # Alternative logging levels are DEBUG, PANIC, FATAL, ERROR, WARN, and INFO.
-#    level: WARN
-#  access:
-#    enabled: true
 
 additionalArguments:
   # Used for the generation of the certificates
   - "--providers.kubernetesIngress.ingressClass=traefik-cert-manager"
   - "--providers.kubernetesingress.allowexternalnameservices=true"
-  - "--metrics.prometheus=true"
+
+logs:
+  general:
+    level: INFO
+    format: json
+  access:
+    enabled: true
+    format: json
+
+metrics:
+  prometheus:
+    entryPoint: metrics
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+    buckets: "0.5,1.0,2.5"
+    manualRouting: false
+    service:
+      enabled: false
+
   
 # TLS Options are created as TLSOption CRDs
 # https://doc.traefik.io/traefik/https/tls/#tls-options
@@ -58,6 +71,9 @@ ports:
   websecure:
     http3:
       enabled: true
+  metrics:
+    # It has to be the same with the traefik-dashboard-service.yaml in monitoring
+    port: 9100
 
 service:
   enabled: true
