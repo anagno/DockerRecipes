@@ -9,10 +9,14 @@ config:
         streamLabels:
           app: event-exporter
         url: http://loki:3100/loki/api/v1/push
+    - name: "dump"
+      stdout: { }
   route:
    routes:
      - match:
          - receiver: "loki"
+         # needed for the dashboards
+         - receiver: "dump"
 
 updateStrategy:
   type: Recreate
