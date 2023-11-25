@@ -26,7 +26,7 @@ kubectl apply -f vpa.yaml
 
 helm install --namespace monitoring loki grafana/loki-stack -f loki-values.yaml --version 2.9.11
 
-helm install --namespace monitoring event-explorter bitnami/kubernetes-event-exporter -f event-exporter-values.yaml --version 2.8.2
+helm install --namespace monitoring event-explorter bitnami/kubernetes-event-exporter -f event-exporter-values.yaml --version 2.9.3
 
 ```
 
