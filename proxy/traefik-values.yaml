@@ -46,7 +46,6 @@ metrics:
     addEntryPointsLabels: true
     addRoutersLabels: true
     addServicesLabels: true
-    buckets: "0.5,1.0,2.5"
     manualRouting: false
     service:
       enabled: false
