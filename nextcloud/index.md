@@ -25,7 +25,7 @@ kubectl apply -f storage.yaml
 
 helm repo add nextcloud https://nextcloud.github.io/helm/
 helm repo update
-helm install cyberlocker nextcloud/nextcloud -f values.yaml --namespace cyberlocker --version 4.5.4
+helm install cyberlocker nextcloud/nextcloud -f values.yaml --namespace cyberlocker --version 4.5.8
 
 kubectl apply -f ingressroute.yaml
 kubectl apply -f vpa.yaml
@@ -48,3 +48,10 @@ php occ config:system:set overwrite.cli.url --value="https://cyberlocker.anagno.
 kubectl -n cyberlocker get secret nextcloud -o jsonpath="{.data.admin-password}" | base64 -d
 kubectl -n cyberlocker exec -it cyberlocker-postgresql-0 -- psql -d nextcloud -U nextcloud
 ```
+
+
+https://grafana.com/grafana/dashboards/17821-nextcloud-log/
+https://okxo.de/monitor-your-nextcloud-logs-for-suspicious-activities/
+https://voidquark.com/blog/parsing-nextcloud-audit-logs-with-grafana-loki/
+
+https://github.com/grafana/helm-charts/blob/main/charts/loki-stack/values.yaml
