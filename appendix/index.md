@@ -231,7 +231,7 @@ To retrieve the logs `kubectl -n kube-system logs -f -l "app.kubernetes.io/name=
 
 ## Pulling images to nodes using k3s ctr
 
-To pull an image that is too big before hand just execute `ansible workers -b -m ansible.builtin.shell -a 'k3s ctr image pull registry.hub.docker.com/library/nextcloud:27.1.2-apache'`
+To pull an image that is too big before hand just execute `ansible workers -b -m ansible.builtin.shell -a 'k3s ctr image pull registry.hub.docker.com/library/nextcloud:28.0.0-apache'`
 
 ## Drain a node
 
