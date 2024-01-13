@@ -85,6 +85,10 @@ grafana:
     - camptocamp-prometheus-alertmanager-datasource
     - grafana-piechart-panel
 
+  # https://github.com/grafana/helm-charts/blob/19a40de8f7953a2c1fd13bdfa72eb75e5784559d/charts/grafana/values.yaml#L1305
+  # It is missbehaving with auth.generic_oauth.client_secret although the secret is not exposed.
+  assertNoLeakedSecrets: false
+
   grafana.ini:
     paths:
       data: /var/lib/grafana/data
