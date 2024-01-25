@@ -428,3 +428,5 @@ ansible erato -b -m ansible.builtin.service -a 'name=k3s state=restarted'
 
 
 ansible erato -b -m ansible.builtin.shell -a 'k3s etcd -h'
+
+kubectl run -ti --rm busybox-libc --image=busybox:1.35.0-glibc --restart=Never -- /bin/sh

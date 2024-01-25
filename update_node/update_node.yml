@@ -76,7 +76,7 @@
 
     # TODO: Refactor because of duplication from setup_cluster
     - name: Updating and starting k3s on workers
-      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC=\"agent\" K3S_URL=https://zeus.intra:6443 K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }} sh"
+      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC=\"agent\" K3S_URL=https://zeus.intra:6443 K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }} sh -s - --resolv-conf /run/systemd/resolve/resolv.conf"
       become: true
       when: inventory_hostname in groups['workers']
 
@@ -105,6 +105,7 @@
 
     # Necessary for longhorn to function without problems
     - name: Start service iscsid
+      become: true
       service:
         name: iscsid
         state: started
