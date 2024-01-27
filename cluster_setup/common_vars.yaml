@@ -1,4 +1,4 @@
-k3s_initialization_parameters: "--resolv-conf /run/systemd/resolve/resolv.conf --disable servicelb --disable traefik --flannel-backend=wireguard-native --etcd-expose-metrics=true --kube-controller-manager-arg=\"bind-address=0.0.0.0\" --kube-proxy-arg=\"metrics-bind-address=0.0.0.0\" --kube-scheduler-arg=\"bind-address=0.0.0.0\" "
+k3s_initialization_parameters: "--disable servicelb --disable traefik --flannel-backend=wireguard-native --etcd-expose-metrics=true --kube-controller-manager-arg=\"bind-address=0.0.0.0\" --kube-proxy-arg=\"metrics-bind-address=0.0.0.0\" --kube-scheduler-arg=\"bind-address=0.0.0.0\" "
 # the --disable servicelb is because the integrated load balancer does not allocate also virtual IPs. 
 # So I prefer to use metallb
 # I prefer to deploy traefik manually to have more control over it. And probably without a load balancer,
@@ -12,6 +12,8 @@ k3s_initialization_parameters: "--resolv-conf /run/systemd/resolve/resolv.conf -
 # The last 4 parameters are for exposing the metrics from the cluster
 # https://github.com/k3s-io/k3s/issues/3619#issuecomment-993977516
 # They are necessary if we want to monitor the services with prometheus
+
+k3s_common_parameters_for_all_nodes: "--resolv-conf /run/systemd/resolve/resolv.conf"
 
 
 # The resolve-conf is because https://github.com/k3s-io/k3s/issues/4087#issuecomment-929374460

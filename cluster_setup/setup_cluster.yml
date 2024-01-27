@@ -52,7 +52,7 @@
       # and that will be installed with k3s. But the manifest is needed before the installation ...
 
     - name: Install and start k3s
-      shell: 'curl -sfL https://get.k3s.io |  sh -s - server --cluster-init --tls-san zeus.intra {{ k3s_initialization_parameters }}'
+      shell: 'curl -sfL https://get.k3s.io |  sh -s - server --cluster-init --tls-san zeus.intra {{ k3s_common_parameters_for_all_nodes }} {{ k3s_initialization_parameters }}'
       when: "'k3s.service' not in ansible_facts.services"
       # the tls-san parameter allows to specify the domain name that will be used for the control-plane
       # https://rancher.com/docs/k3s/latest/en/installation/ha/#3-configure-the-fixed-registration-address
@@ -105,7 +105,7 @@
         state: started
 
     - name: Install and start k3s
-      shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=\"{{ hostvars[groups['masters'][0]]['cluster_token'] }}\" sh -s - server --server https://zeus.intra:6443 {{ k3s_initialization_parameters }}"
+      shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=\"{{ hostvars[groups['masters'][0]]['cluster_token'] }}\" sh -s - server --server https://zeus.intra:6443 {{ k3s_common_parameters_for_all_nodes }} {{ k3s_initialization_parameters }}"
       when: "'k3s.service' not in ansible_facts.services"
 
     - name: Reboot
@@ -135,7 +135,7 @@
         state: started
 
     - name: Start cluster worker node
-      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC=\"agent\" K3S_URL=https://zeus.intra:6443 K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }} sh -s - --resolv-conf /run/systemd/resolve/resolv.conf"
+      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC=\"agent\" K3S_URL=https://zeus.intra:6443 K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }} sh -s - {{ k3s_common_parameters_for_all_nodes }}"
       when: "'k3s.service' not in ansible_facts.services"
 
     - name: Reboot

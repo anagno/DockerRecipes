@@ -70,13 +70,13 @@
 
     # TODO: Refactor because of duplication from setup_cluster
     - name: Updating and starting k3s on main nodes
-      shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=\"{{ hostvars[groups['masters'][0]]['cluster_token'] }}\" sh -s - server --server https://zeus.intra:6443 {{ k3s_initialization_parameters }}"
+      shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=\"{{ hostvars[groups['masters'][0]]['cluster_token'] }}\" sh -s - server --server https://zeus.intra:6443 {{ k3s_common_parameters_for_all_nodes }} {{ k3s_initialization_parameters }}"
       become: true
       when: inventory_hostname in groups['masters']
 
     # TODO: Refactor because of duplication from setup_cluster
     - name: Updating and starting k3s on workers
-      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC=\"agent\" K3S_URL=https://zeus.intra:6443 K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }} sh -s - --resolv-conf /run/systemd/resolve/resolv.conf"
+      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC=\"agent\" K3S_URL=https://zeus.intra:6443 K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }} sh -s - {{ k3s_common_parameters_for_all_nodes }}"
       become: true
       when: inventory_hostname in groups['workers']
 
