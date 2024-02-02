@@ -84,7 +84,7 @@ ansible-playbook storage/setup_storage.yml
 helm repo add longhorn https://charts.longhorn.io
 helm repo update
 kubectl create namespace longhorn-system
-helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.5.3
+helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.6.0
 
 # The vpa is causing instability in the longhorn. So do not activate it for the moment
 #kubectl apply -f vpa.yml
