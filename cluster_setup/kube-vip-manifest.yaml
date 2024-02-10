@@ -23,6 +23,9 @@ rules:
   - apiGroups: ["coordination.k8s.io"]
     resources: ["leases"]
     verbs: ["list", "get", "watch", "update", "create"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["list","get","watch", "update"]
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -43,7 +46,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/name: kube-vip-ds
-    app.kubernetes.io/version: v0.6.4
+    app.kubernetes.io/version: v0.7.0
   name: kube-vip-ds
   namespace: kube-system
 spec:
@@ -55,7 +58,7 @@ spec:
       creationTimestamp: null
       labels:
         app.kubernetes.io/name: kube-vip-ds
-        app.kubernetes.io/version: v0.6.4
+        app.kubernetes.io/version: v0.7.0
     spec:
       affinity:
         nodeAffinity:
@@ -79,12 +82,12 @@ spec:
           value: eth0
         - name: vip_cidr
           value: "32"
+        - name: dns_mode
+          value: first
         - name: cp_enable
           value: "true"
         - name: cp_namespace
           value: kube-system
-        - name: vip_ddns
-          value: "false"
         - name: vip_leaderelection
           value: "true"
         - name: vip_leasename
@@ -99,7 +102,7 @@ spec:
           value: zeus.intra
         - name: prometheus_server
           value: :2112
-        image: ghcr.io/kube-vip/kube-vip:v0.6.4
+        image: ghcr.io/kube-vip/kube-vip:v0.7.0
         imagePullPolicy: IfNotPresent
         name: kube-vip
         resources: {}
