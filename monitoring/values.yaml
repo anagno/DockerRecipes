@@ -73,6 +73,11 @@ kubeEtcd:
 grafana:
   enabled: true
 
+  dnsConfig:
+    options:
+    - name: ndots
+      value: "1"
+
   extraSecretMounts:
     - name: auth-generic-oauth-secret-mount
       secretName: authentik-secret
@@ -90,11 +95,6 @@ grafana:
   assertNoLeakedSecrets: false
 
   grafana.ini:
-    paths:
-      data: /var/lib/grafana/data
-      logs: /var/log/grafana
-      plugins: /var/lib/grafana/plugins
-      provisioning: /etc/grafana/provisioning
     analytics:
       check_for_updates: true
     log:
