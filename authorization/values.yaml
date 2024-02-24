@@ -1,13 +1,5 @@
 # https://github.com/goauthentik/helm/blob/main/charts/authentik/values.yaml
 
-image:
-  repository: ghcr.io/goauthentik/server
-  #tag: 2023.2.2
-
-
-ingress:
-  enabled: false
-
 authentik:
   avatars: none
   email:
@@ -22,68 +14,80 @@ authentik:
     name: "authentik"
     user: "authentik"
 
-# we have to create first the ingressroute, so the secrets are available
-# https://goauthentik.io/docs/core/certificates#web-certificates
-volumes:
-  - name: web-keys
-    secret:
-      secretName: auth-anagno-dev-cert
-      items:
-      - key: tls.crt
-        path: auth.anagno.dev.pem
-      - key: tls.key
-        path: auth.anagno.dev.key
+global:
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-generall
+          key: secret-key
+    - name: AK_ADMIN_PASS
+      valueFrom:
+        secretKeyRef:
+          name: authentik-generall
+          key: ak-admin-pass
+    - name: AUTHENTIK_EMAIL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: no-reply-mail
+          key: password
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-postgresql
+          key: password
+    - name: AUTHENTIK_REDIS__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-redis
+          key: redis-password
+  # we have to create first the ingressroute, so the secrets are available
+  # https://goauthentik.io/docs/core/certificates#web-certificates
+  volumes:
+    - name: web-keys
+      secret:
+        secretName: auth-anagno-dev-cert
+        items:
+        - key: tls.crt
+          path: auth.anagno.dev.pem
+        - key: tls.key
+          path: auth.anagno.dev.key
+  volumeMounts:
+    - name: web-keys
+      readOnly: true
+      mountPath: "/certs"
 
-volumeMounts:
-  - name: web-keys
-    readOnly: true
-    mountPath: "/certs"
+server:
 
-envValueFrom:
-  AUTHENTIK_SECRET_KEY:
-    secretKeyRef:
-      name: authentik-generall
-      key: secret-key
-  AK_ADMIN_PASS:
-    secretKeyRef:
-      name: authentik-generall
-      key: ak-admin-pass
-  AUTHENTIK_EMAIL__PASSWORD:
-    secretKeyRef:
-      name: no-reply-mail
-      key: password
-  AUTHENTIK_POSTGRESQL__PASSWORD:
-    secretKeyRef:
-      name: authentik-database
-      key: postgresql-password
-  AUTHENTIK_REDIS__PASSWORD:
-    secretKeyRef:
-      name: authentik-redis
-      key: redis-password
+  ingress:
+    enabled: false
 
-service:
-  enabled: true
-  type: ClusterIP
-  port: 80
-  name: http
-  protocol: TCP
+  service:
+    type: ClusterIP
+    servicePortHttp: 80
+    servicePortHttpName: http
 
-prometheus:
-  serviceMonitor:
-    create: true
-    interval: 30s
-    scrapeTimeout: 3s
-  rules:
-    create: true
+  metrics:
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 3s
+    rules:
+      enabled: true
 
 postgresql:
   enabled: true
-  postgresqlUsername: "authentik"
-  postgresqlDatabase: "authentik"
-  existingSecret: authentik-database
-  persistence:
-    enabled: true
-    existingClaim: authentik-database
+  username: "authentik"
+  database: "authentik"
+  global:
+    postgresql:
+      auth:
+        database: authentik
+        existingSecret: "authentik-postgresql"
+  primary:
+    persistence:
+      enabled: true
+      existingClaim: "authentik-database"
 
 redis:
   enabled: true
@@ -100,4 +104,3 @@ redis:
 # https://github.com/goauthentik/helm/issues/127
 # https://github.com/FruitCast/authentik-manager
 # https://github.com/dsluijk/authentik-operator
-blueprints: []

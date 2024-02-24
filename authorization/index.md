@@ -11,9 +11,9 @@ kubectl create secret generic authentik-generall --namespace authorization \
   --from-literal=secret-key=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) \
   --from-literal=ak-admin-pass=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
-kubectl create secret generic authentik-database --namespace authorization \
-  --from-literal=postgresql-postgres-password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) \
-  --from-literal=postgresql-password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+kubectl create secret generic authentik-postgresql --namespace authorization \
+  --from-literal=postgres-password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) \
+  --from-literal=password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
 kubectl create secret generic authentik-redis --namespace authorization \
   --from-literal=redis-password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) 
@@ -27,7 +27,7 @@ kubectl apply -f authentik-ingressroute.yaml
 
 helm repo add authentik https://charts.goauthentik.io
 helm repo update
-helm install --namespace authorization authentik authentik/authentik -f values.yaml --version 2023.10.7
+helm install --namespace authorization authentik authentik/authentik -f values.yaml --version 2024.2.1
 ```
 
 !!!Note

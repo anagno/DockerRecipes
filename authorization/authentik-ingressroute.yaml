@@ -30,7 +30,7 @@ spec:
     - match: Host(`auth.anagno.dev`)
       kind: Rule
       services:
-        - name: authentik
+        - name: authentik-server
           port: 80
       middlewares:
       - name: https-redirect
@@ -55,7 +55,7 @@ spec:
     - match: Host(`auth.anagno.dev`)
       kind: Rule
       services:
-        - name: authentik
+        - name: authentik-server
           port: 80
       middlewares:
       - name: https-redirect
