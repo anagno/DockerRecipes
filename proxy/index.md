@@ -19,8 +19,7 @@ Similarly, to deploy Traefik we have to execute:
 kubectl create namespace proxy
 helm repo add traefik https://helm.traefik.io/traefik
 helm repo update
-helm upgrade -n proxy traefik traefik/traefik -f traefik-values.yaml --version 26.0.0
-# Remove the tag in the next upagrde from the traefik-values.yaml
+helm install -n proxy traefik traefik/traefik -f traefik-values.yaml --version 26.1.0
 ```
 
 !!! note
