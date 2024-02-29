@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: calibre-config
+  namespace: library
+spec:
+  storageClassName: replicated
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10M
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: books
+  namespace: library
+spec:
+  storageClassName: replicated
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+---

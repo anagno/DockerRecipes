@@ -1,0 +1,26 @@
+# https://github.com/actions/actions-runner-controller/blob/master/charts/actions-runner-controller/values.yaml
+
+syncPeriod: 1m
+defaultScaleDownDelay: 5m
+
+#hostNetwork: true
+dnsPolicy: Default
+
+authSecret:
+  enabled: true
+  name: "controller-manager"
+
+metrics:
+  serviceMonitor:
+    enable: true
+
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+certManagerEnabled: true
+
+actionsMetrics:
+  serviceMonitor:
+    enable: true

@@ -1,0 +1,89 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: news.anagno.dev
+  namespace: news
+spec:
+  commonName: news.anagno.dev
+  secretName: news.anagno.dev
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - news.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: news.anagno.dev-api
+  namespace: news
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: "Host(`news.anagno.dev`) && PathPrefix(`/api`)"
+      kind: Rule
+      priority: 10 
+      services:
+        - name: freshrss-service
+          port: 80
+      middlewares:
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: news.anagno.dev
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: news.anagno.dev
+  namespace: news
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: news.anagno.dev
+    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    kubernetes.io/ingress.class: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`news.anagno.dev`)
+      kind: Rule
+      priority: 1 
+      services:
+        - name: freshrss-service
+          port: 80
+      middlewares:
+      - name: security-headers
+        namespace: proxy
+      - name: forward-auth-remote-user-headers
+        namespace: authorization
+  tls:
+    secretName: news.anagno.dev
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: news.anagno.dev-http
+  namespace: news
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`news.anagno.dev`)
+      kind: Rule
+      services:
+        - name: freshrss-service
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+---  
