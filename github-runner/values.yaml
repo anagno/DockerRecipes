@@ -16,8 +16,7 @@ metrics:
 
 
 podDisruptionBudget:
-  enabled: true
-  minAvailable: 1
+  enabled: false
 
 certManagerEnabled: true
 
