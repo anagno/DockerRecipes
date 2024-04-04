@@ -14,7 +14,7 @@ Metallb provides a helm chart. So the installation is quite simple:
 ``` bash
 helm repo add metallb https://metallb.github.io/metallb
 kubectl create namespace load-balancer
-helm install --namespace load-balancer load-balancer metallb/metallb -f values.yaml --version 0.14.3
+helm install --namespace load-balancer load-balancer metallb/metallb -f values.yaml --version 0.14.4
 # Wait for the full deployment of the services
 kubectl apply -f IPAddressPool.yaml
 kubectl apply -f vpa.yaml
@@ -68,3 +68,27 @@ kubectl get services -o wide --all-namespaces | grep --color=never -E 'LoadBalan
 * https://metallb.universe.tf/configuration/
 * https://github.com/metallb/metallb/issues/308
 * https://opensource.com/article/20/7/homelab-metallb
+
+
+https://github.com/inlets/inlets-operator
+
+
+IPV6
+
+https://kubernetes-sigs.github.io/external-dns/v0.14.0/sources/service/#clusterip-headless
+https://kubernetes-sigs.github.io/external-dns/v0.14.0/tutorials/traefik-proxy/#manifest-for-clusters-with-rbac-enabled
+https://kubernetes-sigs.github.io/external-dns/v0.14.0/tutorials/hostport/
+https://metallb.universe.tf/troubleshooting/
+kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}'
+
+https://docs.k3s.io/cli/server#networking 
+
+
+ --cluster-cidr=10.42.0.0/16,fd42::/56 --service-cidr=10.43.0.0/16,fd43::/112
+
+https://github.com/kubernetes/kubernetes/issues/81677#issuecomment-524351347
+
+https://github.com/kubernetes/kubernetes/issues/111671
+
+
+https://github.com/k3s-io/docs/pull/103/files
