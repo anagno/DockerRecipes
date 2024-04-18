@@ -16,7 +16,10 @@ echo "<?php phpinfo();" >> p/i/phpinfo.php
 
 # To move the subscriptions 
 scp ubuntu@old_freshrss:/home/ubuntu/freshrss/www/freshrss/data/users/anagno/db.sqlite db.sqlite
-kubectl cp db.sqlite news/freshrss-6fb94cb5d-gzsnr:/var/www/FreshRSS/data/users/anagno/db.sqlite
+kubectl cp db.sqlite news/freshrss-56d767678c-md6h9:/var/www/FreshRSS/data/users/anagno/db.sqlite
+
+
+./cli/do-install.php --default_user caretaker --auth_type http_auth --environment production --base_url https://news.anagno.dev --language en --title FreshRSS --api_enabled --db-type sqlite
 
 # To copy a local config.php to the container
 kubectl cp config.php news/freshrss-7495bcb86b-5wtd7:/var/www/FreshRSS/data/config.php
