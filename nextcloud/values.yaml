@@ -28,7 +28,7 @@ nextcloud:
     fromAddress: no-reply-anagno-me
     domain: outlook.com
     smtp:
-      host: smtp-mail.outlook.com
+      host: smtp.office365.com
       secure: tls
       port: 587
       authtype: LOGIN

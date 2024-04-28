@@ -3,7 +3,7 @@
 authentik:
   avatars: none
   email:
-    host: "smtp-mail.outlook.com"
+    host: "smtp.office365.com"
     port: 587
     username: "no-reply-anagno-me@outlook.com"
     use_tls: true
@@ -66,6 +66,19 @@ server:
     type: ClusterIP
     servicePortHttp: 80
     servicePortHttpName: http
+
+  dnsConfig:
+    options:
+    - name: ndots
+      value: "1"
+
+worker:
+
+  dnsConfig:
+    options:
+    - name: ndots
+      value: "1"
+
 
   metrics:
     serviceMonitor:
