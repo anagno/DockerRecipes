@@ -50,8 +50,7 @@ kubectl apply -f storage/storage-dashboard.yaml
 ```bash
 kubectl apply -f proxy/traefik-dashboard-service.yaml
 kubectl apply -f proxy/traefik-service-monitor.yaml
-kubectl apply -f proxy/traefik-dashboard-1.yaml
-kubectl apply -f proxy/traefik-dashboard-2.yaml
+kubectl apply -f proxy/traefik-dashboard.yaml
 kubectl apply -f proxy/traefik-dashboard-loki.yaml
 ```
 
