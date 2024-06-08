@@ -14,20 +14,20 @@
           # For enabling encryption in the disks
           # https://longhorn.io/docs/1.2.2/advanced-resources/volume-encryption/#requirements
           - cryptsetup
-          # https://github.com/k3s-io/k3s/issues/4188#issuecomment-982503626
-          - linux-modules-extra-raspi
         state: present
       become: true
-    # https://longhorn.io/docs/1.2.2/deploy/install/#using-the-environment-check-script
-    - name: Run check script
-      shell:
-        cmd: curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.3.1/scripts/environment_check.sh | bash
+    # TODO no longer works? Have to examine it again
+    ## https://longhorn.io/docs/1.6.0/deploy/install/#using-the-environment-check-script
+    #- name: Run check script
+    #  shell:
+    #    cmd: curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.6.x/scripts/environment_check.sh | bash
 
     - name: Start service iscsid
       service:
         name: iscsid
         state: started
         enabled: yes
+      become: true
 
 - name: Initialize the disks
   hosts: disks

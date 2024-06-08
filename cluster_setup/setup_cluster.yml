@@ -125,6 +125,9 @@
 - name: Starting workers
   hosts: workers
   tasks:
+    - name: Include common variables
+      include_vars: common_vars.yaml
+
     - name: Check services (to see if k3s is present)
       service_facts:
 

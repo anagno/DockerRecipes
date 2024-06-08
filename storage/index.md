@@ -102,7 +102,7 @@ kubectl apply -f UnrepliccatedStorage.yaml
 
 We have to add the disks from the UI of longhorn
 
-* https://rpi4cluster.com/k3s/k3s-storage-setting/#add-storage
+* https://rpi4cluster.com/storage-setting/
 * https://longhorn.io/docs/1.2.3/volumes-and-nodes/multidisk/#add-a-disk
 
 On how to use them take a look at https://longhorn.io/docs/1.2.2/references/examples/#block-volume
