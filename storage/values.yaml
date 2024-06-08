@@ -16,6 +16,7 @@ defaultSettings:
   replicaAutoBalance: "least-effort"
   defaultDataLocality: "disabled"
   snapshotDataIntegrity: "enabled"
+  fastReplicaRebuildEnabled: "true"
   nodeDownPodDeletionPolicy: "delete-both-statefulset-and-deployment-pod"
   concurrentReplicaRebuildPerNodeLimit: 1
   allowNodeDrainWithLastHealthyReplica: "false"
