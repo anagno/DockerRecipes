@@ -87,6 +87,7 @@ postgresql:
         database: gitea
         existingSecret: "gitea-database"
   primary:
+    resourcesPreset: "none"
     persistence:
       enabled: true
       existingClaim: gitea-database
