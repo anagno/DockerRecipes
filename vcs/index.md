@@ -22,7 +22,7 @@ kubectl apply -f storage.yaml
 
 helm repo add gitea-charts https://dl.gitea.com/charts/
 helm repo update
-helm install vcs gitea-charts/gitea -f values.yaml --namespace vcs --version 10.2.0
+helm install vcs gitea-charts/gitea -f values.yaml --namespace vcs --version 10.3.0
 
 kubectl apply -f ingressroute.yaml
 
