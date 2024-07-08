@@ -112,6 +112,7 @@ readinessProbe:
   periodSeconds: 60
   timeoutSeconds: 15
 startupProbe:
+  #enabled: false
   enabled: true
 
 nginx:
@@ -125,15 +126,39 @@ mariadb:
   enabled: false
 postgresql:
   enabled: true
+  # To upgrade the database we can follow the procedure described here.
+  # https://docs.goauthentik.io/docs/troubleshooting/postgres/upgrade_kubernetes
+  # More or less we dump the old database in a file and then delete it
+  # We update to the new version and we wait until an empty one is created
+  # and then we can restore from the file
+  # We might be hitting the livenessProbe limit in the initialization:
+  # https://github.com/bitnami/charts/issues/14683#issuecomment-1413732132
+  # So we should deactivate the liveness probess in the database for the migration
+  # Uncomment the lines also in the primary section
+  #diagnosticMode:
+  #    enabled: true
+  # export PGPASSWORD=$POSTGRES_PASSWORD
+  # pg_dump -U $POSTGRES_USER $POSTGRES_DATABASE > dump-11.sql
+  # export PGPASSWORD=$POSTGRES_PASSWORD
+  # psql -U $POSTGRES_USER $POSTGRES_DATABASE < dump-15.sql
   global:
     postgresql:
       auth:
         database: nextcloud
         existingSecret: "nextcloud-postgresql-database"
   primary:
+    resourcesPreset: "none"
     persistence:
       enabled: true
       existingClaim: "nextcloud-database"
+    #livenessProbe:
+    #  enabled: false
+    #  initialDelaySeconds: 500
+    #readinessProbe:
+    #  enabled: false
+    #startupProbe:
+    #  enabled: false
+
 redis:
   enabled: true
   architecture: standalone
@@ -141,6 +166,7 @@ redis:
     enabled: true
     existingSecret: "nextcloud-redis"
   master:
+    resourcesPreset: "none"
     persistence:
       enabled: true
       existingClaim: nextcloud-redis
