@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nextcloud-pvc
+  namespace: cyberlocker
+  labels:
+    app: nextcloud
+spec:
+  storageClassName: replicated
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 150Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nextcloud-database
+  namespace: cyberlocker
+  labels:
+    app: nextcloud-database
+spec:
+  storageClassName: replicated
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 40Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nextcloud-redis
+  namespace: cyberlocker
+  labels:
+    app: nextcloud-redis
+spec:
+  storageClassName: replicated
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
