@@ -27,7 +27,7 @@ kubectl apply -f authentik-ingressroute.yaml
 
 helm repo add authentik https://charts.goauthentik.io
 helm repo update
-helm install --namespace authorization authentik authentik/authentik -f values.yaml --version 2024.8.1
+helm install --namespace authorization authentik authentik/authentik -f values.yaml --version 2024.8.2
 ```
 
 !!!Note
