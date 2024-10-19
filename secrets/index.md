@@ -1,15 +1,18 @@
 # Sharing secrets accross namespaces
 
-## Config Syncer
+## Kubernetes replicator
 
 Kubernets does not share secrets accross namespaces. But some times it is 
 usefull to be able to share secrets accross namespaces. For that purpose 
-we use the [Config Syncer service](https://appscode.com/products/kubed/v0.12.0/guides/config-syncer/intra-cluster/)
+we use the [kubernetes-replicator](https://github.com/mittwald/kubernetes-replicator)
+
+
+https://cert-manager.io/docs/devops-tips/syncing-secrets-across-namespaces/
 
 ``` bash
-helm repo add appscode https://charts.appscode.com/stable/
+helm repo add mittwald https://helm.mittwald.de
 helm repo update
-helm install kubed appscode/kubed -f values.yaml --version v0.13.2 --namespace kube-system
+helm install kubernetes-replicator mittwald/kubernetes-replicator -f values.yaml --version v2.10.2 --namespace kube-system
 kubectl apply -f vpa.yaml
 ```
 
@@ -26,7 +29,7 @@ accross namespaces:
 
 ``` bash
 kubectl -n general create secret generic no-reply-mail --from-literal=password=PASSWORD
-kubectl -n general annotate secret no-reply-mail kubed.appscode.com/sync=""
+kubectl -n general annotate secret no-reply-mail replicator.v1.mittwald.de/replicate-to="*"
 ```
 
 ## Resources
