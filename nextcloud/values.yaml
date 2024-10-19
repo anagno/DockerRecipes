@@ -169,7 +169,7 @@ redis:
     resourcesPreset: "none"
     persistence:
       enabled: true
-      existingClaim: nextcloud-redis
+      existingClaim: nextcloud-redis-storage
 
 cronjob:
   enabled: true
