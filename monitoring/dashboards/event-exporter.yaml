@@ -12,6 +12,51 @@ data:
   # https://grafana.com/grafana/dashboards/17882-kubernetes-event-exporter/
   event-exporter-dashboard.json: |
     {
+      "__elements": {},
+      "__requires": [
+        {
+          "type": "grafana",
+          "id": "grafana",
+          "name": "Grafana",
+          "version": "9.3.1"
+        },
+        {
+          "type": "panel",
+          "id": "logs",
+          "name": "Logs",
+          "version": ""
+        },
+        {
+          "type": "datasource",
+          "id": "loki",
+          "name": "Loki",
+          "version": "1.0.0"
+        },
+        {
+          "type": "panel",
+          "id": "piechart",
+          "name": "Pie chart",
+          "version": ""
+        },
+        {
+          "type": "panel",
+          "id": "stat",
+          "name": "Stat",
+          "version": ""
+        },
+        {
+          "type": "panel",
+          "id": "table",
+          "name": "Table",
+          "version": ""
+        },
+        {
+          "type": "panel",
+          "id": "timeseries",
+          "name": "Time series",
+          "version": ""
+        }
+      ],
       "annotations": {
         "list": [
           {
@@ -39,7 +84,7 @@ data:
       "fiscalYearStartMonth": 0,
       "gnetId": 17882,
       "graphTooltip": 0,
-      "id": 61,
+      "id": null,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -68,9 +113,7 @@ data:
               },
               "custom": {
                 "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
+                "displayMode": "auto",
                 "filterable": true,
                 "inspect": false,
                 "minWidth": 65
@@ -128,10 +171,8 @@ data:
                     ]
                   },
                   {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "type": "color-text"
-                    }
+                    "id": "custom.displayMode",
+                    "value": "color-text"
                   },
                   {
                     "id": "custom.width",
@@ -213,9 +254,7 @@ data:
           "id": 36,
           "links": [],
           "options": {
-            "cellHeight": "sm",
             "footer": {
-              "countRows": false,
               "enablePagination": true,
               "fields": "",
               "reducer": [
@@ -226,7 +265,7 @@ data:
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.1.5",
+          "pluginVersion": "9.3.1",
           "targets": [
             {
               "datasource": {
@@ -354,7 +393,6 @@ data:
                   "tooltip": false,
                   "viz": false
                 },
-                "insertNulls": false,
                 "lineInterpolation": "linear",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -448,7 +486,6 @@ data:
                   "tooltip": false,
                   "viz": false
                 },
-                "insertNulls": false,
                 "lineInterpolation": "smooth",
                 "lineWidth": 1,
                 "pointSize": 5,
@@ -589,7 +626,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "10.1.5",
+          "pluginVersion": "9.3.1",
           "targets": [
             {
               "datasource": {
@@ -658,7 +695,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "10.1.5",
+          "pluginVersion": "9.3.1",
           "targets": [
             {
               "datasource": {
@@ -726,7 +763,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "10.1.5",
+          "pluginVersion": "9.3.1",
           "targets": [
             {
               "datasource": {
@@ -796,7 +833,7 @@ data:
             },
             "textMode": "auto"
           },
-          "pluginVersion": "10.1.5",
+          "pluginVersion": "9.3.1",
           "targets": [
             {
               "datasource": {
@@ -864,7 +901,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "10.1.5",
+          "pluginVersion": "9.3.1",
           "targets": [
             {
               "datasource": {
@@ -929,7 +966,7 @@ data:
             },
             "textMode": "auto"
           },
-          "pluginVersion": "10.1.5",
+          "pluginVersion": "9.3.1",
           "targets": [
             {
               "datasource": {
@@ -997,7 +1034,7 @@ data:
             "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "10.1.5",
+          "pluginVersion": "9.3.1",
           "targets": [
             {
               "datasource": {
@@ -1062,7 +1099,7 @@ data:
             },
             "textMode": "auto"
           },
-          "pluginVersion": "10.1.5",
+          "pluginVersion": "9.3.1",
           "targets": [
             {
               "datasource": {
@@ -1080,7 +1117,7 @@ data:
           "type": "stat"
         },
         {
-          "collapsed": false,
+          "collapsed": true,
           "gridPos": {
             "h": 1,
             "w": 24,
@@ -1088,414 +1125,416 @@ data:
             "y": 28
           },
           "id": 30,
-          "panels": [],
+          "panels": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "${datasource}"
+              },
+              "description": "",
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    }
+                  },
+                  "mappings": []
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Field"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "thresholds"
+                        }
+                      },
+                      {
+                        "id": "displayName",
+                        "value": "Reason"
+                      },
+                      {
+                        "id": "color",
+                        "value": {
+                          "fixedColor": "#eab839",
+                          "mode": "fixed"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "options": "Total"
+                    },
+                    "properties": [
+                      {
+                        "id": "color",
+                        "value": {
+                          "mode": "continuous-BlYlRd"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "__systemRef": "hideSeriesFrom",
+                    "matcher": {
+                      "id": "byNames",
+                      "options": {
+                        "mode": "exclude",
+                        "names": [
+                          "Completed",
+                          "Created",
+                          "FreeDiskSpaceFailed",
+                          "InProgress",
+                          "JobAlreadyActive",
+                          "Killing",
+                          "Pulled",
+                          "Pulling",
+                          "SawCompletedJob",
+                          "Scheduled",
+                          "SnapshotDelete",
+                          "SnapshotError",
+                          "SnapshotUpdate",
+                          "Started",
+                          "SuccessfulCreate",
+                          "SuccessfulDelete",
+                          "Unhealthy",
+                          "Valid",
+                          "nodeAssigned",
+                          "unchanged",
+                          "Value"
+                        ],
+                        "prefix": "All except:",
+                        "readOnly": true
+                      }
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.hideFrom",
+                        "value": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": true
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "gridPos": {
+                "h": 14,
+                "w": 6,
+                "x": 0,
+                "y": 29
+              },
+              "id": 26,
+              "interval": "1m",
+              "options": {
+                "legend": {
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "pieType": "pie",
+                "reduceOptions": {
+                  "calcs": [
+                    "sum"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "none"
+                }
+              },
+              "pluginVersion": "9.3.1",
+              "targets": [
+                {
+                  "datasource": {
+                    "type": "loki",
+                    "uid": "${datasource}"
+                  },
+                  "editorMode": "code",
+                  "expr": "sum by (reason) (count_over_time({container=\"event-exporter\"} | json | __error__=`` | metadata_namespace=~`$namespace` [$__interval]))",
+                  "instant": false,
+                  "legendFormat": "{{reason}}",
+                  "queryType": "range",
+                  "range": true,
+                  "refId": "A"
+                }
+              ],
+              "title": "Events by Reason",
+              "transformations": [],
+              "type": "piechart"
+            },
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "${datasource}"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    }
+                  },
+                  "mappings": []
+                },
+                "overrides": []
+              },
+              "gridPos": {
+                "h": 14,
+                "w": 6,
+                "x": 6,
+                "y": 29
+              },
+              "id": 28,
+              "interval": "1m",
+              "options": {
+                "displayLabels": [],
+                "legend": {
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "pieType": "pie",
+                "reduceOptions": {
+                  "calcs": [
+                    "sum"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "none"
+                }
+              },
+              "targets": [
+                {
+                  "datasource": {
+                    "type": "loki",
+                    "uid": "${datasource}"
+                  },
+                  "editorMode": "code",
+                  "expr": "sum by (metadata_namespace) (count_over_time({container=\"event-exporter\"} | json | __error__=`` | metadata_namespace=~`$namespace` [$__interval]))",
+                  "legendFormat": "{{metadata_namespace}}",
+                  "queryType": "range",
+                  "range": true,
+                  "refId": "A"
+                }
+              ],
+              "title": "Events by Namespace",
+              "type": "piechart"
+            },
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "${datasource}"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    }
+                  },
+                  "mappings": []
+                },
+                "overrides": []
+              },
+              "gridPos": {
+                "h": 14,
+                "w": 6,
+                "x": 12,
+                "y": 29
+              },
+              "id": 20,
+              "interval": "1m",
+              "options": {
+                "legend": {
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
+                "pieType": "pie",
+                "reduceOptions": {
+                  "calcs": [
+                    "sum"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "none"
+                }
+              },
+              "targets": [
+                {
+                  "datasource": {
+                    "type": "loki",
+                    "uid": "${datasource}"
+                  },
+                  "editorMode": "code",
+                  "expr": "sum by (source_component) (count_over_time({container=\"event-exporter\"} | json | __error__=`` | metadata_namespace=~`$namespace` [$__interval]))",
+                  "legendFormat": "{{source_component}}",
+                  "queryType": "range",
+                  "range": true,
+                  "refId": "A"
+                }
+              ],
+              "title": "Events by Source",
+              "type": "piechart"
+            },
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "${datasource}"
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    }
+                  },
+                  "links": [],
+                  "mappings": []
+                },
+                "overrides": []
+              },
+              "gridPos": {
+                "h": 14,
+                "w": 6,
+                "x": 18,
+                "y": 29
+              },
+              "id": 22,
+              "interval": "1m",
+              "options": {
+                "legend": {
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true,
+                  "values": []
+                },
+                "pieType": "pie",
+                "reduceOptions": {
+                  "calcs": [
+                    "sum"
+                  ],
+                  "fields": "",
+                  "values": false
+                },
+                "tooltip": {
+                  "mode": "multi",
+                  "sort": "none"
+                }
+              },
+              "targets": [
+                {
+                  "datasource": {
+                    "type": "loki",
+                    "uid": "${datasource}"
+                  },
+                  "editorMode": "code",
+                  "expr": "sum by (involvedObject_kind) (count_over_time({container=\"event-exporter\"} | json | __error__=`` | metadata_namespace=~`$namespace` [$__interval]))",
+                  "legendFormat": "{{involvedObject_kind}}",
+                  "queryType": "range",
+                  "range": true,
+                  "refId": "A"
+                }
+              ],
+              "title": "Events by Kind",
+              "type": "piechart"
+            }
+          ],
           "title": "Kubernetes Events - Distribution",
           "type": "row"
         },
         {
-          "datasource": {
-            "type": "loki",
-            "uid": "${datasource}"
-          },
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "mappings": []
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Field"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "thresholds"
-                    }
-                  },
-                  {
-                    "id": "displayName",
-                    "value": "Reason"
-                  },
-                  {
-                    "id": "color",
-                    "value": {
-                      "fixedColor": "#eab839",
-                      "mode": "fixed"
-                    }
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Total"
-                },
-                "properties": [
-                  {
-                    "id": "color",
-                    "value": {
-                      "mode": "continuous-BlYlRd"
-                    }
-                  }
-                ]
-              },
-              {
-                "__systemRef": "hideSeriesFrom",
-                "matcher": {
-                  "id": "byNames",
-                  "options": {
-                    "mode": "exclude",
-                    "names": [
-                      "Completed",
-                      "Created",
-                      "FreeDiskSpaceFailed",
-                      "InProgress",
-                      "JobAlreadyActive",
-                      "Killing",
-                      "Pulled",
-                      "Pulling",
-                      "SawCompletedJob",
-                      "Scheduled",
-                      "SnapshotDelete",
-                      "SnapshotError",
-                      "SnapshotUpdate",
-                      "Started",
-                      "SuccessfulCreate",
-                      "SuccessfulDelete",
-                      "Unhealthy",
-                      "Valid",
-                      "nodeAssigned",
-                      "unchanged",
-                      "Value"
-                    ],
-                    "prefix": "All except:",
-                    "readOnly": true
-                  }
-                },
-                "properties": [
-                  {
-                    "id": "custom.hideFrom",
-                    "value": {
-                      "legend": false,
-                      "tooltip": false,
-                      "viz": true
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 14,
-            "w": 6,
-            "x": 0,
-            "y": 29
-          },
-          "id": 26,
-          "interval": "1m",
-          "options": {
-            "legend": {
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "pieType": "pie",
-            "reduceOptions": {
-              "calcs": [
-                "sum"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "9.3.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "${datasource}"
-              },
-              "editorMode": "code",
-              "expr": "sum by (reason) (count_over_time({container=\"event-exporter\"} | json | __error__=`` | metadata_namespace=~`$namespace` [$__interval]))",
-              "instant": false,
-              "legendFormat": "{{reason}}",
-              "queryType": "range",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Events by Reason",
-          "transformations": [],
-          "type": "piechart"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${datasource}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "mappings": []
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 14,
-            "w": 6,
-            "x": 6,
-            "y": 29
-          },
-          "id": 28,
-          "interval": "1m",
-          "options": {
-            "displayLabels": [],
-            "legend": {
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "pieType": "pie",
-            "reduceOptions": {
-              "calcs": [
-                "sum"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "${datasource}"
-              },
-              "editorMode": "code",
-              "expr": "sum by (metadata_namespace) (count_over_time({container=\"event-exporter\"} | json | __error__=`` | metadata_namespace=~`$namespace` [$__interval]))",
-              "legendFormat": "{{metadata_namespace}}",
-              "queryType": "range",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Events by Namespace",
-          "type": "piechart"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${datasource}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "mappings": []
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 14,
-            "w": 6,
-            "x": 12,
-            "y": 29
-          },
-          "id": 20,
-          "interval": "1m",
-          "options": {
-            "legend": {
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "pieType": "pie",
-            "reduceOptions": {
-              "calcs": [
-                "sum"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "${datasource}"
-              },
-              "editorMode": "code",
-              "expr": "sum by (source_component) (count_over_time({container=\"event-exporter\"} | json | __error__=`` | metadata_namespace=~`$namespace` [$__interval]))",
-              "legendFormat": "{{source_component}}",
-              "queryType": "range",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Events by Source",
-          "type": "piechart"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${datasource}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                }
-              },
-              "links": [],
-              "mappings": []
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 14,
-            "w": 6,
-            "x": 18,
-            "y": 29
-          },
-          "id": 22,
-          "interval": "1m",
-          "options": {
-            "legend": {
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true,
-              "values": []
-            },
-            "pieType": "pie",
-            "reduceOptions": {
-              "calcs": [
-                "sum"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "loki",
-                "uid": "${datasource}"
-              },
-              "editorMode": "code",
-              "expr": "sum by (involvedObject_kind) (count_over_time({container=\"event-exporter\"} | json | __error__=`` | metadata_namespace=~`$namespace` [$__interval]))",
-              "legendFormat": "{{involvedObject_kind}}",
-              "queryType": "range",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Events by Kind",
-          "type": "piechart"
-        },
-        {
-          "collapsed": false,
+          "collapsed": true,
           "gridPos": {
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 43
+            "y": 29
           },
           "id": 38,
-          "panels": [],
-          "title": "Kubernetes Events - Raw Logs",
-          "type": "row"
-        },
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${datasource}"
-          },
-          "gridPos": {
-            "h": 13,
-            "w": 24,
-            "x": 0,
-            "y": 44
-          },
-          "id": 8,
-          "options": {
-            "dedupStrategy": "none",
-            "enableLogDetails": true,
-            "prettifyLogMessage": false,
-            "showCommonLabels": false,
-            "showLabels": false,
-            "showTime": true,
-            "sortOrder": "Descending",
-            "wrapLogMessage": false
-          },
-          "targets": [
+          "panels": [
             {
               "datasource": {
                 "type": "loki",
                 "uid": "${datasource}"
               },
-              "editorMode": "code",
-              "expr": "{container=\"event-exporter\"} |~ `(?i)$contains` | json | __error__=`` | metadata_namespace=~`$namespace`",
-              "queryType": "range",
-              "range": true,
-              "refId": "A"
+              "gridPos": {
+                "h": 13,
+                "w": 24,
+                "x": 0,
+                "y": 44
+              },
+              "id": 8,
+              "options": {
+                "dedupStrategy": "none",
+                "enableLogDetails": true,
+                "prettifyLogMessage": false,
+                "showCommonLabels": false,
+                "showLabels": false,
+                "showTime": true,
+                "sortOrder": "Descending",
+                "wrapLogMessage": false
+              },
+              "targets": [
+                {
+                  "datasource": {
+                    "type": "loki",
+                    "uid": "${datasource}"
+                  },
+                  "editorMode": "code",
+                  "expr": "{container=\"event-exporter\"} |~ `(?i)$contains` | json | __error__=`` | metadata_namespace=~`$namespace`",
+                  "queryType": "range",
+                  "range": true,
+                  "refId": "A"
+                }
+              ],
+              "type": "logs"
             }
           ],
-          "type": "logs"
+          "title": "Kubernetes Events - Raw Logs",
+          "type": "row"
         }
       ],
       "refresh": "1m",
-      "schemaVersion": 38,
+      "schemaVersion": 37,
       "style": "dark",
       "tags": [
         "loki"
@@ -1506,7 +1545,7 @@ data:
             "current": {
               "selected": false,
               "text": "Loki",
-              "value": "P8E80F9AEF21F6940"
+              "value": "Loki"
             },
             "hide": 0,
             "includeAll": false,
@@ -1522,15 +1561,7 @@ data:
           },
           {
             "allValue": ".*",
-            "current": {
-              "selected": false,
-              "text": [
-                "All"
-              ],
-              "value": [
-                "$__all"
-              ]
-            },
+            "current": {},
             "datasource": {
               "type": "loki",
               "uid": "${datasource}"
@@ -1555,7 +1586,7 @@ data:
           },
           {
             "current": {
-              "selected": true,
+              "selected": false,
               "text": "",
               "value": ""
             },
@@ -1577,7 +1608,7 @@ data:
         ]
       },
       "time": {
-        "from": "now-30m",
+        "from": "now-1h",
         "to": "now"
       },
       "timepicker": {
@@ -1596,6 +1627,6 @@ data:
       "timezone": "",
       "title": "Kubernetes Event Exporter",
       "uid": "kubernetes-event-exporter",
-      "version": 1,
+      "version": 3,
       "weekStart": ""
     }
