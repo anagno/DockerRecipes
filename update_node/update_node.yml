@@ -28,15 +28,25 @@
       set_fact:
         cluster_token: '{{ cluster_token.stdout }}'
 
-
-# https://github.com/longhorn/longhorn/issues/613
-
+  # https://github.com/longhorn/longhorn/issues/7927
 - name: Update node
   hosts: all
   any_errors_fatal: true
   ignore_unreachable: true
   serial: 1
   tasks:
+
+    - name: Pause the rebuilding of the longhorn storage
+      delegate_to: localhost
+      kubernetes.core.helm:
+        name: longhorn
+        chart_ref: longhorn/longhorn
+        release_namespace: longhorn-system
+        values:
+          defaultSettings:
+            concurrentReplicaRebuildPerNodeLimit: 0
+      when: inventory_hostname in groups['disks']
+
     - name: Drain node from cluster
       kubernetes.core.k8s_drain:
         kubeconfig: /etc/rancher/k3s/k3s.yaml
@@ -118,6 +128,17 @@
         name: '{{ inventory_hostname }}'
       delegate_to: "{{ groups['masters'][0] }}"
       become: yes
+
+    - name: Continue the rebuilding of the longhorn storage
+      delegate_to: localhost
+      kubernetes.core.helm:
+        name: longhorn
+        chart_ref: longhorn/longhorn
+        release_namespace: longhorn-system
+        values:
+          defaultSettings:
+            concurrentReplicaRebuildPerNodeLimit: 1
+      when: inventory_hostname in groups['disks']
 
     - name: Sleep for 600 to wait for longhorn to re-balance
       ansible.builtin.wait_for:
