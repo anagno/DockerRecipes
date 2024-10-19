@@ -20,7 +20,7 @@ kubectl create secret generic authentik-secret --namespace monitoring \
   --from-literal=client_secret=SECRET_FROM_AUTHENTIK
 
 helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
-    --version v59.0.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+    --version v65.3.1 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress-public.yaml
 kubectl apply -f vpa.yaml
 
@@ -57,7 +57,6 @@ kubectl apply -f proxy/traefik-dashboard-loki.yaml
 * General dashboards:
 
 ```bash
-kubectl apply -f dashboards/alerts-prometheus-dashboard.yaml
 kubectl apply -f dashboards/alerts-summary-dashboard.yaml
 kubectl apply -f dashboards/alerts-dashboard.yaml
 kubectl apply -f dashboards/cluster-details-dashboard.yaml
@@ -99,7 +98,7 @@ kubectl apply -f dashboards/authentik-dashboard.yaml
 
 ```bash
 helm repo add kuberhealthy https://kuberhealthy.github.io/kuberhealthy/helm-repos
-helm install -n monitoring kuberhealthy kuberhealthy/kuberhealthy -f kuberhealthy-values.yaml --version 92
+helm install -n monitoring kuberhealthy kuberhealthy/kuberhealthy -f kuberhealthy-values.yaml --version 105
 ```
 
 ## Usefull commands:
@@ -107,6 +106,11 @@ helm install -n monitoring kuberhealthy kuberhealthy/kuberhealthy -f kuberhealth
 ```
 kubectl -n monitoring port-forward service/monitoring-kube-prometheus-prometheus 9090:9090
 ```
+
+TODO add as dashboard 
+https://grafana.com/grafana/dashboards/15760-kubernetes-views-pods/
+https://grafana.com/grafana/dashboards/21410-kubernetes-overview/
+
 
 ## Resources
 
