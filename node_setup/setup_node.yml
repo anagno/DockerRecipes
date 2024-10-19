@@ -1,0 +1,12 @@
+---
+- name: First setup of the nodes
+  hosts: all #amphitrite 
+  become: yes
+  tasks:
+    - name: Change the hostname
+      ansible.builtin.hostname:
+        name: '{{ inventory_hostname }}'
+
+    - import_tasks: cgroup.yml
+    - import_tasks: fan.yml
+    - import_tasks: dist-upgrade.yaml

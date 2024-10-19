@@ -1,0 +1,77 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: samba-server
+  namespace: library
+  labels:
+    app: samba-server
+spec:
+  selector:
+    matchLabels:
+      app: samba-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: samba-server
+    spec:
+      dnsPolicy: ClusterFirst
+      containers:
+      - name: samba-server
+        image: dperson/samba:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: USERID
+            value: "1000"
+          - name: GROUPID
+            value: "1000"
+        args:
+          # disable recycle bin
+          - -r
+          - -s
+          - "books;/books;yes;yes;no;all;none;anagno"
+          - -u
+          - "anagno;anagno"
+        ports:
+          - name: netbios
+            containerPort: 139
+          - name: smb
+            containerPort: 445
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            #cpu: 500m
+            memory: 512Mi
+        volumeMounts:
+          - mountPath: /books
+            name: books
+      volumes:
+        - name: books
+          persistentVolumeClaim:
+            claimName: books
+            readOnly: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: samba-server-service
+  namespace: library
+  labels:
+    app: samba-server-service
+spec:
+  ports:
+  - name: netbios
+    port: 139
+    protocol: TCP
+    targetPort: 139
+  - name: smb
+    port: 445
+    protocol: TCP
+    targetPort: 445
+  selector:
+    app: samba-server
+  type: LoadBalancer
+  loadBalancerIP: 192.168.179.236
