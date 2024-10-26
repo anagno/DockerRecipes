@@ -41,4 +41,4 @@ spec:
     customFrameOptionsValue: "SAMEORIGIN"
     referrerPolicy: "same-origin"
     featurePolicy: "vibrate 'self'"
-    stsSeconds: 315360000
+    stsSeconds: 15552000
