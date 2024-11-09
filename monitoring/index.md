@@ -20,10 +20,12 @@ kubectl create secret generic authentik-secret --namespace monitoring \
   --from-literal=client_secret=SECRET_FROM_AUTHENTIK
 
 helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
-    --version v65.5.1 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+    --version v66.0.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress-public.yaml
 kubectl apply -f vpa.yaml
 
+
+# https://github.com/grafana/helm-charts/issues/3300
 helm install --namespace monitoring loki grafana/loki-stack -f loki-values.yaml --version 2.10.2
 
 helm install --namespace monitoring event-explorter bitnami/kubernetes-event-exporter -f event-exporter-values.yaml --version 2.9.3
