@@ -9,6 +9,8 @@ persistence:
   reclaimPolicy: Delete
 
 defaultSettings:
+  backupTarget: cifs://192.168.179.2/backup
+  backupTargetCredentialSecret: longhorn-backup
   defaultDataPath: /media/storage/
   createDefaultDiskLabeledNodes: false
   storageOverProvisioningPercentage: 100

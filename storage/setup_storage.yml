@@ -14,6 +14,9 @@
           # For enabling encryption in the disks
           # https://longhorn.io/docs/1.2.2/advanced-resources/volume-encryption/#requirements
           - cryptsetup
+          # necessary for the backup functionality
+          # https://github.com/longhorn/longhorn/blob/master/enhancements/20230116-smb-cifs-backup-store-support.md
+          - cifs-utils
         state: present
       become: true
     # TODO no longer works? Have to examine it again

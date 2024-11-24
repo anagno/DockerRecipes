@@ -98,6 +98,10 @@ kubectl create secret generic longhorn-crypto --namespace longhorn-system \
 
 kubectl apply -f RepliccatedStorage.yaml
 kubectl apply -f UnrepliccatedStorage.yaml
+
+kubectl create secret generic longhorn-backup --namespace longhorn-system \
+  --from-literal=CIFS_USERNAME=longhorn \
+  --from-literal=CIFS_PASSWORD=MY_SECRET_PASSWORD
 ```
 
 We have to add the disks from the UI of longhorn
