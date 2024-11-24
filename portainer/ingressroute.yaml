@@ -1,0 +1,60 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pantheon.anagno.dev
+  namespace: pantheon
+spec:
+  commonName: pantheon.anagno.dev
+  secretName: pantheon.anagno.dev
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - pantheon.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pantheon.anagno.dev
+  namespace: pantheon
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: pantheon.anagno.dev
+    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    kubernetes.io/ingress.class: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`pantheon.anagno.dev`)
+      kind: Rule
+      services:
+        - name: portainer
+          port: 9000
+      middlewares:
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: pantheon.anagno.dev
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pantheon.anagno.dev-http
+  namespace: pantheon
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`pantheon.anagno.dev`)
+      kind: Rule
+      services:
+        - name: portainer
+          port: 9000
+      middlewares:
+      - name: https-redirect
+        namespace: proxy

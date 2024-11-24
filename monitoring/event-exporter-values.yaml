@@ -1,0 +1,30 @@
+# https://github.com/bitnami/charts/blob/main/bitnami/kubernetes-event-exporter/values.yaml
+
+config:
+  logLevel: debug
+  logFormat: pretty
+  receivers:
+    - name: "loki"
+      loki:
+        streamLabels:
+          app: event-exporter
+        url: http://loki:3100/loki/api/v1/push
+    - name: "dump"
+      stdout: { }
+  route:
+   routes:
+     - match:
+         - receiver: "loki"
+         # needed for the dashboards
+         - receiver: "dump"
+
+updateStrategy:
+  type: Recreate
+
+metrics:
+  enabled: false
+
+autoscaling:
+  vpa:
+    enabled: false
+
