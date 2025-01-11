@@ -215,7 +215,7 @@ curl https://kube-vip.io/manifests/rbac.yaml > kube-vip-manifest.yaml
 # We have to specify the cidr because of the 
 # https://github.com/kube-vip/kube-vip/issues/912 bug
 sudo docker run --network host \
---rm plndr/kube-vip:v0.8.7 manifest daemonset \
+--rm plndr/kube-vip:v0.8.8 manifest daemonset \
 --interface eth0 \
 --address zeus.intra \
 --ddns \
