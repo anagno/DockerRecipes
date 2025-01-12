@@ -30,7 +30,7 @@ loki:
   persistence:
     enabled: true
     storageClassName: replicated
-    accessModes: ["ReadWriteOnce"]
+    accessModes: ["ReadWriteMany"]
     size: 30Gi
 
 
