@@ -20,7 +20,7 @@ kubectl create secret generic authentik-secret --namespace monitoring \
   --from-literal=client_secret=SECRET_FROM_AUTHENTIK
 
 helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
-    --version v68.2.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+    --version v68.3.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress-public.yaml
 kubectl apply -f vpa.yaml
 
