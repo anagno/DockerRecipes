@@ -9,7 +9,7 @@ kubectl apply -f storage.yaml
 
 helm repo add portainer https://portainer.github.io/k8s/
 helm repo update
-helm install portainer portainer/portainer  -f values.yaml --namespace pantheon --version 1.0.64
+helm install portainer portainer/portainer  -f values.yaml --namespace pantheon --version 1.0.65
 
 kubectl apply -f ingressroute.yaml
 kubectl apply -f vpa.yaml
