@@ -19,7 +19,7 @@ Similarly, to deploy Traefik we have to execute:
 kubectl create namespace proxy
 helm repo add traefik https://helm.traefik.io/traefik
 helm repo update
-helm install -n proxy traefik traefik/traefik -f traefik-values.yaml --version 35.1.0
+helm install -n proxy traefik traefik/traefik -f traefik-values.yaml --version 35.2.0
 ```
 
 !!! note
@@ -90,15 +90,20 @@ kubectl apply -f letenrcypt.yaml
 
 Cert manager has out of the box support for the basic `HHTP01` challenge. This does not allow to 
 create certificates with wildcards. For that we have to use the `DNS01` challenge. But we need an 
-[extra plugin](https://github.com/bwolf/cert-manager-webhook-gandi) for that purpose. 
+[extra plugin](https://github.com/molnett/cert-manager-webhook-gandi) for that purpose. 
 
 ```bash
 # THESE INSTRUCTIONS DO NOT WORK. THEY ARE NOT READY
-helm repo add bwolf https://bwolf.github.io/cert-manager-webhook-gandi
-helm install webhook-gandi bwolf/cert-manager-webhook-gandi --namespace cert-manager --version v0.2.0 --set features.apiPriorityAndFairness=true --set logLevel=2
+helm repo add cert-manager-webhook-gandi https://molnett.github.io/cert-manager-webhook-gandi/
+helm repo update
+helm upgrade webhook-gandi cert-manager-webhook-gandi/cert-manager-webhook-gandi --namespace cert-manager --version v0.2.4 -f cert-gandi-values.yaml
+ 
+kubectl create secret generic gandi-credentials --namespace cert-manager 
+kubectl -n general annotate secret gandi replicator.v1.mittwald.de/replication-allowed="true"
+kubectl -n general annotate secret gandi replicator.v1.mittwald.de/replication-allowed-namespaces="cert-manager"
+kubectl -n cert-manager annotate secret gandi-credentials replicator.v1.mittwald.de/replicate-from="general/gandi"
 
-kubectl -n general annotate secret gandi kubed.appscode.com/sync="app=gandi-key" --overwrite
-kubectl label namespace cert-manager app=gandi-key
+kubectl apply -f gandi_stagging.yaml
 ```
 
 ## Testing that everything works
