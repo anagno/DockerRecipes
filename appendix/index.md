@@ -62,6 +62,33 @@ mkdocs build
 sudo k3s crictl ps
 ```
 
+### Removing a master node
+
+If a master node fails, we will have also to update the etcd nodes, to remove it
+from the etcd cluster
+
+``` bash
+kubectl delete node <name>
+
+kubectl -n kube-system exec -it etcd-melpomene -- etcdctl --endpoints https://127.0.0.1:2379 \
+    --cacert /etc/kubernetes/pki/etcd/ca.crt \
+    --cert /etc/kubernetes/pki/etcd/server.crt \
+    --key /etc/kubernetes/pki/etcd/server.key member list
+
+kubectl -n kube-system exec -it etcd-melpomene -- etcdctl --endpoints https://127.0.0.1:2379 \
+    --cacert /etc/kubernetes/pki/etcd/ca.crt \
+    --cert /etc/kubernetes/pki/etcd/server.crt \
+    --key /etc/kubernetes/pki/etcd/server.key member remove <node_id>
+
+# Remove from kubeadm-config
+
+kubectl -n kube-system get cm kubeadm-config -o yaml > /tmp/conf.yml
+manually edit /tmp/conf.yml to remove the old server
+kubectl -n kube-system apply -f /tmp/conf.yml
+
+# https://github.com/k3s-io/k3s/issues/2732#issuecomment-749484037
+```
+
 ## Removing failed nodes from the etcd cluster
 
 If a node fails it is not as simple to remove it and re-add it. Sometimes the failed node 
@@ -81,7 +108,7 @@ kubectl taint nodes other_master_node node-role.kubernetes.io/master=true:NoSche
 Then we can create a pod to manipulate the etcd cluster
 
 ```bash
-# https://github.com/k3s-io/k3s/issues/2732#issuecomment-749484037
+
 kubectl run --rm --tty --stdin --image quay.io/coreos/etcd:v3.5.4 etcdctl --overrides='{"apiVersion":"v1","kind":"Pod","spec":{"hostNetwork":true,"restartPolicy":"Never","securityContext":{"runAsUser":0,"runAsGroup":0},"containers":[{"command":["/bin/sh"],"image":"docker.io/rancher/coreos-etcd:v3.5.4-arm64","name":"etcdctl","stdin":true,"stdinOnce":true,"tty":true,"volumeMounts":[{"mountPath":"/var/lib/rancher","name":"var-lib-rancher"}]}],"volumes":[{"name":"var-lib-rancher","hostPath":{"path":"/var/lib/rancher","type":"Directory"}}],"nodeSelector":{"node-role.kubernetes.io/etcd":"true"}}}'
 
 etcdctl --key /var/lib/rancher/k3s/server/tls/etcd/client.key --cert /var/lib/rancher/k3s/server/tls/etcd/client.crt --cacert /var/lib/rancher/k3s/server/tls/etcd/server-ca.crt member list
@@ -118,7 +145,7 @@ Resources:
 
 If you have already an installed ubuntu on the Raspberry Pi you can execute:
 
-```
+```bash
 sudo apt-get install rpi-eeprom
 
 sudo rpi-eeprom-update
@@ -139,7 +166,7 @@ sudo reboot
 
 or via ansible:
 
-```
+```bash
 ansible all -b -m package -a "name=rpi-eeprom"
 ansible all -b -m shell -a "rpi-eeprom-update"
 ansible all -b -m shell -a "rpi-eeprom-update -a"
@@ -154,7 +181,7 @@ write first an sd card that will [update the firmware](https://rpi4cluster.com/k
 Some times the USB devices are not [re-attache](https://github.com/raspberrypi/rpi-eeprom/issues/361)
 after a reboot. 
 
-```
+```bash
 sudo apt-get install rpi-eeprom
 
 sudo rpi-eeprom-update
@@ -230,6 +257,12 @@ sudo docker run --network host \
 To update it in the nodes `ansible masters -b -m copy -a "src=cluster_setup/kube-vip-manifest.yaml dest=/var/lib/rancher/k3s/server/manifests/vip.yaml"`
 To retrieve the logs `kubectl -n kube-system logs -f -l "app.kubernetes.io/name=kube-vip-ds"`
 
+## Restarting the k3s service in the nodes 
+
+```bash
+ansible erato -b -m ansible.builtin.service -a 'name=k3s state=restarted'
+```
+
 ## Pulling images to nodes using k3s ctr
 
 To pull an image that is too big before hand just execute `ansible workers -b -m ansible.builtin.shell -a 'k3s ctr image pull registry.hub.docker.com/library/nextcloud:28.0.1-apache'`
@@ -248,14 +281,14 @@ We can use the:
 
 * [kube-bench](https://github.com/aquasecurity/kube-bench)
 
-    ```sh
-    curl https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job.yaml > kube-bench-job.yaml
-    kubectl apply -f kube-bench-job.yaml
-    kubectl logs kube-bench-kp8sv
-    kubectl delete pod kube-bench-kp8sv
-    kubectl delete -f kube-bench-job.yaml
-    rm kube-bench-job.yaml
-    ```
+```bash
+curl https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job.yaml > kube-bench-job.yaml
+kubectl apply -f kube-bench-job.yaml
+kubectl logs kube-bench-kp8sv
+kubectl delete pod kube-bench-kp8sv
+kubectl delete -f kube-bench-job.yaml
+rm kube-bench-job.yaml
+```
 
 ## Resources:
 
@@ -263,15 +296,6 @@ We can use the:
 * https://github.com/212850a/k3s-ansible/commit/930f32432d72fd911822e6a29f253ff545a2a2ee
 * https://github.com/k3s-io/k3s/issues/2732#issuecomment-749484037
 * https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/
-
-
-
-## Go over them
-
-https://hub.docker.com/r/osminogin/tor-simple
-https://tufin.medium.com/how-to-use-a-proxy-with-go-http-client-cfc485e9f342
-
-https://ikarus.sg/using-zram-to-get-more-out-of-your-raspberry-pi/
 
 ## Troubleshooting
 
@@ -292,7 +316,7 @@ kubeadm upgrade diff --config kubeadm-config.yaml
 
 and to apply them just execute: 
 
-```
+```bash
 kubeadm upgrade apply --config kubeadm-config.yaml
 ```
 
@@ -315,71 +339,6 @@ Resources:
 * https://www.raspberrypi.org/forums/viewtopic.php?f=63&t=244194
 * https://gist.github.com/alwynallan/1c13096c4cd675f38405702e89e0c536
 
-
-In the case a master node fails we will have to remove him from the etcd cluster
-
-Resources:
- * https://github.com/kubernetes/kubeadm/issues/1300#issuecomment-464955084
-
-```
-kubectl delete node <name>
-
-kubectl -n kube-system exec -it etcd-melpomene -- etcdctl --endpoints https://127.0.0.1:2379 --cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/server.crt --key /etc/kubernetes/pki/etcd/server.key member list
-
-kubectl -n kube-system exec -it etcd-melpomene -- etcdctl --endpoints https://127.0.0.1:2379 --cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/server.crt --key /etc/kubernetes/pki/etcd/server.key member remove 4985985992cc00d
-
-# Remove from kubeadm-config
-
-kubectl -n kube-system get cm kubeadm-config -o yaml > /tmp/conf.yml
-manually edit /tmp/conf.yml to remove the old server
-kubectl -n kube-system apply -f /tmp/conf.yml
-
-```
-
-```
-sudo apt-get install -y --allow-change-held-packages kubeadm=1.21.x-00 kubelet=1.21.x-00 kubectl=1.21.x-00
-
-sudo apt-get install -y --allow-change-held-packages kubeadm=1.21.2-00 kubelet=1.21.2-00 kubectl=1.21.2-00
-sudo kubeadm upgrade apply v1.21.2
-sudo apt-mark hold kubelet kubeadm kubectl
-```
-
-Take a look at:
-
-* https://github.com/nextcloud/helm
-* https://geek-cookbook.funkypenguin.co.nz/recipes/jellyfin/
-* https://jellyfin.org/docs/general/server/users/index.html
-* https://github.com/home-cluster/jellyfin-openshift/blob/master/deploy/deployment.yaml
-* https://github.com/home-cluster/jellyfin-openshift/blob/master/deploy/deployment.yaml
-* https://github.com/cdwv/bitwarden-k8s/blob/master/chart/bitwarden-k8s/templates/deployment.yaml
-* https://github.com/guerzon/bitwarden-kubernetes
-* https://greg.jeanmart.me/2020/04/13/self-host-your-password-manager-with-bitward/
-
-### Removing a master node
-
-If a master node fails, we will have also to update the etcd nodes, to remove it
-from the etcd cluster
-
-``` bash
-kubectl delete node <name>
-
-kubectl -n kube-system exec -it etcd-melpomene -- etcdctl --endpoints https://127.0.0.1:2379 \
-    --cacert /etc/kubernetes/pki/etcd/ca.crt \
-    --cert /etc/kubernetes/pki/etcd/server.crt \
-    --key /etc/kubernetes/pki/etcd/server.key member list
-
-kubectl -n kube-system exec -it etcd-melpomene -- etcdctl --endpoints https://127.0.0.1:2379 \
-    --cacert /etc/kubernetes/pki/etcd/ca.crt \
-    --cert /etc/kubernetes/pki/etcd/server.crt \
-    --key /etc/kubernetes/pki/etcd/server.key member remove <node_id>
-
-# Remove from kubeadm-config
-
-kubectl -n kube-system get cm kubeadm-config -o yaml > /tmp/conf.yml
-manually edit /tmp/conf.yml to remove the old server
-kubectl -n kube-system apply -f /tmp/conf.yml
-```
-
 ### General problems with limits
 
 I think these issues:
@@ -398,36 +357,19 @@ only some throttling if the cpu is overused in the node.
 * https://github.com/kubernetes/kubeadm/issues/1464
 
 
-    #- name: Check packages
-    #  package_facts:
-    #    manager: auto
-
-    #- name: Install open-iscsi
-    #  package:
-    #    name: open-iscsi
-    #  when: not "'open-iscsi' in ansible_facts.packages"
 
 
-    #- name: check services
-    #  service_facts:
 
-    #- name: print
-    #  debug:
-    #    msg: "iscsid is {{ ansible_facts.services['iscsid.service']['status'] }}"
-    #  when: "'iscsid.service' in ansible_facts.services"
+## Go over them
 
-
-ansible masters -m ansible.builtin.shell -a 'cat /boot/firmware/cmdline.txt'
-ansible masters -b -m ansible.builtin.shell -a 'cat /var/lib/rancher/k3s/server/manifests/coredns-local.yaml'
-ansible masters -b -m copy -a "src=cluster_setup/coredns.yaml dest=/var/lib/rancher/k3s/server/manifests/coredns-local.yaml" 
-
-
-ansible masters -b -m ansible.builtin.shell -a 'rm /var/lib/rancher/k3s/server/manifests/coredns.yaml'
-ansible erato -b -m ansible.builtin.shell -a 'ls -al /var/lib/rancher/k3s/server/manifests/'
-
-ansible erato -b -m ansible.builtin.service -a 'name=k3s state=restarted'
-
-
-ansible erato -b -m ansible.builtin.shell -a 'k3s etcd -h'
-
-kubectl run -ti --rm busybox-libc --image=busybox:1.35.0-glibc --restart=Never -- /bin/sh
+* https://hub.docker.com/r/osminogin/tor-simple
+* https://tufin.medium.com/how-to-use-a-proxy-with-go-http-client-cfc485e9f342
+* https://ikarus.sg/using-zram-to-get-more-out-of-your-raspberry-pi/
+* https://github.com/nextcloud/helm
+* https://geek-cookbook.funkypenguin.co.nz/recipes/jellyfin/
+* https://jellyfin.org/docs/general/server/users/index.html
+* https://github.com/home-cluster/jellyfin-openshift/blob/master/deploy/deployment.yaml
+* https://github.com/home-cluster/jellyfin-openshift/blob/master/deploy/deployment.yaml
+* https://github.com/cdwv/bitwarden-k8s/blob/master/chart/bitwarden-k8s/templates/deployment.yaml
+* https://github.com/guerzon/bitwarden-kubernetes
+* https://greg.jeanmart.me/2020/04/13/self-host-your-password-manager-with-bitward/
