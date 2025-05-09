@@ -7,8 +7,6 @@ usefull to be able to share secrets accross namespaces. For that purpose
 we use the [kubernetes-replicator](https://github.com/mittwald/kubernetes-replicator)
 
 
-https://cert-manager.io/docs/devops-tips/syncing-secrets-across-namespaces/
-
 ``` bash
 helm repo add mittwald https://helm.mittwald.de
 helm repo update
