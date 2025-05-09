@@ -7,7 +7,7 @@
   copy:
     src: fans/pi_fan_hwpwm
     dest: /usr/local/sbin/pi_fan_hwpwm
-    force: False
+    force: yes
     mode: '777'
   register: pwn_fan_binary
 
