@@ -97,11 +97,6 @@ kubectl apply -f dashboards/externa-dns-dashboard.yml
 kubectl apply -f dashboards/authentik-dashboard.yaml
 ```
 
-```bash
-helm repo add kuberhealthy https://kuberhealthy.github.io/kuberhealthy/helm-repos
-helm install -n monitoring kuberhealthy kuberhealthy/kuberhealthy -f kuberhealthy-values.yaml --version 105
-```
-
 ## Usefull commands:
 
 ```
