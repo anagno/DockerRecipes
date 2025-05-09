@@ -68,6 +68,7 @@ kubectl apply -f dashboards/volumes-dashboard.yaml
 kubectl apply -f dashboards/node-exporter.yaml
 kubectl apply -f dashboards/node-overview.yaml
 kubectl apply -f dashboards/vpa-dashboard.yaml
+kubectl apply -f dashboards/hpa-dashboard.yaml
 kubectl apply -f dashboards/event-exporter.yaml
 kubectl apply -f dashboards/loki-search.yaml
 ```
