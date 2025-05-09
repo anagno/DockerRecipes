@@ -86,26 +86,6 @@ kubectl apply -f letenrcypt.yaml
     We are using `traefik-cert-manager` as name for the traefik ingress.
     That we will have to specify it when we deploy the traefik
 
-### Let`s encrypt with wildcards
-
-Cert manager has out of the box support for the basic `HHTP01` challenge. This does not allow to 
-create certificates with wildcards. For that we have to use the `DNS01` challenge. But we need an 
-[extra plugin](https://github.com/molnett/cert-manager-webhook-gandi) for that purpose. 
-
-```bash
-# THESE INSTRUCTIONS DO NOT WORK. THEY ARE NOT READY
-helm repo add cert-manager-webhook-gandi https://molnett.github.io/cert-manager-webhook-gandi/
-helm repo update
-helm upgrade webhook-gandi cert-manager-webhook-gandi/cert-manager-webhook-gandi --namespace cert-manager --version v0.2.4 -f cert-gandi-values.yaml
- 
-kubectl create secret generic gandi-credentials --namespace cert-manager 
-kubectl -n general annotate secret gandi replicator.v1.mittwald.de/replication-allowed="true"
-kubectl -n general annotate secret gandi replicator.v1.mittwald.de/replication-allowed-namespaces="cert-manager"
-kubectl -n cert-manager annotate secret gandi-credentials replicator.v1.mittwald.de/replicate-from="general/gandi"
-
-kubectl apply -f gandi_stagging.yaml
-```
-
 ## Testing that everything works
 
 To test that everything works, we can deploy a testing whoami service:
