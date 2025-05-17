@@ -22,29 +22,12 @@ kubectl apply -f storage.yaml
 
 helm repo add gitea-charts https://dl.gitea.com/charts/
 helm repo update
-helm install vcs gitea-charts/gitea -f values.yaml --namespace vcs --version 11.0.1
+helm install vcs gitea-charts/gitea -f values.yaml --namespace vcs --version 12.0.0
 
 kubectl apply -f ingressroute.yaml
-
-
 ```
 
 
-To add also the a runner 
-
-
-``` bash
-kubectl -n vcs exec -it vcs-gitea-5f4bb6b899-fnw7v -- /bin/bash
-vcs-gitea-5f4bb6b899-fnw7v:/var/lib/gitea$ gitea actions generate-runner-token
-```
-
-
-Use the generate token in the creation of the next secret
-
-```bash
-kubectl create secret generic gitea-runner --namespace vcs \
-  --from-literal=token=THE_TOKEN_FROM_ABOVE
-```
 
 
 ## Resources: 

@@ -72,7 +72,7 @@ gitea:
           name: gitea-database
           key: password
 
-redis-cluster:
+valkey-cluster:
   enabled: false
   usePassword: false
 
@@ -91,15 +91,3 @@ postgresql:
     persistence:
       enabled: true
       existingClaim: gitea-database
-
-
-# Before activating generate the secret for the runner
-# Follow https://gitea.com/gitea/helm-chart/src/branch/main/readme-actions-dev.md
-actions:
-  enabled: true
-
-  provisioning:
-    enabled: false
-
-  existingSecret: "gitea-runner"
-  existingSecretKey: "token"
