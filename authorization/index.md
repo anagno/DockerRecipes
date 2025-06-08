@@ -27,7 +27,7 @@ kubectl apply -f authentik-ingressroute.yaml
 
 helm repo add authentik https://charts.goauthentik.io
 helm repo update
-helm install --namespace authorization authentik authentik/authentik -f values.yaml --version 2025.4.1
+helm install --namespace authorization authentik authentik/authentik -f values.yaml --version 2025.6.1
 ```
 
 !!!Note
@@ -77,6 +77,7 @@ ak export_blueprint
 
 ## Resources:
 
+* https://docs.goauthentik.io/docs/troubleshooting/postgres/upgrade_kubernetes
 * https://goauthentik.io/docs/installation/kubernetes
 * https://goauthentik.io/docs/providers/proxy/
 * https://goauthentik.io/docs/policies/expression?utm_source=authentik
