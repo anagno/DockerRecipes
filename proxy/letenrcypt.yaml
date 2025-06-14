@@ -6,6 +6,7 @@ metadata:
 spec:
   acme:
     email: anagnwstopoulos@hotmail.com
+    profile: tlsserver
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-account-key

@@ -6,6 +6,7 @@ metadata:
 spec:
   acme:
     email: anagnwstopoulos@hotmail.com
+    profile: tlsserver
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-stagging-account-key
