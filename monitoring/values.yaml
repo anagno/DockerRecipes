@@ -95,9 +95,6 @@ grafana:
   assertNoLeakedSecrets: false
 
   grafana.ini:
-    security:
-      # Eventually this thing has to be removed
-      angular_support_enabled: true
     analytics:
       check_for_updates: true
     log:
