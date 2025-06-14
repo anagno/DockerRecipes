@@ -57,5 +57,5 @@ spec:
       - containerName: '*'
         maxAllowed:
           cpu: 1
-          memory: 512Mi
+          memory: 1024Mi
 ---
