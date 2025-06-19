@@ -1,8 +1,8 @@
 # https://github.com/kubernetes-sigs/external-dns/blob/master/charts/external-dns/values.yaml
 
 
-image:
-  tag: "v0.14.0"
+#image:
+#  tag: "v0.14.0"
 
 serviceMonitor:
   enabled: true
@@ -25,7 +25,8 @@ domainFilters:
   - anagno.dev
 
 # https://kubernetes-sigs.github.io/external-dns/v0.14.0/tutorials/gandi/
-provider: gandi
+provider: 
+  name: gandi
 
 env:
   - name: GANDI_KEY
