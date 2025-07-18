@@ -100,20 +100,20 @@ hpa:
   maxPods: 2
 
 livenessProbe:
-  #enabled: false
-  enabled: true
+  enabled: false
+  #enabled: true
   initialDelaySeconds: 60
   periodSeconds: 60
   timeoutSeconds: 15
 readinessProbe:
-  #enabled: false
-  enabled: true
+  enabled: false
+  #enabled: true
   initialDelaySeconds: 60
   periodSeconds: 60
   timeoutSeconds: 15
 startupProbe:
-  #enabled: false
-  enabled: true
+  enabled: false
+  #enabled: true
 
 nginx:
   enabled: false
@@ -141,6 +141,7 @@ postgresql:
   # pg_dump -U $POSTGRES_USER $POSTGRES_DATABASE > dump-11.sql
   # export PGPASSWORD=$POSTGRES_PASSWORD
   # psql -U $POSTGRES_USER $POSTGRES_DATABASE < dump-15.sql
+  # Alternative use the initContainer
   global:
     postgresql:
       auth:
@@ -151,6 +152,24 @@ postgresql:
     persistence:
       enabled: true
       existingClaim: "nextcloud-database"
+    #initContainers:
+    #  - name: upgrade
+    #    image: "pgautoupgrade/pgautoupgrade:17-alpine"
+    #    volumeMounts:
+    #      - mountPath: "/bitnami/postgresql"
+    #        name: "data" 
+    #    env:
+    #      - name: POSTGRES_PASSWORD
+    #        valueFrom:
+    #          secretKeyRef:
+    #            name: nextcloud-postgresql-database
+    #            key: password
+    #      - name: "PGAUTO_ONESHOT"
+    #        value: "yes"
+    #      - name: POSTGRES_DB
+    #        value: nextcloud
+    #      - name: PGDATA
+    #        value: /bitnami/postgresql/data
     #livenessProbe:
     #  enabled: false
     #  initialDelaySeconds: 500
