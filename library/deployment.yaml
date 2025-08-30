@@ -21,7 +21,7 @@ spec:
       dnsPolicy: Default
       containers:
       - name: calibre-server
-        image: linuxserver/calibre-web:0.6.24
+        image: linuxserver/calibre-web:0.6.25
         imagePullPolicy: IfNotPresent
         env:
         - name: PUID
