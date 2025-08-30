@@ -97,6 +97,15 @@ worker:
   startupProbe:
     timeoutSeconds: 10
 
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 3s
+    rules:
+      enabled: true
+
 postgresql:
   enabled: true
   username: "authentik"
