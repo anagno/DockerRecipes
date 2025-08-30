@@ -20,7 +20,7 @@ spec:
       dnsPolicy: Default
       containers:
       - name: freshrss-server
-        image: freshrss/freshrss:1.26.3
+        image: freshrss/freshrss:1.27.0
         imagePullPolicy: IfNotPresent
         env:
         - name: TRUSTED_PROXY
