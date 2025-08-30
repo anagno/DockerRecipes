@@ -1,0 +1,13 @@
+# https://github.com/portainer/k8s/blob/gh-pages/charts/portainer/values.yaml
+
+image:
+  repository: portainer/portainer-ce
+  #tag: 2.20.3
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+
+persistence:
+  enabled: true
+  existingClaim: portainer-pvc

@@ -1,0 +1,97 @@
+# https://www.jeffgeerling.com/blog/2018/ansible-playbook-upgrade-all-ubuntu-1204-lts-hosts-1404-or-1604-1804-etc
+# Upgrade script from ubuntu 20.04 to 22.04
+
+---
+
+- name: Update node
+  hosts: all
+  any_errors_fatal: true
+  ignore_unreachable: true
+  serial: 1
+  tasks:
+    - name: install pre-requisites
+      pip:
+        name:
+          - openshift
+          - pyyaml
+          - kubernetes 
+      delegate_to: "{{ groups['masters'][0] }}"
+      become: yes
+
+    - name: Drain node from cluster
+      kubernetes.core.k8s_drain:
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+        state: drain
+        name: '{{ inventory_hostname }}'
+        delete_options:
+          delete_emptydir_data: yes
+          ignore_daemonsets: yes
+      delegate_to: "{{ groups['masters'][0] }}"
+      become: yes
+      # https://github.com/ansible-collections/kubernetes.core/issues/474
+      when: inventory_hostname not in groups['disks']
+
+    - name: Drain node from cluster 
+      shell: kubectl drain {{ inventory_hostname|lower }} --ignore-daemonsets --delete-emptydir-data --force --pod-selector='app!=csi-attacher,app!=csi-provisioner' --kubeconfig /etc/rancher/k3s/k3s.yaml
+      delegate_to: "{{ groups['masters'][0] }}"
+      become: yes
+      # https://github.com/ansible-collections/kubernetes.core/issues/474
+      when: inventory_hostname in groups['disks']
+    - name: Upgrade all packages to the latest version
+      apt: update_cache=yes upgrade=full
+      become: yes
+
+    - name: Ensure update-manager-core is installed.
+      apt: name=update-manager-core state=present
+      become: yes
+
+    - name: Run do-release-upgrade non-interactively.
+      command: do-release-upgrade -f DistUpgradeViewNonInteractive
+      become: yes
+
+    - name: Reboot 
+      ansible.builtin.reboot:
+        reboot_timeout: 1200
+      become: true
+
+    - name: Check that the disks were re-mounted
+      shell: 'lsblk | grep /media/storage'
+      when: inventory_hostname in groups['disks']
+
+    # Necessary for the iscsid to start without problems
+    # which is needed for longhorn
+    - name: Install new linux modules extra
+      package:
+        name:
+          - linux-modules-extra-raspi
+        state: present
+      become: true
+
+    - name: Start service iscsid
+      service:
+        name: iscsid
+        state: started
+        enabled: yes
+      become: true
+
+    - name: Restore node to cluster
+      kubernetes.core.k8s_drain:
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+        state: uncordon
+        name: '{{ inventory_hostname }}'
+      delegate_to: "{{ groups['masters'][0] }}"
+      become: yes
+
+    - name: Sleep for 600 to wait for longhorn to re-balance
+      ansible.builtin.wait_for:
+        timeout: 600
+      delegate_to: localhost
+      when: inventory_hostname in groups['disks']
+      # https://github.com/longhorn/website/issues/346
+      # https://github.com/longhorn/longhorn-manager/pull/710
+      # https://github.com/longhorn/longhorn/issues/307
+
+
+# ansible aretusa -m shell -a "lsb_release -a"
+# ansible erato -b -m package -a "name=linux-modules-extra-raspi state=present"
+# ansible erato -b -m service -a "name=iscsid state=started enabled=yes"

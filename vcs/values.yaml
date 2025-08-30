@@ -1,0 +1,93 @@
+# https://gitea.com/gitea/helm-chart/src/branch/main/values.yaml
+
+image:
+  #tag: ""
+  pullPolicy: IfNotPresent
+
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+  ssh:
+    type: LoadBalancer
+    port: 22
+    loadBalancerIP: 192.168.179.241
+
+dnsConfig:
+  options:
+    - name: ndots
+      value: "1"
+
+ingress:
+  enabled: false
+
+persistence:
+  enabled: true
+  create: false
+  claimName: gitea-pvc
+
+signing:
+  enabled: false
+
+strategy:
+  type: "Recreate"
+
+gitea:
+  admin:
+    existingSecret: gitea
+  oauth:
+    - name: "authentik"
+      provider: "openidConnect"
+      existingSecret: gitea-oauth
+      autoDiscoverUrl: "https://auth.anagno.dev/application/o/vcs/.well-known/openid-configuration"
+      iconUrl: "https://auth.anagno.dev/static/dist/assets/icons/icon.svg"
+      scopes: "email profile gitea"
+      required-claim-name: "gitea"
+      group-claim-name: "gitea"
+      admin-group: "admin"
+
+  config:
+    database:
+      DB_TYPE: postgres
+    session:
+      PROVIDER: db
+    cache:
+      ADAPTER: memory
+    queue:
+      TYPE: level
+    indexer:
+      ISSUE_INDEXER_TYPE: bleve
+      REPO_INDEXER_ENABLED: true
+    server:
+      ROOT_URL: "https://vcs.anagno.dev"
+      SSH_PORT: 22 
+      SSH_LISTEN_PORT: 2222 
+    service:
+      DISABLE_REGISTRATION: true
+
+  additionalConfigFromEnvs:
+    - name: GITEA__DATABASE__PASSWD
+      valueFrom:
+        secretKeyRef:
+          name: gitea-database
+          key: password
+
+valkey-cluster:
+  enabled: false
+  usePassword: false
+
+postgresql-ha:
+  enabled: false
+
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        database: gitea
+        existingSecret: "gitea-database"
+  primary:
+    resourcesPreset: "none"
+    persistence:
+      enabled: true
+      existingClaim: gitea-database

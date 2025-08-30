@@ -1,0 +1,142 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-manager-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: DaemonSet
+    name: longhorn-manager
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-csi-plugin-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: DaemonSet
+    name: longhorn-csi-plugin
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: csi-attacher-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: csi-attacher
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: csi-provisioner-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: csi-provisioner
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: csi-resizer-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: csi-resizer
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: csi-snapshotter-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: csi-snapshotter
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-admission-webhook-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: longhorn-admission-webhook
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-conversion-webhook-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: longhorn-conversion-webhook
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-driver-deployer-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: longhorn-driver-deployer
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-recovery-backend-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: longhorn-recovery-backend
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-ui-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: longhorn-ui
+  updatePolicy:
+    updateMode: "Auto"

@@ -1,0 +1,202 @@
+# https://github.com/nextcloud/helm/blob/master/charts/nextcloud/values.yaml
+
+image:
+  repository: nextcloud
+  #tag: 25.0.2-apache
+  pullPolicy: IfNotPresent
+
+ingress:
+  enabled: false
+
+phpClientHttpsFix:
+  enabled: false
+  protocol: https
+
+nextcloud:
+  host: cyberlocker.anagno.dev
+  existingSecret:
+    enabled: true
+    secretName: nextcloud
+    usernameKey: admin-username
+    passwordKey: admin-password
+    tokenKey: serverinfo_token
+    smtpUsernameKey: smtp_username
+    smtpPasswordKey: smtp_password
+    smtpHostKey: smtp_host
+  mail:
+    enabled: true
+    fromAddress: no-reply-anagno-me
+    domain: outlook.com
+    smtp:
+      host: smtp.office365.com
+      secure: tls
+      port: 587
+      authtype: LOGIN
+  # PHP Configuration files
+  # Will be injected in /usr/local/etc/php/conf.d for apache image and in /usr/local/etc/php-fpm.d when nginx.enabled: true
+  phpConfigs: {}
+  # Default config files
+  # IMPORTANT: Will be used only if you put extra configs, otherwise default will come from nextcloud itself
+  # Default confgurations can be found here: https://github.com/nextcloud/docker/tree/master/25/apache/config
+  defaultConfigs:
+    # To protect /var/www/html/config
+    .htaccess: true
+    # Redis default configuration
+    redis.config.php: true
+    # Apache configuration for rewrite urls
+    apache-pretty-urls.config.php: true
+    # Define APCu as local cache
+    apcu.config.php: true
+    # Apps directory configs
+    apps.config.php: true
+    # Used for auto configure database
+    autoconfig.php: true
+    # SMTP default configuration
+    smtp.config.php: true
+  # Extra config files created in /var/www/html/config/
+  # ref: https://docs.nextcloud.com/server/15/admin_manual/configuration_server/config_sample_php_parameters.html#multiple-config-php-file
+  configs: 
+    proxy.config.php: |-
+      <?php
+      $CONFIG = array (
+        'trusted_proxies' => array(
+          0 => '127.0.0.1',
+          1 => '10.0.0.0/8',
+        ),
+        'overwriteprotocol' => 'https',
+        'overwritehost' => 'cyberlocker.anagno.dev',
+        'forwarded_for_headers' => array('HTTP_X_FORWARDED_FOR'),
+      );
+
+  extraEnv:
+    - name: SMTP_NAME
+      value: no-reply-anagno-me@outlook.com
+    - name: SMTP_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: no-reply-mail
+          key: password
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: nextcloud-postgresql-database
+          key: password
+    - name: REDIS_HOST_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: nextcloud-redis
+          key: redis-password
+
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+hpa:
+  enabled: true
+  cputhreshold: 80
+  minPods: 1
+  maxPods: 2
+
+livenessProbe:
+  enabled: false
+  #enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 60
+  timeoutSeconds: 15
+readinessProbe:
+  enabled: false
+  #enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 60
+  timeoutSeconds: 15
+startupProbe:
+  enabled: false
+  #enabled: true
+
+nginx:
+  enabled: false
+
+internalDatabase:
+  enabled: false
+externalDatabase:
+  enabled: false
+mariadb:
+  enabled: false
+postgresql:
+  enabled: true
+  # To upgrade the database we can follow the procedure described here.
+  # https://docs.goauthentik.io/docs/troubleshooting/postgres/upgrade_kubernetes
+  # More or less we dump the old database in a file and then delete it
+  # We update to the new version and we wait until an empty one is created
+  # and then we can restore from the file
+  # We might be hitting the livenessProbe limit in the initialization:
+  # https://github.com/bitnami/charts/issues/14683#issuecomment-1413732132
+  # So we should deactivate the liveness probess in the database for the migration
+  # Uncomment the lines also in the primary section
+  #diagnosticMode:
+  #    enabled: true
+  # export PGPASSWORD=$POSTGRES_PASSWORD
+  # pg_dump -U $POSTGRES_USER $POSTGRES_DATABASE > dump-11.sql
+  # export PGPASSWORD=$POSTGRES_PASSWORD
+  # psql -U $POSTGRES_USER $POSTGRES_DATABASE < dump-15.sql
+  # Alternative use the initContainer
+  global:
+    postgresql:
+      auth:
+        database: nextcloud
+        existingSecret: "nextcloud-postgresql-database"
+  primary:
+    resourcesPreset: "none"
+    persistence:
+      enabled: true
+      existingClaim: "nextcloud-database"
+    #initContainers:
+    #  - name: upgrade
+    #    image: "pgautoupgrade/pgautoupgrade:17-alpine"
+    #    volumeMounts:
+    #      - mountPath: "/bitnami/postgresql"
+    #        name: "data" 
+    #    env:
+    #      - name: POSTGRES_PASSWORD
+    #        valueFrom:
+    #          secretKeyRef:
+    #            name: nextcloud-postgresql-database
+    #            key: password
+    #      - name: "PGAUTO_ONESHOT"
+    #        value: "yes"
+    #      - name: POSTGRES_DB
+    #        value: nextcloud
+    #      - name: PGDATA
+    #        value: /bitnami/postgresql/data
+    #livenessProbe:
+    #  enabled: false
+    #  initialDelaySeconds: 500
+    #readinessProbe:
+    #  enabled: false
+    #startupProbe:
+    #  enabled: false
+
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: true
+    existingSecret: "nextcloud-redis"
+  master:
+    resourcesPreset: "none"
+    persistence:
+      enabled: true
+      existingClaim: nextcloud-redis-storage
+
+cronjob:
+  enabled: true
+
+service:
+  type: ClusterIP
+  port: 80
+
+persistence:
+  enabled: true
+  existingClaim: nextcloud-pvc

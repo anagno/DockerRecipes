@@ -1,0 +1,65 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: library.anagno.dev
+  namespace: library
+spec:
+  commonName: library.anagno.dev
+  secretName: library.anagno.dev
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - library.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: library.anagno.dev
+  namespace: library
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: library.anagno.dev
+    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    kubernetes.io/ingress.class: traefik  
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`library.anagno.dev`)
+      kind: Rule
+      priority: 1 
+      services:
+        - name: calibre-service
+          port: 80
+      middlewares:
+      - name: security-headers
+        namespace: proxy
+      - name: forward-auth-remote-user-headers
+        namespace: authorization
+  tls:
+    secretName: library.anagno.dev
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: library.anagno.dev-http
+  namespace: library
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`library.anagno.dev`)
+      kind: Rule
+      services:
+        - name: calibre-service
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+---  

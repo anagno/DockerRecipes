@@ -1,0 +1,329 @@
+# https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+# https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md
+
+defaultRules:
+  disabled:
+    Watchdog: true
+
+alertmanager:
+  alertmanagerSpec:
+    storage:
+     volumeClaimTemplate:
+       spec:
+         storageClassName: replicated
+         accessModes: ["ReadWriteOnce"]
+         resources:
+           requests:
+             storage: 1Gi
+
+# https://github.com/k3s-io/k3s/issues/3619
+kubeControllerManager:
+  enabled: true
+  endpoints:
+   - 192.168.179.103
+   - 192.168.179.100
+   - 192.168.179.120
+  service:
+    enabled: true
+    port: 10257
+    targetPort: 10257
+  serviceMonitor:
+    enabled: true
+    https: true
+    insecureSkipVerify: true
+
+kubeScheduler:
+  enabled: true
+  endpoints:
+   - 192.168.179.103
+   - 192.168.179.100
+   - 192.168.179.120
+  service:
+    enabled: true
+    port: 10259
+    targetPort: 10259
+  serviceMonitor:
+    enabled: true
+    https: true
+    insecureSkipVerify: true
+
+kubeProxy:
+  enabled: true
+  endpoints:
+   - 192.168.179.103
+   - 192.168.179.100
+   - 192.168.179.120
+  service:
+    enabled: true
+    port: 10249
+    targetPort: 10249
+
+kubeEtcd:
+  enabled: true
+  endpoints:
+   - 192.168.179.103
+   - 192.168.179.100
+   - 192.168.179.120
+  service:
+    enabled: true
+    port: 2381
+    targetPort: 2381
+
+
+grafana:
+  enabled: true
+
+  dnsConfig:
+    options:
+    - name: ndots
+      value: "1"
+
+  extraSecretMounts:
+    - name: auth-generic-oauth-secret-mount
+      secretName: authentik-secret
+      defaultMode: 0440
+      mountPath: /etc/secrets/auth_generic_oauth
+      readOnly: true
+
+  plugins:
+    # https://grafana.com/grafana/plugins/camptocamp-prometheus-alertmanager-datasource/
+    - camptocamp-prometheus-alertmanager-datasource
+    - grafana-piechart-panel
+
+  # https://github.com/grafana/helm-charts/blob/19a40de8f7953a2c1fd13bdfa72eb75e5784559d/charts/grafana/values.yaml#L1305
+  # It is missbehaving with auth.generic_oauth.client_secret although the secret is not exposed.
+  assertNoLeakedSecrets: false
+
+  grafana.ini:
+    analytics:
+      check_for_updates: true
+    log:
+      mode: console
+    grafana_net:
+      url: https://grafana.net
+    users:
+      allow_sign_up: false
+      auto_assign_org: true
+      auto_assign_org_role: Editor
+    server:
+      root_url: "https://monitoring.anagno.dev"
+    auth:
+      oauth_auto_login: true
+    auth.generic_oauth:
+      name: auth.anagno.dev
+      auto_sign_up: true
+      enabled: true
+      # https://github.com/helm/charts/issues/22473#issuecomment-662361020
+      client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
+      client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
+      scopes: openid email profile
+      auth_url: https://auth.anagno.dev/application/o/authorize/
+      token_url: https://auth.anagno.dev/application/o/token/
+      api_url: https://auth.anagno.dev/application/o/userinfo/
+      role_attribute_path: contains(groups[*], 'caretakers') && 'Admin' || 'Viewer'
+      use_refresh_token: true
+
+  sidecar:
+    # For adding dashboards and datasources via ConfigMaps
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      annotations: 
+        monitoring-sidecar-dashboard-directory: "/tmp/dashboards/kubernetes"
+    datasources:
+      enabled: true
+      defaultDatasourceEnabled: true
+      createPrometheusReplicasDatasources: false
+      label: grafana_datasource
+      annotations: 
+        monitoring-sidecar-datasource-directory: "/tmp/datasource/kubernetes"
+
+  additionalDataSources:
+    - name: Prometheus AlertManager
+      orgId: 1
+      type: camptocamp-prometheus-alertmanager-datasource
+      isDefault: false
+      url: http://{{ printf "%s-alertmanager" (include "kube-prometheus-stack.fullname" .)  }}:9093
+      version: 1
+    - name: Loki
+      orgId: 1
+      type: loki
+      isDefault: false
+      url: http://loki:3100
+      version: 1
+
+prometheus:
+  enabled: true
+  service:
+    clusterIP: ""
+    port: 9090
+    externalIPs: []
+    type: ClusterIP
+
+  prometheusSpec:
+    resources:
+      limits:
+        memory: 6000Mi
+
+    # https://github.com/rook/rook/issues/6680
+    # This was necessary to be able to scrap the data for the Kubernetes/Compute Resources/* databoards
+    # We need to be able to scrap the data from all the namespaces
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    podMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelector: {}
+    retention: 30d
+    retentionSize: "25GiB"
+    walCompression: true
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: replicated
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 30Gi
+
+prometheusOperator:
+  enabled: true
+  prometheusConfigReloader:
+    # resource config for prometheusConfigReloader
+    # The default ones are causing some throttling
+    # because the Raspberry pi is not powerfull enough
+    resources: {}
+  # Enable vertical pod autoscaler support for prometheus-operator
+  verticalPodAutoscaler:
+    enabled: yes
+
+kube-state-metrics:
+  rbac:
+    extraRules:
+      - apiGroups: ["autoscaling.k8s.io"]
+        resources: ["verticalpodautoscalers"]
+        verbs: ["list", "watch"]
+  prometheus:
+    monitor:
+      enabled: true
+  # https://github.com/kubernetes/kube-state-metrics/blob/main/docs/customresourcestate-metrics.md#verticalpodautoscaler
+  # https://github.com/kubernetes/kube-state-metrics/issues/2041#issuecomment-1614327806
+  # https://github.com/kubernetes/kube-state-metrics/issues/2041#issuecomment-1648307077
+  # https://github.com/kubernetes/kube-state-metrics/issues/2041#issuecomment-1746479076
+  customResourceState:
+    enabled: true
+    config:
+      kind: CustomResourceStateMetrics
+      spec:
+        resources:
+          - groupVersionKind:
+              group: autoscaling.k8s.io
+              kind: "VerticalPodAutoscaler"
+              version: "v1"
+            labelsFromPath:
+              verticalpodautoscaler: [metadata, name]
+              namespace: [metadata, namespace]
+              target_api_version: [apiVersion]
+              target_kind: [spec, targetRef, kind]
+              target_name: [spec, targetRef, name]
+            metrics:
+              - name: "vpa_containerrecommendations_target"
+                help: "VPA container recommendations for memory."
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [target, memory]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "memory"
+                  unit: "byte"
+              - name: "vpa_containerrecommendations_lowerbound"
+                help: "VPA container recommendations for memory."
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [lowerBound, memory]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "memory"
+                  unit: "byte"
+              - name: "vpa_containerrecommendations_uncappedtarget"
+                help: "VPA container recommendations for memory."
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [uncappedTarget, memory]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "memory"
+                  unit: "byte"
+              - name: "vpa_containerrecommendations_upperbound"
+                help: "VPA container recommendations for memory."
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [upperBound, memory]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "memory"
+                  unit: "byte"
+              - name: "vpa_containerrecommendations_target"
+                help: "VPA container recommendations for cpu."
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [target, cpu]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "cpu"
+                  unit: "core"
+              - name: "vpa_containerrecommendations_lowerbound"
+                help: "VPA container recommendations for cpu."
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [lowerBound, cpu]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "cpu"
+                  unit: "core"
+              - name: "vpa_containerrecommendations_uncappedtarget"
+                help: "VPA container recommendations for cpu."
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [uncappedTarget, cpu]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "cpu"
+                  unit: "core"
+              - name: "vpa_containerrecommendations_upperbound"
+                help: "VPA container recommendations for cpu."
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [upperBound, cpu]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "cpu"
+                  unit: "core"
+  selfMonitor:
+    enabled: true
+
+prometheus-node-exporter:
+  verticalPodAutoscaler:
+    enabled: true

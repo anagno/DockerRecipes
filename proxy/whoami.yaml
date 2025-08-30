@@ -1,0 +1,76 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: www.intra
+spec:
+  commonName: www.intra
+  secretName: www.intra
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - www.intra
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  namespace: default
+  name: whoami
+  labels:
+    app: whoami
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: whoami
+  template:
+    metadata:
+      labels:
+        app: whoami
+    spec:
+      containers:
+        - name: whoami
+          image: containous/whoami
+              
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami
+spec:
+  ports:
+    - protocol: TCP
+      name: web
+      targetPort: 80
+      port: 80
+  selector:
+    app: whoami
+    
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: whoami
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`www.intra`)
+      kind: Rule
+      services:
+        - name: whoami
+          port: 80
+      middlewares:
+      - name: https-redirect
+        namespace: proxy
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: www.intra
+    options:
+      name: tls-security-headers
+      namespace: proxy

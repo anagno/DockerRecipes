@@ -1,0 +1,14 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  namespace: proxy
+  name: proxy
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`proxy.intra`)
+      kind: Rule
+      services:
+        - name: api@internal
+          kind: TraefikService

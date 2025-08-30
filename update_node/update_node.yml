@@ -1,0 +1,151 @@
+---
+
+# TODO: Refactor because of duplication from setup_cluster
+- name: Retrieve cluster token
+  hosts: masters[0]
+  tasks:
+    - name: Install the necessary packages
+      package:
+        name:
+          - pip
+        state: present
+      become: true
+
+    - name: install pre-requisites
+      pip:
+        name:
+          - openshift
+          - pyyaml
+          - kubernetes 
+      become: yes
+
+    - name: Get token
+      shell: 'cat /var/lib/rancher/k3s/server/node-token'
+      become: true
+      register: cluster_token
+
+    - name: Create facts
+      set_fact:
+        cluster_token: '{{ cluster_token.stdout }}'
+
+  # https://github.com/longhorn/longhorn/issues/7927
+- name: Update node
+  hosts: all
+  any_errors_fatal: true
+  ignore_unreachable: true
+  serial: 1
+  tasks:
+
+    - name: Pause the rebuilding of the longhorn storage
+      delegate_to: localhost
+      kubernetes.core.helm:
+        name: longhorn
+        chart_ref: longhorn/longhorn
+        release_namespace: longhorn-system
+        values:
+          defaultSettings:
+            concurrentReplicaRebuildPerNodeLimit: 0
+      when: inventory_hostname in groups['disks']
+
+    - name: Drain node from cluster
+      kubernetes.core.k8s_drain:
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+        state: drain
+        name: '{{ inventory_hostname }}'
+        delete_options:
+          delete_emptydir_data: yes
+          ignore_daemonsets: yes
+      delegate_to: "{{ groups['masters'][0] }}"
+      become: yes
+      # https://longhorn.io/docs/1.3.1/volumes-and-nodes/maintenance/#updating-the-node-os-or-container-runtime
+      # https://github.com/ansible-collections/kubernetes.core/issues/474
+      when: inventory_hostname not in groups['disks']
+
+    - name: Drain node from cluster 
+      shell: kubectl drain {{ inventory_hostname|lower }} --ignore-daemonsets --delete-emptydir-data --pod-selector='app!=csi-attacher,app!=csi-provisioner,longhorn.io/component!=instance-manager,app!=longhorn-admission-webhook,app!=longhorn-conversion-webhook' --kubeconfig /etc/rancher/k3s/k3s.yaml
+      delegate_to: "{{ groups['masters'][0] }}"
+      become: yes
+      # https://longhorn.io/docs/1.3.1/volumes-and-nodes/maintenance/#updating-the-node-os-or-container-runtime
+      # https://github.com/ansible-collections/kubernetes.core/issues/474
+      when: inventory_hostname in groups['disks']
+
+    - name: Upgrade the OS (apt-get update)
+      apt:
+        update_cache: yes
+        upgrade: dist
+      become: yes
+
+    - name: Include common variables
+      include_vars: "../cluster_setup/common_vars.yaml"
+
+    # TODO: Refactor because of duplication from setup_cluster
+    - name: Updating and starting k3s on main nodes
+      shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=\"{{ hostvars[groups['masters'][0]]['cluster_token'] }}\" sh -s - server --server https://zeus.intra:6443 {{ k3s_common_parameters_for_all_nodes }} {{ k3s_initialization_parameters }}"
+      become: true
+      when: inventory_hostname in groups['masters']
+
+    # TODO: Refactor because of duplication from setup_cluster
+    - name: Updating and starting k3s on workers
+      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC=\"agent\" K3S_URL=https://zeus.intra:6443 K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }} sh -s - {{ k3s_common_parameters_for_all_nodes }}"
+      become: true
+      when: inventory_hostname in groups['workers']
+
+    - name: Check if reboot required
+      stat:
+        path: /var/run/reboot-required
+      register: reboot_required_file
+
+    - name: Reboot if required from updates
+      ansible.builtin.reboot:
+        reboot_timeout: 1200
+      become: true
+      when: reboot_required_file.stat.exists
+
+    - name: Wait for the reboot to complete if updates were made.
+      wait_for_connection:
+        connect_timeout: 60
+        sleep: 20
+        delay: 20
+        timeout: 300
+      when: reboot_required_file.stat.exists
+
+    - name: Check that the disks were re-mounted
+      shell: 'lsblk | grep /media/storage'
+      when: inventory_hostname in groups['disks']
+
+    # Necessary for longhorn to function without problems
+    - name: Start service iscsid
+      become: true
+      service:
+        name: iscsid
+        state: started
+        enabled: yes
+
+    - name: Restore node to cluster
+      kubernetes.core.k8s_drain:
+        kubeconfig: /etc/rancher/k3s/k3s.yaml
+        state: uncordon
+        name: '{{ inventory_hostname }}'
+      delegate_to: "{{ groups['masters'][0] }}"
+      become: yes
+
+    - name: Continue the rebuilding of the longhorn storage
+      delegate_to: localhost
+      kubernetes.core.helm:
+        name: longhorn
+        chart_ref: longhorn/longhorn
+        release_namespace: longhorn-system
+        values:
+          defaultSettings:
+            concurrentReplicaRebuildPerNodeLimit: 1
+      when: inventory_hostname in groups['disks']
+
+    - name: Sleep for 600 to wait for longhorn to re-balance
+      ansible.builtin.wait_for:
+        timeout: 600
+      delegate_to: localhost
+      when: inventory_hostname in groups['disks'] and
+            reboot_required_file.stat.exists
+      # https://github.com/longhorn/website/issues/346
+      # https://github.com/longhorn/longhorn-manager/pull/710
+      # https://github.com/longhorn/longhorn/issues/307

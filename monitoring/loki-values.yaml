@@ -1,0 +1,62 @@
+# https://github.com/grafana/helm-charts/blob/main/charts/loki-stack/values.yaml
+
+test_pod:
+  enabled: false
+
+loki:
+  enabled: true
+  isDefault: false
+  config:
+    table_manager:
+      retention_deletes_enabled: true
+      retention_period: 7d
+    # https://github.com/grafana/loki/issues/5123#issuecomment-1025488801
+    server:
+      http_server_read_timeout: 3m
+      http_server_write_timeout: 3m
+    limits_config:
+      max_query_series: 100000
+      max_query_parallelism: 2
+    query_range:
+      split_queries_by_interval: 0
+      parallelise_shardable_queries: false
+    querier:
+      max_concurrent: 2048
+    frontend:
+      max_outstanding_per_tenant: 4096
+      compress_responses: true
+  serviceMonitor:
+    enabled: true
+  persistence:
+    enabled: true
+    storageClassName: replicated
+    accessModes: ["ReadWriteMany"]
+    size: 30Gi
+
+
+promtail:
+  enabled: true
+  daemonset:
+    autoscaling:
+      enabled: true
+  config:
+    logLevel: info
+    serverPort: 3101
+    clients:
+      - url: http://{{ .Release.Name }}:3100/loki/api/v1/push
+
+fluent-bit:
+  enabled: false
+
+grafana:
+  enabled: false
+
+prometheus:
+  enabled: false
+
+filebeat:
+  enabled: false
+
+logstash:
+  enabled: false
+

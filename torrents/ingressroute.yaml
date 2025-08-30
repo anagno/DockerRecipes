@@ -1,0 +1,62 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: torrents.anagno.dev
+  namespace: torrents
+spec:
+  commonName: torrents.anagno.dev
+  secretName: torrents.anagno.dev
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - torrents.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: torrents.anagno.dev
+  namespace: torrents
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: torrents.anagno.dev
+    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    kubernetes.io/ingress.class: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`torrents.anagno.dev`)
+      kind: Rule
+      services:
+        - name: transmission-server-service
+          port: 9091
+      middlewares:
+      - name: security-headers
+        namespace: proxy
+      - name: ak-outpost-authentik-embedded-outpost
+        namespace: authorization
+  tls:
+    secretName: torrents.anagno.dev
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: torrents.anagno.dev-http
+  namespace: torrents
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`torrents.anagno.dev`)
+      kind: Rule
+      services:
+        - name: transmission-server-service
+          port: 9091
+      middlewares:
+      - name: https-redirect
+        namespace: proxy

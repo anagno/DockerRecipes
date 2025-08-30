@@ -1,0 +1,54 @@
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: prometheus-monitoring-kube-prometheus-prometheus-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: StatefulSet
+    name: prometheus-monitoring-kube-prometheus-prometheus
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: 'prometheus'
+        maxAllowed:
+          memory: 6000Mi
+      - containerName: '*'
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: alertmanager-monitoring-kube-prometheus-alertmanager-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: StatefulSet
+    name: alertmanager-monitoring-kube-prometheus-alertmanager
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 2
+          memory: 512Mi
+        minAllowed:
+          cpu: 500m
+          memory: 100Mi
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: monitoring-grafana-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: monitoring-grafana
+  updatePolicy:
+    updateMode: "Auto"

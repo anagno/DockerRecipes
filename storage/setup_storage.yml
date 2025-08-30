@@ -1,0 +1,117 @@
+---
+- name: Prerequisites 
+  hosts: all
+  tasks:
+    - name: Install the necessary packages
+      package:
+        name:
+          # https://longhorn.io/docs/1.2.2/deploy/install/#installation-requirements
+          - open-iscsi
+          - nfs-common
+          - gawk
+          - util-linux
+          - jq
+          # For enabling encryption in the disks
+          # https://longhorn.io/docs/1.2.2/advanced-resources/volume-encryption/#requirements
+          - cryptsetup
+          # necessary for the backup functionality
+          # https://github.com/longhorn/longhorn/blob/master/enhancements/20230116-smb-cifs-backup-store-support.md
+          - cifs-utils
+        state: present
+      become: true
+    # TODO no longer works? Have to examine it again
+    ## https://longhorn.io/docs/1.6.0/deploy/install/#using-the-environment-check-script
+    #- name: Run check script
+    #  shell:
+    #    cmd: curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.6.x/scripts/environment_check.sh | bash
+
+    - name: Start service iscsid
+      service:
+        name: iscsid
+        state: started
+        enabled: yes
+      become: true
+
+- name: Initialize the disks
+  hosts: disks
+  tasks:
+    - name: Check that the disk_path is defined
+      fail:
+        msg: The disk_path variable must be defined
+      when: disk_path is not defined
+
+    - name: Check if the storage has been initialized
+      stat:
+        path: /media/storage
+      become: true
+      register: storage_exists
+
+    - name: Read device information
+      community.general.parted: device='{{ disk_path }}' unit=MiB
+      #ignore_errors: true
+      register: sda_info
+      become: true
+      when: not storage_exists.stat.exists
+      
+    #- name: print
+    #  debug:
+    #    msg: "sda_info is {{ sda_info }}"
+
+    - name: un-mount the device
+      ansible.posix.mount:
+        path: /media/storage
+        src: '{{ disk_path }}1'
+        fstype: ext4
+        state: unmounted
+      become: true
+      when: not storage_exists.stat.exists
+
+    - name: Remove all partitions from disk
+      community.general.parted:
+        device: '{{ disk_path }}'
+        number: '{{ item.num }}'
+        state: absent
+      loop: '{{ sda_info.partitions }}'
+      become: true
+      when: not storage_exists.stat.exists
+
+    - name: Create a new ext4 primary partition
+      community.general.parted:
+        device: '{{ disk_path }}'
+        number: 1
+        label: gpt
+        state: present
+        fs_type: ext4
+      become: true
+      when: not storage_exists.stat.exists
+
+    - name: Create a ext4 filesystem on disk
+      filesystem:
+        fstype: ext4
+        dev: '{{ disk_path }}1'
+      become: true
+      when: not storage_exists.stat.exists
+
+    - name: Create the mount point for the disks
+      file:
+        path: /media/storage
+        state: directory
+        recurse: true
+        owner: root
+        group: root
+        mode: 0755
+      become: true
+      when: not storage_exists.stat.exists
+
+    - name: mount the disk
+      ansible.posix.mount:
+        path: /media/storage
+        src: '{{ disk_path }}1'
+        fstype: ext4
+        opts: nofail,defaults
+        state: mounted
+      become: true
+      when: not storage_exists.stat.exists
+
+# https://github.com/gdha/pi4-longhorn/blob/main/prepare-usb-disk/roles/format_usb_device/tasks/main.yml
+# https://github.com/gdha/pi4-longhorn/blob/main/prepare-usb-disk/roles/mkfs_usb_device/tasks/main.yml

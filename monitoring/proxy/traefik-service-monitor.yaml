@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: traefik-servicemonitor
+  namespace: proxy
+spec:
+  jobLabel: traefik-metrics
+  namespaceSelector:
+    matchNames:
+    - proxy
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: traefik
+      app.kubernetes.io/name: traefik-metrics
+  endpoints:
+  - honorLabels: true
+    interval: 30s
+    path: /metrics
+    targetPort: metrics

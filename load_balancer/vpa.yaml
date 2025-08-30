@@ -1,0 +1,25 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: load-balancer-metallb-controller-vpa
+  namespace: load-balancer
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: load-balancer-metallb-controller
+  updatePolicy:
+    updateMode: "Auto"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: load-balancer-metallb-speaker
+  namespace: load-balancer
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: DaemonSet
+    name: load-balancer-metallb-speaker
+  updatePolicy:
+    updateMode: "Auto"

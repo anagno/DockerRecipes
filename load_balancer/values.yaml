@@ -1,0 +1,15 @@
+# https://github.com/metallb/metallb/blob/main/charts/metallb/values.yaml
+
+prometheus:
+  serviceAccount: "prometheus-k8s"
+  namespace: "monitoring"
+  podMonitor:
+    enabled: true
+
+controller:
+  image:
+    pullPolicy: IfNotPresent
+
+speaker:
+  image:
+    pullPolicy: IfNotPresent
