@@ -76,10 +76,6 @@ server:
     enabled: true
     serviceMonitor:
       enabled: true
-      interval: 30s
-      scrapeTimeout: 3s
-    rules:
-      enabled: true
 
 worker:
 
@@ -100,10 +96,6 @@ worker:
   metrics:
     enabled: true
     serviceMonitor:
-      enabled: true
-      interval: 30s
-      scrapeTimeout: 3s
-    rules:
       enabled: true
 
 postgresql:
