@@ -8,6 +8,7 @@
           # https://longhorn.io/docs/1.2.2/deploy/install/#installation-requirements
           - open-iscsi
           - nfs-common
+          - dmsetup
           - gawk
           - util-linux
           - jq
@@ -19,11 +20,27 @@
           - cifs-utils
         state: present
       become: true
-    # TODO no longer works? Have to examine it again
-    ## https://longhorn.io/docs/1.6.0/deploy/install/#using-the-environment-check-script
-    #- name: Run check script
-    #  shell:
-    #    cmd: curl -sSfL https://raw.githubusercontent.com/longhorn/longhorn/v1.6.x/scripts/environment_check.sh | bash
+
+    - name: Load the nfs module
+      community.general.modprobe:
+        name: nfs
+        state: present
+        persistent: present
+      become: true
+
+    - name: Load the dm_crypt module
+      community.general.modprobe:
+        name: dm_crypt
+        state: present
+        persistent: present
+      become: true
+
+    - name: Start service multipathd
+      service:
+        name: multipathd
+        state: started
+        enabled: yes
+      become: true
 
     - name: Start service iscsid
       service:
@@ -53,9 +70,9 @@
       become: true
       when: not storage_exists.stat.exists
       
-    #- name: print
-    #  debug:
-    #    msg: "sda_info is {{ sda_info }}"
+    - name: print
+      debug:
+        msg: "sda_info is {{ sda_info }}"
 
     - name: un-mount the device
       ansible.posix.mount:

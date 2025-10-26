@@ -79,12 +79,31 @@ ansible-playbook storage/setup_storage.yml
 ## Installing longhorn
 
 ```bash
+
+# https://longhorn.io/docs/1.10.0/deploy/install/#longhorn-command-line-tool
+curl -sSfL -o longhornctl https://github.com/longhorn/cli/releases/download/v1.10.0/longhornctl-linux-amd64
+chmod +x longhornctl
+kubectl create namespace longhorn-system
+export KUBECONFIG=~/.kube/config
+./longhornctl check preflight
+/.longhornctl --image longhornio/longhorn-cli:v1.10.0 install preflight
+# https://longhorn.io/docs/1.10.0/v2-data-engine/quick-start/#check-environment
+
 # We have to use the longhrn-system namespace. It is mentioned in the
 # documentation of the helm chart
 helm repo add longhorn https://charts.longhorn.io
 helm repo update
 kubectl create namespace longhorn-system
-helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.9.2
+
+kubectl create secret generic longhorn-backup --namespace longhorn-system \
+  --from-literal=CIFS_USERNAME=longhorn \
+  --from-literal=CIFS_PASSWORD=Black4dvertis1ngCurrent1y
+
+kubectl create secret generic longhorn-crypto --namespace longhorn-system \
+  --from-literal=CRYPTO_KEY_VALUE=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) \
+  --from-literal=CRYPTO_KEY_PROVIDER=secret
+
+helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.10.0
 
 # The vpa is causing instability in the longhorn. So do not activate it for the moment
 #kubectl apply -f vpa.yml
@@ -92,16 +111,9 @@ kubectl apply -f dashboard.yml
 
 # Apply our storage classes 
 
-kubectl create secret generic longhorn-crypto --namespace longhorn-system \
-  --from-literal=CRYPTO_KEY_VALUE=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) \
-  --from-literal=CRYPTO_KEY_PROVIDER=secret
-
 kubectl apply -f RepliccatedStorage.yaml
 kubectl apply -f UnrepliccatedStorage.yaml
-
-kubectl create secret generic longhorn-backup --namespace longhorn-system \
-  --from-literal=CIFS_USERNAME=longhorn \
-  --from-literal=CIFS_PASSWORD=MY_SECRET_PASSWORD
+kubectl apply -f Snapshots.yaml
 ```
 
 We have to add the disks from the UI of longhorn
@@ -120,6 +132,8 @@ Maybe of interest:
 
 ```
 kubectl -n longhorn-system logs -f -l "app=longhorn-manager" --max-log-requests 10
+sudo fsck.ext4 /dev/sdb1
+sudo mkfs -t ext4 /dev/sdb1
 ```
 
 ## Resources

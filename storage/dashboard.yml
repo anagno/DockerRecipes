@@ -1,15 +1,15 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: storage.intra
+  name: storage.internal
   namespace: longhorn-system
 spec:
-  commonName: storage.intra
-  secretName: storage.intra
+  commonName: storage.internal
+  secretName: storage.internal
   privateKey:
     rotationPolicy: Always
   dnsNames:
-    - storage.intra
+    - storage.internal
   issuerRef:
     name: selfsigned-issuer
     kind: ClusterIssuer
@@ -17,13 +17,13 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: storage.intra
+  name: storage.internal
   namespace: longhorn-system
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`storage.intra`)
+    - match: Host(`storage.internal`)
       kind: Rule
       services:
         - name: longhorn-frontend
@@ -34,25 +34,8 @@ spec:
       - name: https-redirect
         namespace: proxy
   tls:
-    secretName: storage.intra
+    secretName: storage.internal
     options:
       name: tls-security-headers
       namespace: proxy
 ---
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: storage.intra.dev-http
-  namespace: longhorn-system
-spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`storage.intra`)
-      kind: Rule
-      services:
-        - name: longhorn-frontend
-          port: 80
-      middlewares:
-      - name: https-redirect
-        namespace: proxy

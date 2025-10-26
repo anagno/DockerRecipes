@@ -1,0 +1,10 @@
+kind: VolumeSnapshotClass
+apiVersion: snapshot.storage.k8s.io/v1
+metadata:
+  name: default-snapshot-class
+  namespace: longhorn-system
+driver: driver.longhorn.io
+deletionPolicy: Delete
+parameters:
+  type: bi
+  export-type: qcow2

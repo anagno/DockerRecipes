@@ -6,21 +6,23 @@ service:
 
 persistence:
   defaultClassReplicaCount: 3
+  defaultDataLocality: best-effort
+  defaultReplicaAutoBalance: least-effort
   reclaimPolicy: Delete
 
 defaultSettings:
-  backupTarget: cifs://192.168.179.2/backup
+  backupTarget: cifs://gateway.internal/backup
   backupTargetCredentialSecret: longhorn-backup
   defaultDataPath: /media/storage/
   createDefaultDiskLabeledNodes: false
-  storageOverProvisioningPercentage: 100
-  storageMinimalAvailablePercentage: 15
+  storageOverProvisioningPercentage: "100"
+  storageMinimalAvailablePercentage: "15"
   replicaAutoBalance: "least-effort"
   defaultDataLocality: "disabled"
   snapshotDataIntegrity: "enabled"
   fastReplicaRebuildEnabled: "true"
   nodeDownPodDeletionPolicy: "delete-both-statefulset-and-deployment-pod"
-  concurrentReplicaRebuildPerNodeLimit: 1
+  concurrentReplicaRebuildPerNodeLimit: "1"
   allowNodeDrainWithLastHealthyReplica: "false"
   orphanAutoDeletion: "true"
   # https://longhorn.io/kb/troubleshooting-volume-readonly-or-io-error/
