@@ -7,17 +7,11 @@
     - name: Install the necessary packages
       package:
         name:
-          - pip
+          - python3-openshift
+          - python3-yaml
+          - python3-kubernetes
         state: present
       become: true
-
-    - name: install pre-requisites
-      pip:
-        name:
-          - openshift
-          - pyyaml
-          - kubernetes 
-      become: yes
 
     - name: Get token
       shell: 'cat /var/lib/rancher/k3s/server/node-token'
@@ -62,7 +56,12 @@
       when: inventory_hostname not in groups['disks']
 
     - name: Drain node from cluster 
-      shell: kubectl drain {{ inventory_hostname|lower }} --ignore-daemonsets --delete-emptydir-data --pod-selector='app!=csi-attacher,app!=csi-provisioner,longhorn.io/component!=instance-manager,app!=longhorn-admission-webhook,app!=longhorn-conversion-webhook' --kubeconfig /etc/rancher/k3s/k3s.yaml
+      ansible.builtin.shell: >- 
+        kubectl drain {{ inventory_hostname|lower }}
+        --ignore-daemonsets
+        --delete-emptydir-data
+        --pod-selector='app!=csi-attacher,app!=csi-provisioner,longhorn.io/component!=instance-manager,app!=longhorn-admission-webhook,app!=longhorn-conversion-webhook'
+        --kubeconfig /etc/rancher/k3s/k3s.yaml
       delegate_to: "{{ groups['masters'][0] }}"
       become: yes
       # https://longhorn.io/docs/1.3.1/volumes-and-nodes/maintenance/#updating-the-node-os-or-container-runtime
@@ -80,13 +79,25 @@
 
     # TODO: Refactor because of duplication from setup_cluster
     - name: Updating and starting k3s on main nodes
-      shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=\"{{ hostvars[groups['masters'][0]]['cluster_token'] }}\" sh -s - server --server https://zeus.intra:6443 {{ k3s_common_parameters_for_all_nodes }} {{ k3s_initialization_parameters }}"
+      ansible.builtin.shell: >-
+        curl -sfL https://get.k3s.io |
+        K3S_TOKEN="{{ hostvars[groups['masters'][0]]['cluster_token'] }}"
+        sh -s - server --server https://zeus.internal:6443
+        {{ k3s_common_parameters_for_all_nodes }}
+        {{ k3s_initialization_parameters }}
       become: true
       when: inventory_hostname in groups['masters']
 
     # TODO: Refactor because of duplication from setup_cluster
     - name: Updating and starting k3s on workers
-      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC=\"agent\" K3S_URL=https://zeus.intra:6443 K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }} sh -s - {{ k3s_common_parameters_for_all_nodes }}"
+      ansible.builtin.shell: >-
+        curl -sfL https://get.k3s.io |
+        INSTALL_K3S_EXEC="agent"
+        K3S_URL=https://zeus.internal:6443
+        K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }}
+        sh -s - \
+        {{ k3s_common_parameters_for_all_nodes }}
+        {{ k3s_init_parameters_for_workers }}
       become: true
       when: inventory_hostname in groups['workers']
 

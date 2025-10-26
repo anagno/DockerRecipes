@@ -242,11 +242,12 @@ curl https://kube-vip.io/manifests/rbac.yaml > kube-vip-manifest.yaml
 sudo docker run --network host \
 --rm plndr/kube-vip:v1.0.0 manifest daemonset \
 --interface eth0 \
---address zeus.intra \
---ddns \
+--address "zeus.internal" \
+--dnsMode dual \
 --inCluster \
 --taint \
 --controlplane \
+--enableLoadBalancer \
 --arp \
 --leaderElection | sudo tee --append kube-vip-manifest.yaml
 

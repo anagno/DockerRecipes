@@ -1,3 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: proxy.internal
+  namespace: proxy
+spec:
+  commonName: proxy.internal
+  secretName: proxy.internal
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - proxy.internal
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -5,10 +21,18 @@ metadata:
   name: proxy
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
-    - match: Host(`proxy.intra`)
+    - match: Host(`proxy.internal`)
       kind: Rule
       services:
         - name: api@internal
           kind: TraefikService
+      middlewares:
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: proxy.internal
+    options:
+      name: tls-security-headers
+      namespace: proxy

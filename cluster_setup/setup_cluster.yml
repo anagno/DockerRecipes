@@ -1,11 +1,9 @@
 ---
 
-# strongswan-swanctl
-# charon-systemd
-
 - name: Prerequisites 
   hosts: all
   tasks:
+    # https://github.com/k3s-io/k3s/issues/7671#issuecomment-1582262752
     - name: Iptables to see bridged traffic
       copy:
         src: "k3s.conf"
@@ -18,8 +16,27 @@
     - name: Install the necessary packages
       package:
         name:
+          # needed for flannel encrypted backed
+          # https://docs.k3s.io/networking/basic-network-options?_highlight=flannel&_highlight=encryption#flannel-options
           - wireguard
         state: present
+      become: true
+
+    - name: Create k3s folder
+      file:
+        path: /etc/rancher/k3s/
+        state: directory
+      become: true
+
+    # https://docs.k3s.io/installation/registry-mirror#enabling-registry-mirroring
+    # This is duplicated only in master nodes. We do not have to duplicate everywhere the images
+    - name: Copy the registries files to activate the regkstry mirror
+      copy:
+        src: "registries.yaml"
+        dest: "/etc/rancher/k3s/registries.yaml"
+        owner: root
+        group: root
+        mode: 0644
       become: true
 
 - name: Initialize k3s cluster
@@ -52,16 +69,20 @@
       # and that will be installed with k3s. But the manifest is needed before the installation ...
 
     - name: Install and start k3s
-      shell: 'curl -sfL https://get.k3s.io |  sh -s - server --cluster-init --tls-san zeus.intra {{ k3s_common_parameters_for_all_nodes }} {{ k3s_initialization_parameters }}'
+      ansible.builtin.shell: >-
+        curl -sfL https://get.k3s.io |
+        sh -s - server --cluster-init --tls-san zeus.internal
+        {{ k3s_common_parameters_for_all_nodes }}
+        {{ k3s_initialization_parameters }}
+      become: true
       when: "'k3s.service' not in ansible_facts.services"
       # the tls-san parameter allows to specify the domain name that will be used for the control-plane
       # https://rancher.com/docs/k3s/latest/en/installation/ha/#3-configure-the-fixed-registration-address
 
     - name: Wait for port the vip to start
       wait_for:
-        host: zeus.intra
+        host: zeus.internal
         port: 6443
-        state: started
       when: "'k3s.service' not in ansible_facts.services"
 
     - name: Reboot
@@ -79,7 +100,7 @@
       when: "'k3s.service' not in ansible_facts.services"
 
     - name: Get token
-      shell: 'cat /var/lib/rancher/k3s/server/node-token'
+      ansible.builtin.shell: 'cat /var/lib/rancher/k3s/server/node-token'
       become: true
       register: cluster_token
 
@@ -100,12 +121,18 @@
 
     - name: Wait for port the vip to start
       wait_for:
-        host: zeus.intra
+        host: zeus.internal
         port: 6443
         state: started
 
     - name: Install and start k3s
-      shell: "curl -sfL https://get.k3s.io | K3S_TOKEN=\"{{ hostvars[groups['masters'][0]]['cluster_token'] }}\" sh -s - server --server https://zeus.intra:6443 {{ k3s_common_parameters_for_all_nodes }} {{ k3s_initialization_parameters }}"
+      ansible.builtin.shell: >-
+        curl -sfL https://get.k3s.io |
+        K3S_TOKEN="{{ hostvars[groups['masters'][0]]['cluster_token'] }}"
+        sh -s - server --server https://zeus.internal:6443
+        {{ k3s_common_parameters_for_all_nodes }}
+        {{ k3s_initialization_parameters }}
+      become: true
       when: "'k3s.service' not in ansible_facts.services"
 
     - name: Reboot
@@ -133,12 +160,20 @@
 
     - name: Wait for port the vip to start
       wait_for:
-        host: zeus.intra
+        host: zeus.internal
         port: 6443
         state: started
 
     - name: Start cluster worker node
-      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC=\"agent\" K3S_URL=https://zeus.intra:6443 K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }} sh -s - {{ k3s_common_parameters_for_all_nodes }}"
+      ansible.builtin.shell: >-
+        curl -sfL https://get.k3s.io |
+        INSTALL_K3S_EXEC="agent"
+        K3S_URL=https://zeus.internal:6443
+        K3S_TOKEN={{ hostvars[groups['masters'][0]]['cluster_token'] }}
+        sh -s - \
+        {{ k3s_common_parameters_for_all_nodes }}
+        {{ k3s_init_parameters_for_workers }}
+      become: true
       when: "'k3s.service' not in ansible_facts.services"
 
     - name: Reboot

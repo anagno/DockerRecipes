@@ -2,16 +2,13 @@
 
 Now that are nodes are up and running we can start with the 
 initialization of the  k3s cluster.
+Before the initializatio l,n reserve a domain name in your router
+and reserve IPs for the Virtual IP of the control plnae.
 The scripts we have in ansible makes it easy. Just execute:
 
 ```bash
 ansible-playbook cluster_setup/setup_cluster.yml
 ```
-
-!!!Note
-    Flannel default network is not enrcypted. So the communication between the pods is unencrypted. 
-    There is an experimental backend that supports Wireguard (https://github.com/flannel-io/flannel/blob/master/Documentation/backends.md#wireguard).
-    I also tried with the experimental IPSec backend, but it did not work
 
 Once the cluster is initialized we can start controlling it using kubectl.
 But for that we have to install it to our local system
@@ -35,6 +32,11 @@ Then replace “localhost” with the IP or name of your K3s server. kubectl can
     master nodes are being influenced) we can execute 
     `kubectl taint nodes myserver node-role.kubernetes.io/master=true:NoSchedule`
     We can see the taints with `kubectl get nodes -o json | jq '.items[].spec.taints'`
+    Avoid the use of documented taint k3s-controlplane=true:NoExecute used to avoid deployment of pods on master node.
+    We are interested on running certain pods on master node, like the ones needed to collect logs/metrics from the master node.
+    Instead, use the taint `node-role.kubernetes.io/control-plane:NoSchedule`. K3S common services: core-dns, metric-service, 
+    service-lb are configured with tolerance to node-role.kubernetes.io/control-plane taint, so they will be scheduled on master node.
+    So use `kubectl taint nodes myserver node-role.kubernetes.io/control-plane:NoSchedule`
 
 ## Resources
 
@@ -45,3 +47,4 @@ Then replace “localhost” with the IP or name of your K3s server. kubectl can
 * https://github.com/geerlingguy/raspberry-pi-dramble
 * https://ikarus.sg/kubernetes-with-k3s/
 * https://gist.github.com/LarsNieuwenhuizen/03c224e50871e123e4376f0518083cb1
+* https://picluster.ricsanfre.com

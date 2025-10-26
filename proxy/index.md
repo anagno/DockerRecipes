@@ -1,6 +1,6 @@
 # Reverse Proxy
 
-Since we only have a single public IP, if we want to set up multiple public services we 
+Since we only have a single public IPv4, if we want to set up multiple public services we 
 will need a reverse proxy to redirect the requests to the correct services. Our proxy
 will also handle the ssl termination, to simplify the set up of the services. 
 
@@ -19,7 +19,8 @@ Similarly, to deploy Traefik we have to execute:
 kubectl create namespace proxy
 helm repo add traefik https://helm.traefik.io/traefik
 helm repo update
-helm install -n proxy traefik traefik/traefik -f traefik-values.yaml --version 37.1.1
+helm install -n proxy traefik-crds traefik/traefik-crds -f traefik-crds-values.yaml --version 1.11.1
+helm install -n proxy traefik traefik/traefik -f traefik-values.yaml  --version 37.2.0 
 ```
 
 !!! note
@@ -44,8 +45,6 @@ we also deploy these requirements:
 
 ```bash
 kubectl apply -f grigoris_proxy.yaml
-kubectl apply -f box_proxy.yaml
-kubectl apply -f traefik-dashboard.yaml
 ```
 
 ## Cert-manager
@@ -59,7 +58,7 @@ cheap, I will use an another manager (i.e. cert-manager)
 kubectl create namespace cert-manager
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
-helm install cert-manager jetstack/cert-manager --namespace cert-manager -f cert-values.yaml --version v1.18.2
+helm install cert-manager jetstack/cert-manager --namespace cert-manager -f cert-values.yaml --version v1.19.1
 kubectl apply -f cert-vpa.yaml
 ```
 
@@ -80,11 +79,9 @@ Now that the `cert-manager` is running we can create our certificate issuers:
 kubectl apply -f self_signed.yaml
 kubectl apply -f letenrcypt_stagging.yaml
 kubectl apply -f letenrcypt.yaml
-```
 
-!!!Note
-    We are using `traefik-cert-manager` as name for the traefik ingress.
-    That we will have to specify it when we deploy the traefik
+kubectl apply -f traefik-dashboard.yaml
+```
 
 ## Testing that everything works
 
@@ -96,9 +93,56 @@ kubectl apply -f whoami.yaml
 kubectl delete -f whoami.yaml
 # Forcing renew. Good practice when updating the cert-manager to make sure that
 # everything still works
-kubectl cert-manager status certificate login.anagno.me -n authentication
-kubectl cert-manager renew login.anagno.me -n authentication
+kubectl cert-manager status certificate test.anagno.dev -n general
+kubectl cert-manager renew test.anagno.dev -n authentication
 ```
+
+## Gateway API vs Ingress
+
+The Gateway API is the next generation of Kubernetes Ingress and it was investigate to see if it should
+be used in the deployment of the services. From the experimentations I did unfortunatelly, it did not fit
+yet my uses cases (see gateway_api folder). 
+
+The main problem I faced was that for each Gateway I could only have a single certificate
+to decrypt the HTTPS traffic. That means that I would need to either setup
+* [DNS01](https://cert-manager.io/docs/configuration/acme/dns01/acme-dns/) resolver for cert-manager 
+* or use supbaths.
+
+The DNS resolver would introduce that I would have an extra service like cloudflare or depend on obsolete 
+plugins of cert-manager. Both not ideal for the moment. 
+
+The subpaths could lead to complexities with the deployed services. Although most services, have the 
+possibility to adapt the subpath, some might expect to be on the root of the domain name.
+
+Alternative for each subdomain I could create a new Gateway Kubernetes Object, but that result 
+in more complicated setups.
+
+In the future there might be better support of my uses and it might be worth it switching to it. 
+
+The problems I faced:
+
+* Each Gateway can have only one certificate to decrypt the HTTPS traffik. Pontial solutions for this are:
+
+    * https://github.com/kubernetes-sigs/gateway-api/issues/3249
+    * https://github.com/kubernetes-sigs/gateway-api/issues/2111
+    * https://github.com/kubernetes-sigs/gateway-api/discussions/3418
+    * https://gateway-api.sigs.k8s.io/geps/gep-1713/
+    * https://github.com/kubernetes-sigs/gateway-api/issues/1713
+
+  The most promising solution probably is the `ListenerSet`s, but that is not still
+  supported in Traefik.
+* The TLSRoute does not support externalName services. The TLSRoute will be used in `grigoris_proxy`
+
+* The Middlewares of traefik can not still be defined in the Gateway API. So we still need the 
+specific CDRs from Traefik. Pontential solution for this one is:
+    * https://gateway-api.sigs.k8s.io/geps/gep-1767/
+
+* The authentik has only experimental support for the Gateway API
+
+
+Since there no plan yet to deprecate the [Ingress API](https://gateway-api.sigs.k8s.io/faq/#will-gateway-api-replace-the-ingress-api),
+I will remain for the moment with the Ingress API logic
+
 
 Resources:
 

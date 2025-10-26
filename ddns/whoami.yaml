@@ -37,15 +37,15 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: test-ext.anagno.dev
+  name: test.anagno.dev
   namespace: general
 spec:
-  commonName: test-ext.anagno.dev
-  secretName: test-ext.anagno.dev-cert
+  commonName: test.anagno.dev
+  secretName: test.anagno.dev-cert
   privateKey:
     rotationPolicy: Always
   dnsNames:
-    - test-ext.anagno.dev
+    - test.anagno.dev
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer
@@ -56,25 +56,24 @@ metadata:
   name: whoami
   namespace: general
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: test-ext.anagno.dev
+    external-dns.alpha.kubernetes.io/hostname: test.anagno.dev
     external-dns.alpha.kubernetes.io/target: zh.anagno.dev
-    kubernetes.io/ingress.class: traefik
+    kubernetes.io/ingressClassName: traefik
 spec:
   entryPoints:
     - websecure
+    #- web 
   routes:
-    - match: Host(`test-ext.anagno.dev`)
+    - match: Host(`test.anagno.dev`)
       kind: Rule
       services:
         - name: whoami
           port: 80
       middlewares:
-      - name: https-redirect
-        namespace: proxy
       - name: security-headers
         namespace: proxy
   tls:
-    secretName: test-ext.anagno.dev-cert
+    secretName: test.anagno.dev-cert
     options:
       name: tls-security-headers
       namespace: proxy

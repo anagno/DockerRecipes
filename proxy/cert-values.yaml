@@ -1,14 +1,29 @@
-#https://github.com/jetstack/cert-manager/blob/master/deploy/charts/cert-manager/values.yaml
+# https://github.com/jetstack/cert-manager/blob/master/deploy/charts/cert-manager/values.yaml
 
 crds:
   enabled: true
 
 replicaCount: 1
 
+enableCertificateOwnerRef: true
+
+config:
+#  # https://cert-manager.io/docs/usage/gateway/
+#  apiVersion: controller.config.cert-manager.io/v1alpha1
+#  kind: ControllerConfiguration
+  enableGatewayAPI: false
+
+
+
 #https://github.com/jetstack/cert-manager/issues/959
 podDnsPolicy: "Default"
 
+serviceIPFamilyPolicy: "RequireDualStack"
+
+webhook:
+  serviceIPFamilyPolicy: "RequireDualStack"
+
 prometheus:
-  enabled: true
+  enabled: false
   servicemonitor:
-    enabled: true
+    enabled: false

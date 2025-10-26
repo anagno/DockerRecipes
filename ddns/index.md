@@ -10,12 +10,31 @@ to my dynamic IP. This is necessary to be able to access the services of my clus
 For the purpose I have created a [docker image](https://github.com/anagno/gandi-ddns) that is using my dns provider
 api to update my IP when it changes.
 
+This image updates only the IPv4 address and the IPv6 I just have appended it manually. 
+
+TODO: In the future I should find a better solution to also udate the IPv6 automaticall
+Maybe replace the ddns functionality with https://github.com/mickybart/gandi-v5-rs?tab=readme-ov-file
+so we can have also dynamic IPv6 updates
+
 Furthermore we are going to use [external-dns](https://github.com/kubernetes-sigs/external-dns) to automatically update our dns.
+
+## Personal Access Token (PAT)
+
+My dns provider is gandi and I need a token to be able to automatically update the dns records. This token has to be 
+update frequently (depending on the settings of the token). So create a reminder for updating the token.
+
+The token is created from the User Icon on the top right -> User Settings -> Personal Access Tokens (PAT) -> Create a token
+
+I restricted only to the domains (products) that were of interest for me and I had to activate from the Domains section the
+`Manage domain name technical configuration`
+
+## Installation 
+
 
 
 ``` bash
 kubectl create namespace general
-kubectl -n general create secret generic gandi --from-literal=API_KEY=GANDITOKEN
+kubectl -n general create secret generic gandi --from-literal=GANDI_PAT=GANDITOKEN
 kubectl apply -f ddns-anagno-me.yaml
 kubectl apply -f ddns-anagno-dev.yaml
 
@@ -25,7 +44,7 @@ helm install external-dns external-dns/external-dns -f values.yaml --namespace g
 
 kubect apply -f vpa.yml
 
-kubectl apply -f test.yaml
+kubectl apply -f whoami.yaml
 # test that everything works
 kubectl delete -f test.yaml
 ```

@@ -10,7 +10,7 @@ we use the [kubernetes-replicator](https://github.com/mittwald/kubernetes-replic
 ``` bash
 helm repo add mittwald https://helm.mittwald.de
 helm repo update
-helm install kubernetes-replicator mittwald/kubernetes-replicator -f values.yaml --version v2.10.2 --namespace kube-system
+helm install kubernetes-replicator mittwald/kubernetes-replicator -f values.yaml --version v2.12.0 --namespace kube-system
 kubectl apply -f vpa.yaml
 ```
 

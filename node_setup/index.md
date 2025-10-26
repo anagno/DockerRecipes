@@ -66,6 +66,10 @@ ansible-vault encrypt_string 'my_strong_password' --name 'ansible_ssh_pass'
     The above command does not pass the vault_password_file because it is 
     defined in the ansible.cfg
 
+!!! note
+    To decrypt the value again you can use 
+    `ansible-inventory --host node_1 | jq -r '.ansible_ssh_pass.__ansible_vault' | ansible-vault decrypt`
+
 ### Operating system 
 
 The most simple OS to use is [Ubuntu](https://ubuntu.com/download/raspberry-pi). 

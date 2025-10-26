@@ -5,7 +5,19 @@ metadata:
   namespace: load-balancer
 spec:
   addresses:
-  - 192.168.179.230-192.168.179.250
+  - 192.168.142.220-192.168.142.240
+  - fd93:142::220-fd93:142::240
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: public-ipv6
+  namespace: load-balancer
+spec:
+  addresses:
+  - 2a02:169:3af:7::220-2a02:169:3af:7::240
+  - 2a02:169:3af:6::220-2a02:169:3af:6::240
+  autoAssign: false
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
@@ -15,4 +27,4 @@ metadata:
 spec:
   ipAddressPools:
   - default
----
+  - public-ipv6

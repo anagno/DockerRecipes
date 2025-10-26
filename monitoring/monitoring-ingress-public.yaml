@@ -22,7 +22,7 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/hostname: monitoring.anagno.dev
     external-dns.alpha.kubernetes.io/target: zh.anagno.dev
-    kubernetes.io/ingress.class: traefik
+    kubernetes.io/ingressClassName: traefik
 spec:
   entryPoints:
     - websecure

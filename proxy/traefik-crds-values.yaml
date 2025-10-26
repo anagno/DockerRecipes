@@ -1,0 +1,7 @@
+# https://github.com/traefik/traefik-helm-chart/blob/master/traefik-crds/values.yaml
+
+traefik: true
+gatewayAPI: false
+gatewayAPIExperimental: true
+hub: false
+deleteOnUninstall: true

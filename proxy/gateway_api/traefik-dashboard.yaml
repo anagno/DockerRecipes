@@ -1,0 +1,53 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: proxy-internal-tls
+  namespace: proxy
+spec:
+  commonName: proxy.internal
+  secretName: proxy-internal-tls
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - proxy.internal
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: proxy-internal
+  namespace: proxy
+spec:
+  gatewayClassName: default
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: "proxy.internal"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: proxy-internal-tls
+            namespace: proxy
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  namespace: proxy
+  name: proxy
+spec:
+  parentRefs:
+    - name: proxy-internal
+      sectionName: https
+      kind: Gateway
+  rules:
+  - backendRefs:
+      # https://doc.traefik.io/traefik/expose/kubernetes/#using-gateway-api-with-traefikservice
+      - group: traefik.io
+        kind: TraefikService
+        name: api@internal

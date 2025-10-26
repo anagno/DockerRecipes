@@ -4,7 +4,7 @@ prometheus:
   serviceAccount: "prometheus-k8s"
   namespace: "monitoring"
   podMonitor:
-    enabled: true
+    enabled: false
 
 controller:
   image:

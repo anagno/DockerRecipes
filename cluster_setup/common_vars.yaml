@@ -1,22 +1,55 @@
-k3s_initialization_parameters: "--disable servicelb --disable traefik --flannel-backend=wireguard-native --etcd-expose-metrics=true --kube-controller-manager-arg=\"bind-address=0.0.0.0\" --kube-proxy-arg=\"metrics-bind-address=0.0.0.0\" --kube-scheduler-arg=\"bind-address=0.0.0.0\" "
-# the --disable servicelb is because the integrated load balancer does not allocate also virtual IPs. 
-# So I prefer to use metallb
-# I prefer to deploy traefik manually to have more control over it. And probably without a load balancer,
-# we will also have problems with the proxy deployment.
-# K3s is using flannel as CNI.
-# Flannel default network is not enrcypted. So the communication between the pods is unencrypted. 
-# There are experimental backend that supports [encryption](https://github.com/flannel-io/flannel/blob/master/Documentation/backends.md).
-# We can activate it in [k3s](https://rancher.com/docs/k3s/latest/en/installation/network-options/#flannel-options),
-# I had problems when I activated the ipsec. The communication between the nodes did not work
-# So I am now testing with wireguard
-# The last 4 parameters are for exposing the metrics from the cluster
-# https://github.com/k3s-io/k3s/issues/3619#issuecomment-993977516
-# They are necessary if we want to monitor the services with prometheus
+k3s_initialization_parameters: >-
+  --disable=servicelb
+  --disable=traefik
+  --flannel-backend=wireguard-native
+  --cluster-cidr=10.42.0.0/16,fd10:42::/56
+  --service-cidr=10.43.0.0/16,fd10:43::/112
+  --flannel-ipv6-masq
+  --node-taint "node-role.kubernetes.io/control-plane:NoSchedule"
+  --embedded-registry
+  --kubelet-arg="image-gc-high-threshold=50"
+  --kubelet-arg="image-gc-low-threshold=45"
+  --kube-controller-manager-arg "terminated-pod-gc-threshold=10"
+  --etcd-expose-metrics=true
+  --kube-controller-manager-arg="bind-address=0.0.0.0"
+  --kube-scheduler-arg="bind-address=0.0.0.0"
+  --kube-proxy-arg="metrics-bind-address=0.0.0.0"
 
-k3s_common_parameters_for_all_nodes: "--resolv-conf /run/systemd/resolve/resolv.conf"
+# Explanations of parameters:
+#   * --disable servicelb: The integrated load balancer does not allocate also virtual IPs. 
+#     In either case we will have to deploy something like kube-vio or metallb, so de-activate 
+#     to make maintance easier
+#   * --disable traefik: I prefer to deploy traefik manually to have more control over it.
+#   * --flannel-backend: Flannel default network is not enrcypted. So the communication between the pods is unencrypted. 
+#        To enable encryption we use wireguard
+#        https://docs.k3s.io/networking/basic-network-options?_highlight=flannel&_highlight=encryption#flannel-options
+#   * --cluster-cidr=10.42.0.0/16,fd10:42::/56
+#   * --service-cidr=10.43.0.0/16,fd10:43::/112
+#     To enable dual stack in k3s -- https://docs.k3s.io/networking/basic-network-options?_highlight=dual&_highlight=stack#dual-stack-ipv4--ipv6-networking
+#   * --flannel-ipv6-masq Since I am using ULA IPv6 I need that option -- See the description from the above link
+#       They are being used to clean the images from the local registries
+#       https://github.com/spegel-org/spegel/issues/282
+#   * --embedded-registry: To enable the registry mirror 
+#       https://docs.k3s.io/installation/registry-mirror#enabling-the-distributed-oci-registry-mirror
+#   * --kubelet-arg="-image-gc-high-threshold=60"
+#     --kubelet-arg="-image-gc-low-threshold=55"
+#   * --etcd-expose-metrics=true 
+#   * --kube-controller-manager-arg="bind-address=0.0.0.0" 
+#   * --kube-proxy-arg="metrics-bind-address=0.0.0.0" 
+#   * --kube-scheduler-arg="bind-address=0.0.0.0" :
+#       The last 4 parameters are for exposing the metrics from the cluster
+#       https://github.com/k3s-io/k3s/issues/3619#issuecomment-993977516
+#       They are necessary if we want to monitor the services with prometheus
 
+k3s_common_parameters_for_all_nodes: >-
+  --resolv-conf /run/systemd/resolve/resolv.conf
 
-# The resolve-conf is because https://github.com/k3s-io/k3s/issues/4087#issuecomment-929374460
+k3s_init_parameters_for_workers: >-
+  --node-label "node_type=worker"
+
+# Explanations of parameters:
+#   * --resolve-conf: To enable the coredns to forward requests to my router
+#     https://github.com/k3s-io/k3s/issues/4087#issuecomment-929374460
 
 # # Resources
 # * https://www.danielstechblog.io/setting-custom-upstream-nameservers-for-coredns-in-azure-kubernetes-service/

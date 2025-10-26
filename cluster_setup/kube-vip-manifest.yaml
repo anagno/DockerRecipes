@@ -43,6 +43,7 @@ subjects:
 - kind: ServiceAccount
   name: kube-vip
   namespace: kube-system
+
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -91,13 +92,11 @@ spec:
         - name: vip_subnet
           value: "32"
         - name: dns_mode
-          value: first
+          value: dual
         - name: cp_enable
           value: "true"
         - name: cp_namespace
           value: kube-system
-        - name: vip_ddns
-          value: "true"
         - name: vip_leaderelection
           value: "true"
         - name: vip_leasename
@@ -108,8 +107,14 @@ spec:
           value: "3"
         - name: vip_retryperiod
           value: "1"
+        - name: lb_enable
+          value: "true"
+        - name: lb_port
+          value: "6443"
+        - name: lb_fwdmethod
+          value: local
         - name: address
-          value: zeus.intra
+          value: zeus.internal
         - name: prometheus_server
           value: :2112
         image: ghcr.io/kube-vip/kube-vip:v1.0.0

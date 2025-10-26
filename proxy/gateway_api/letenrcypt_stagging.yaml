@@ -12,5 +12,8 @@ spec:
       name: letsencrypt-stagging-account-key
     solvers:
     - http01:
-        ingress:
-          ingressClassName: traefik
+        gatewayHTTPRoute:
+          parentRefs:
+            - name: default-gateway
+              namespace: proxy
+              kind: Gateway

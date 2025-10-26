@@ -5,14 +5,23 @@
 #  tag: "v0.14.0"
 
 serviceMonitor:
-  enabled: true
+  enabled: false
+
+
+service:
+  ipFamilyPolicy: "RequireDualStack"
 
 dnsPolicy: Default
 
 sources:
   - service
   - ingress
+  # https://kubernetes-sigs.github.io/external-dns/v0.19.0/docs/sources/traefik-proxy/
   - traefik-proxy
+  #- gateway-httproute
+  #- gateway-tlsroute
+  #- gateway-tcproute
+  #- gateway-udproute
 
 policy: sync
 
@@ -24,20 +33,16 @@ domainFilters:
   - anagno.me
   - anagno.dev
 
-# https://kubernetes-sigs.github.io/external-dns/v0.14.0/tutorials/gandi/
+# https://kubernetes-sigs.github.io/external-dns/v0.19.0/docs/tutorials/gandi/
 provider: 
   name: gandi
 
 env:
-  - name: GANDI_KEY
+  - name: GANDI_PAT
     valueFrom:
       secretKeyRef:
         name: gandi
-        key: API_KEY
-
-extraArgs: 
-  # https://kubernetes-sigs.github.io/external-dns/v0.14.0/tutorials/traefik-proxy/
-  - --source=traefik-proxy
+        key: GANDI_PAT
 
 deploymentStrategy:
   type: Recreate

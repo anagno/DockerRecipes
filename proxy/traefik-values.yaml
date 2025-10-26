@@ -16,7 +16,7 @@ ingressClass:
 # We will create our IngressRoute for the dashboard
 ingressRoute:
   dashboard:
-    enabled: False
+    enabled: false
 
 providers:
   kubernetesCRD:
@@ -25,12 +25,41 @@ providers:
     allowExternalNameServices: true
   kubernetesIngress:
     enabled: true
+    allowExternalNameServices: true
+  kubernetesGateway:
+    enabled: false
+    # This option currently enables support for TCPRoute and TLSRoute.
+    experimentalChannel: false
 
+gatewayClass:  # @schema additionalProperties: false
+  name: "default"
 
-additionalArguments:
-  # Used for the generation of the certificates
-  - "--providers.kubernetesIngress.ingressClass=traefik-cert-manager"
-  - "--providers.kubernetesingress.allowexternalnameservices=true"
+gateway:
+  # Do not enable for the moment since we are not using it
+  enable: false
+  # This gateway will be mainly be used from cert-manager
+  # to create certificates for the other gateways
+  name: "default-gateway"
+  annotations:
+    cert-manager.io/issuer: selfsigned-issuer
+    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+  listeners:
+    web:
+      protocol: HTTP
+      port: 80
+      namespacePolicy:
+        from: All
+    # We can not activate by default the https in the default
+    # because we need to have certificates defined
+    # So we activate the HTTP, to be able to get certificates
+    # with let`s encrypt and then we can define new gateways
+    # specific to the domains we are interested
+    # websecure:
+    #  protocol: HTTPS
+    #  namespacePolicy:
+    #    from: All
+    #  certificateRefs:
+    #  mode: "Terminate"
 
 logs:
   general:
@@ -50,24 +79,26 @@ metrics:
     service:
       enabled: false
 
-  
-# TLS Options are created as TLSOption CRDs
-# https://doc.traefik.io/traefik/https/tls/#tls-options
-# Example:
-tlsOptions:
-  default:
-    sniStrict: true
-    preferServerCipherSuites: true
-    cipherSuites:
-      - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-      - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-      - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
-    curvePreferences:
-      - CurveP521
-      - CurveP384
-
 ports:
+  web:
+    port: 80
+    expose:
+      default: true
+      ipv6-1: true
+      ipv6-2: true
+    # We can not have default redirection in the port level
+    # because the let`s encrypt needs HTTP to create the certificates
+    #redirections:
+    #  entryPoint: 
+    #    to: websecure
+    #    scheme: https
+    #    permanent: true
   websecure:
+    port: 443
+    expose:
+      default: true
+      ipv6-1: true
+      ipv6-2: true
     http3:
       enabled: true
   metrics:
@@ -77,9 +108,32 @@ ports:
 service:
   enabled: true
   type: LoadBalancer
-  spec: 
+  spec:
+    # https://metallb.io/usage/#cluster-traffic-policy
     externalTrafficPolicy: Local
-    loadBalancerIP: "192.168.179.240"
+  annotations:
+    metallb.io/loadBalancerIPs: "192.168.142.240,fd93:142::240"
+  ipFamilyPolicy: RequireDualStack
+  additionalServices:
+    ipv6-1:
+      # https://github.com/traefik/traefik-helm-chart/issues/1233#issuecomment-2435187894
+      single: true
+      type: LoadBalancer
+      spec:
+        # https://metallb.io/usage/#cluster-traffic-policy
+        externalTrafficPolicy: Local
+      annotations:
+        metallb.io/loadBalancerIPs: "2a02:169:3af:7::240"
+      ipFamilies: [ "IPv6" ]
+    ipv6-2:
+      single: true
+      type: LoadBalancer
+      spec:
+        # https://metallb.io/usage/#cluster-traffic-policy
+        externalTrafficPolicy: Local
+      annotations:
+        metallb.io/loadBalancerIPs: "2a02:169:3af:6::240"
+      ipFamilies: [ "IPv6" ]
 
 resources:
   requests:
