@@ -40,7 +40,7 @@ kubectl apply -f ddns-anagno-dev.yaml
 
 helm repo add external-dns https://kubernetes-sigs.github.io/external-dns/ 
 helm repo update
-helm install external-dns external-dns/external-dns -f values.yaml --namespace general --version 1.19.0
+helm install external-dns external-dns/external-dns -f values.yaml --namespace general --version 1.20.0
 
 kubect apply -f vpa.yml
 
