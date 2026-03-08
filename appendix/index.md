@@ -240,7 +240,7 @@ curl https://kube-vip.io/manifests/rbac.yaml > kube-vip-manifest.yaml
 ### Append --- in the file
 
 sudo docker run --network host \
---rm plndr/kube-vip:v1.0.0 manifest daemonset \
+--rm plndr/kube-vip:v1.0.4 manifest daemonset \
 --interface eth0 \
 --address "zeus.internal" \
 --dnsMode dual \

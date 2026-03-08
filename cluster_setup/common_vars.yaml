@@ -17,7 +17,7 @@ k3s_initialization_parameters: >-
 
 # Explanations of parameters:
 #   * --disable servicelb: The integrated load balancer does not allocate also virtual IPs. 
-#     In either case we will have to deploy something like kube-vio or metallb, so de-activate 
+#     In either case we will have to deploy something like kube-vip or metallb, so de-activate 
 #     to make maintance easier
 #   * --disable traefik: I prefer to deploy traefik manually to have more control over it.
 #   * --flannel-backend: Flannel default network is not enrcypted. So the communication between the pods is unencrypted. 
