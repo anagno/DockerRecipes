@@ -14,14 +14,8 @@ service:
 dnsPolicy: Default
 
 sources:
-  - service
-  - ingress
-  # https://kubernetes-sigs.github.io/external-dns/v0.19.0/docs/sources/traefik-proxy/
+  # https://kubernetes-sigs.github.io/external-dns/v0.21.0/docs/sources/traefik-proxy/
   - traefik-proxy
-  #- gateway-httproute
-  #- gateway-tlsroute
-  #- gateway-tcproute
-  #- gateway-udproute
 
 policy: sync
 

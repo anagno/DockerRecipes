@@ -7,14 +7,6 @@ replicaCount: 1
 
 enableCertificateOwnerRef: true
 
-config:
-#  # https://cert-manager.io/docs/usage/gateway/
-#  apiVersion: controller.config.cert-manager.io/v1alpha1
-#  kind: ControllerConfiguration
-  enableGatewayAPI: false
-
-
-
 #https://github.com/jetstack/cert-manager/issues/959
 podDnsPolicy: "Default"
 

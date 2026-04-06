@@ -19,8 +19,7 @@ Similarly, to deploy Traefik we have to execute:
 kubectl create namespace proxy
 helm repo add traefik https://helm.traefik.io/traefik
 helm repo update
-helm install -n proxy traefik-crds traefik/traefik-crds -f traefik-crds-values.yaml --version 1.11.1
-helm install -n proxy traefik traefik/traefik -f traefik-values.yaml  --version 37.2.0 
+helm install -n proxy traefik traefik/traefik -f traefik-values.yaml  --version 39.0.7
 ```
 
 !!! note
@@ -36,7 +35,6 @@ Now that our proxy is running we can define some Middlewares to simplify the
 deployment of services:
 
 ```bash
-kubectl apply -f https_redirect.yaml
 kubectl apply -f security_headers.yaml
 ```
 
@@ -58,7 +56,7 @@ cheap, I will use an another manager (i.e. cert-manager)
 kubectl create namespace cert-manager
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
-helm install cert-manager jetstack/cert-manager --namespace cert-manager -f cert-values.yaml --version v1.19.4
+helm install cert-manager jetstack/cert-manager --namespace cert-manager -f cert-values.yaml --version v1.20.1
 kubectl apply -f cert-vpa.yaml
 ```
 

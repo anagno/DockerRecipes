@@ -86,13 +86,12 @@ ports:
       default: true
       ipv6-1: true
       ipv6-2: true
-    # We can not have default redirection in the port level
-    # because the let`s encrypt needs HTTP to create the certificates
-    #redirections:
-    #  entryPoint: 
-    #    to: websecure
-    #    scheme: https
-    #    permanent: true
+    allowACMEByPass: true
+    http:
+      redirections:
+        entryPoint: 
+          to: websecure
+          scheme: https
   websecure:
     port: 443
     expose:
