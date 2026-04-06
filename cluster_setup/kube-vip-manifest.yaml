@@ -50,7 +50,7 @@ kind: DaemonSet
 metadata:
   labels:
     app.kubernetes.io/name: kube-vip-ds
-    app.kubernetes.io/version: v1.0.4
+    app.kubernetes.io/version: v1.1.2
   name: kube-vip-ds
   namespace: kube-system
 spec:
@@ -61,7 +61,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: kube-vip-ds
-        app.kubernetes.io/version: v1.0.4
+        app.kubernetes.io/version: v1.1.2
     spec:
       affinity:
         nodeAffinity:
@@ -102,11 +102,11 @@ spec:
         - name: vip_leasename
           value: plndr-cp-lock
         - name: vip_leaseduration
-          value: "5"
+          value: "15"
         - name: vip_renewdeadline
-          value: "3"
+          value: "10"
         - name: vip_retryperiod
-          value: "1"
+          value: "2"
         - name: lb_enable
           value: "true"
         - name: lb_port
@@ -117,7 +117,7 @@ spec:
           value: zeus.internal
         - name: prometheus_server
           value: :2112
-        image: ghcr.io/kube-vip/kube-vip:v1.0.4
+        image: ghcr.io/kube-vip/kube-vip:v1.1.2
         imagePullPolicy: IfNotPresent
         name: kube-vip
         resources: {}
