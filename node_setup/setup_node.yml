@@ -7,6 +7,7 @@
       ansible.builtin.hostname:
         name: '{{ inventory_hostname }}'
 
+    - import_tasks: firewall.yml
     - import_tasks: cgroup.yml
     - import_tasks: fan.yml
     - import_tasks: dist-upgrade.yaml

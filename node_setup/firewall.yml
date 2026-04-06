@@ -1,0 +1,52 @@
+---
+# Enable the firewall and the rules needed for the cluster to work.
+# This firewall rules are only for ubuntu server systems.
+
+- name: Install ufw
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+    update_cache: yes
+
+- name: UFW - Allow SSH connections only from the local network
+  community.general.ufw:
+    rule: allow
+    name: OpenSSH
+    from_ip: '{{ item }}'
+  loop:
+    - 192.168.142.0/24
+    - fd93:142::/60
+    - 2a02:169:3af:6::/64
+    - 2a02:169:3af:7::/64
+
+- name: UFW - Allow HTTP connections
+  community.general.ufw:
+    rule: allow
+    port: "443"
+    proto: tcp
+
+- name: UFW - Allow HTTPS connections
+  community.general.ufw:
+    rule: allow
+    port: "80"
+    proto: tcp
+
+- name: UFW - Allow communication between the nodes
+  community.general.ufw:
+    rule: allow
+    src: '{{ item }}'
+  loop:
+    # Pods
+    - 10.42.0.0/16
+    - fd10:42::/56
+    # Services
+    - 10.43.0.0/16
+    - fd10:43::/112
+
+- name: UFW - Enable and deny by default
+  community.general.ufw:
+    state: enabled
+    default: deny
+
+- name: UFW - Reload firewall
+  ansible.builtin.command: ufw reload

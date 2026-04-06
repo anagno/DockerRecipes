@@ -48,6 +48,45 @@
     - name: Check services (to see if k3s is present)
       service_facts:
 
+    - name: UFW - Allow incoming access to the apiserver
+      community.general.ufw:
+        rule: allow
+        port: "6443"
+        proto: tcp
+        from_ip: '{{ item }}'
+      loop:
+        - 192.168.142.0/24
+        - fd93:142::/60
+        - 2a02:169:3af:6::/64
+        - 2a02:169:3af:7::/64
+
+    - name: UFW - Allow incoming access to the etcd server
+      community.general.ufw:
+        rule: allow
+        port: "2380"
+        proto: tcp
+        from_ip: '{{ item }}'
+      loop:
+        - 192.168.142.0/24
+        - fd93:142::/60
+        - 2a02:169:3af:6::/64
+        - 2a02:169:3af:7::/64
+
+    - name: UFW - Allow incoming access to the etcd server
+      community.general.ufw:
+        rule: allow
+        port: "2379"
+        proto: tcp
+        from_ip: '{{ item }}'
+      loop:
+        - 192.168.142.0/24
+        - fd93:142::/60
+        - 2a02:169:3af:6::/64
+        - 2a02:169:3af:7::/64
+
+    - name: UFW - Reload firewall
+      ansible.builtin.command: ufw reload
+
     - name: Create kube-vip manifests directory on first master
       file:
         path: /var/lib/rancher/k3s/server/manifests
@@ -118,6 +157,45 @@
 
     - name: Check services (to see if k3s is present)
       service_facts:
+
+    - name: UFW - Allow incoming access to the apiserver
+      community.general.ufw:
+        rule: allow
+        port: "6443"
+        proto: tcp
+        from_ip: '{{ item }}'
+      loop:
+        - 192.168.142.0/24
+        - fd93:142::/60
+        - 2a02:169:3af:6::/64
+        - 2a02:169:3af:7::/64
+
+    - name: UFW - Allow incoming access to the etcd server
+      community.general.ufw:
+        rule: allow
+        port: "2380"
+        proto: tcp
+        from_ip: '{{ item }}'
+      loop:
+        - 192.168.142.0/24
+        - fd93:142::/60
+        - 2a02:169:3af:6::/64
+        - 2a02:169:3af:7::/64
+
+    - name: UFW - Allow incoming access to the etcd server
+      community.general.ufw:
+        rule: allow
+        port: "2379"
+        proto: tcp
+        from_ip: '{{ item }}'
+      loop:
+        - 192.168.142.0/24
+        - fd93:142::/60
+        - 2a02:169:3af:6::/64
+        - 2a02:169:3af:7::/64
+
+    - name: UFW - Reload firewall
+      ansible.builtin.command: ufw reload
 
     - name: Wait for port the vip to start
       wait_for:
