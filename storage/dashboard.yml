@@ -31,8 +31,6 @@ spec:
       middlewares:
       - name: security-headers
         namespace: proxy
-      - name: https-redirect
-        namespace: proxy
   tls:
     secretName: storage.internal
     options:

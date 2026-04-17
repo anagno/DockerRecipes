@@ -81,12 +81,12 @@ ansible-playbook storage/setup_storage.yml
 ```bash
 
 # https://longhorn.io/docs/1.10.0/deploy/install/#longhorn-command-line-tool
-curl -sSfL -o longhornctl https://github.com/longhorn/cli/releases/download/v1.10.0/longhornctl-linux-amd64
+curl -sSfL -o longhornctl https://github.com/longhorn/cli/releases/download/v1.11.1/longhornctl-linux-amd64
 chmod +x longhornctl
 kubectl create namespace longhorn-system
 export KUBECONFIG=~/.kube/config
 ./longhornctl check preflight
-/.longhornctl --image longhornio/longhorn-cli:v1.10.0 install preflight
+./longhornctl --image longhornio/longhorn-cli:v1.11.1 install preflight
 # https://longhorn.io/docs/1.10.0/v2-data-engine/quick-start/#check-environment
 
 # We have to use the longhrn-system namespace. It is mentioned in the
@@ -97,13 +97,13 @@ kubectl create namespace longhorn-system
 
 kubectl create secret generic longhorn-backup --namespace longhorn-system \
   --from-literal=CIFS_USERNAME=longhorn \
-  --from-literal=CIFS_PASSWORD=Black4dvertis1ngCurrent1y
+  --from-literal=CIFS_PASSWORD=PASSWORD
 
 kubectl create secret generic longhorn-crypto --namespace longhorn-system \
   --from-literal=CRYPTO_KEY_VALUE=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) \
   --from-literal=CRYPTO_KEY_PROVIDER=secret
 
-helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.10.2
+helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.11.1
 
 # The vpa is causing instability in the longhorn. So do not activate it for the moment
 #kubectl apply -f vpa.yml
