@@ -1,0 +1,17 @@
+# https://github.com/cloudnative-pg/charts/blob/main/charts/cloudnative-pg/values.yaml
+
+config:
+  create: true
+  name: cnpg-controller-manager-config
+  clusterWide: true
+  # https://cloudnative-pg.io/documentation/current/operator_conf/#available-options
+  data: 
+    CLUSTERS_ROLLOUT_DELAY: '60'
+    INSTANCES_ROLLOUT_DELAY: '10'
+  maxConcurrentReconciles: 5
+
+
+monitoring:
+  podMonitorEnabled: false
+  grafanaDashboard:
+    create: false

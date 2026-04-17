@@ -33,8 +33,6 @@ spec:
         - name: authentik-server
           port: 80
       middlewares:
-      - name: https-redirect
-        namespace: proxy
       - name: security-headers
         namespace: proxy
   tls:
@@ -42,21 +40,3 @@ spec:
     options:
       name: tls-security-headers
       namespace: proxy
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: auth.anagno.dev-http
-  namespace: authorization
-spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`auth.anagno.dev`)
-      kind: Rule
-      services:
-        - name: authentik-server
-          port: 80
-      middlewares:
-      - name: https-redirect
-        namespace: proxy

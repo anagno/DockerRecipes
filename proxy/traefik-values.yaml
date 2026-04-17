@@ -10,8 +10,9 @@ deployment:
   replicas: 2
 
 ingressClass:
+  # needed from cert-manager to create certificates
   enabled: true
-  isDefaultClass: true
+  isDefaultClass: false
 
 # We will create our IngressRoute for the dashboard
 ingressRoute:

@@ -11,6 +11,7 @@ authentik:
     timeout: 30
     from: "no-reply-anagno-me@outlook.com"
   postgresql:
+    host: "authentik-database-cluster-rw"
     name: "authentik"
     user: "authentik"
 
@@ -19,28 +20,24 @@ global:
     - name: AUTHENTIK_SECRET_KEY
       valueFrom:
         secretKeyRef:
-          name: authentik-generall
+          name: authentik-general
           key: secret-key
-    - name: AK_ADMIN_PASS
+    # https://docs.goauthentik.io/install-config/automated-install/#authentik_bootstrap_password
+    - name: AUTHENTIK_BOOTSTRAP_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: authentik-generall
+          name: authentik-general
           key: ak-admin-pass
-    - name: AUTHENTIK_EMAIL__PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: no-reply-mail
-          key: password
+#    - name: AUTHENTIK_EMAIL__PASSWORD
+#      valueFrom:
+#        secretKeyRef:
+#          name: no-reply-mail
+#          key: password
     - name: AUTHENTIK_POSTGRESQL__PASSWORD
       valueFrom:
         secretKeyRef:
           name: authentik-postgresql
           key: password
-    - name: AUTHENTIK_REDIS__PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: authentik-redis
-          key: redis-password
   # we have to create first the ingressroute, so the secrets are available
   # https://goauthentik.io/docs/core/certificates#web-certificates
   volumes:
@@ -73,9 +70,9 @@ server:
       value: "1"
 
   metrics:
-    enabled: true
+    enabled: false
     serviceMonitor:
-      enabled: true
+      enabled: false
 
 worker:
 
@@ -94,33 +91,13 @@ worker:
     timeoutSeconds: 10
 
   metrics:
-    enabled: true
+    enabled: false
     serviceMonitor:
-      enabled: true
+      enabled: false
 
 postgresql:
-  enabled: true
-  username: "authentik"
-  database: "authentik"
-  global:
-    postgresql:
-      auth:
-        database: authentik
-        existingSecret: "authentik-postgresql"
-  primary:
-    persistence:
-      enabled: true
-      existingClaim: "authentik-database"
-
-redis:
-  enabled: true
-  auth:
-    enabled: true
-    existingSecret: "authentik-redis"
-  master:
-    persistence:
-      enabled: true
-      existingClaim: authentik-redis
+  # We use an external database
+  enabled: false
 
 # https://github.com/goauthentik/helm/blob/480a5546b6d6b3d089e14dea357d9726439086fb/charts/authentik/ci/manfiests/blueprint.yaml
 # https://github.com/goauthentik/helm/blob/480a5546b6d6b3d089e14dea357d9726439086fb/charts/authentik/ci/ct-values.yaml#L39
