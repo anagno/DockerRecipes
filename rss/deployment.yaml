@@ -17,21 +17,59 @@ spec:
       labels:
         app: freshrss-server
     spec:
-      dnsPolicy: Default
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
       containers:
       - name: freshrss-server
-        image: freshrss/freshrss:1.27.0
+        image: freshrss/freshrss:1.28.1
         imagePullPolicy: IfNotPresent
         env:
-        - name: TRUSTED_PROXY
-          value: "10.0.0.0/8"
+        - name: DATA_PATH
+          value: /data
         - name: CRON_MIN
           value: "17,47"
+        - name: OIDC_ENABLED
+          value: "1"
+        - name: OIDC_PROVIDER_METADATA_URL
+          value: "https://auth.anagno.dev/application/o/news/.well-known/openid-configuration"
+        - name: OIDC_REMOTE_USER_CLAIM
+          value: "preferred_username"
+        - name: OIDC_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: freshrss-oidc-secret
+              key: client_id
+        - name: OIDC_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: freshrss-oidc-secret
+              key: client_secret
+        - name: OIDC_CLIENT_CRYPTO_KEY
+          valueFrom:
+            secretKeyRef:
+              name: freshrss-oidc-secret
+              key: crypto_key
+        - name: OIDC_X_FORWARDED_HEADERS
+          value: "X-Forwarded-Port X-Forwarded-Proto X-Forwarded-Host"
+        - name: OIDC_SCOPES
+          value: "openid email profile"
+        - name: FRESHRSS_POSTGRESQL__USER
+          valueFrom:
+            secretKeyRef:
+              name: freshrss-postgresql
+              key: username
+        - name: FRESHRSS_POSTGRESQL__PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: freshrss-postgresql
+              key: password
         ports:
           - name: http
             containerPort: 80
         volumeMounts:
-          - mountPath: /var/www/FreshRSS/data
+          - mountPath: /data
             name: data
             readOnly: false
       volumes:
@@ -40,22 +78,22 @@ spec:
             claimName: news-data
             readOnly: false
 ---
-apiVersion: "autoscaling.k8s.io/v1"
-kind: VerticalPodAutoscaler
-metadata:
-  name: news-vpa
-  namespace: news
-spec:
-  targetRef:
-    apiVersion: "apps/v1"
-    kind: Deployment
-    name: freshrss
-  updatePolicy:
-    updateMode: "Auto"
-  resourcePolicy:
-    containerPolicies:
-      - containerName: '*'
-        maxAllowed:
-          cpu: 1
-          memory: 1024Mi
----
+#apiVersion: "autoscaling.k8s.io/v1"
+#kind: VerticalPodAutoscaler
+#metadata:
+#  name: news-vpa
+#  namespace: news
+#spec:
+#  targetRef:
+#    apiVersion: "apps/v1"
+#    kind: Deployment
+#    name: freshrss
+#  updatePolicy:
+#    updateMode: "Auto"
+#  resourcePolicy:
+#    containerPolicies:
+#      - containerName: '*'
+#        maxAllowed:
+#          cpu: 1
+#          memory: 1024Mi
+#---

@@ -61,29 +61,8 @@ spec:
       middlewares:
       - name: security-headers
         namespace: proxy
-      - name: forward-auth-remote-user-headers
-        namespace: authorization
   tls:
     secretName: news.anagno.dev
     options:
       name: tls-security-headers
       namespace: proxy
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: news.anagno.dev-http
-  namespace: news
-spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`news.anagno.dev`)
-      kind: Rule
-      services:
-        - name: freshrss-service
-          port: 80
-      middlewares:
-      - name: https-redirect
-        namespace: proxy
----  
