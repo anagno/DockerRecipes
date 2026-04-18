@@ -70,9 +70,9 @@ server:
       value: "1"
 
   metrics:
-    enabled: false
+    enabled: true
     serviceMonitor:
-      enabled: false
+      enabled: true
 
 worker:
 
@@ -91,9 +91,9 @@ worker:
     timeoutSeconds: 10
 
   metrics:
-    enabled: false
+    enabled: true
     serviceMonitor:
-      enabled: false
+      enabled: true
 
 postgresql:
   # We use an external database

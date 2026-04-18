@@ -5,7 +5,7 @@
 #  tag: "v0.14.0"
 
 serviceMonitor:
-  enabled: false
+  enabled: true
 
 
 service:

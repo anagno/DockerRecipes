@@ -9,6 +9,9 @@ helm repo add grafana https://grafana.github.io/helm-charts
 helm repo add stable https://charts.helm.sh/stable
 helm repo update
 
+
+ansible-playbook monitoring/firewall.yml
+
 kubectl create namespace monitoring
 
 
@@ -20,15 +23,14 @@ kubectl create secret generic authentik-secret --namespace monitoring \
   --from-literal=client_secret=SECRET_FROM_AUTHENTIK
 
 helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
-    --version v77.10.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+    --version v83.6.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress-public.yaml
 kubectl apply -f vpa.yaml
 
 
 # https://github.com/grafana/helm-charts/issues/3300
-helm install --namespace monitoring loki grafana/loki-stack -f loki-values.yaml --version 2.10.2
-
-helm install --namespace monitoring event-explorter bitnami/kubernetes-event-exporter -f event-exporter-values.yaml --version 2.9.3
+#helm install --namespace monitoring loki grafana/loki-stack -f loki-values.yaml --version 2.10.2
+# TODO find an alternative for loki and promtail
 
 ```
 
@@ -53,7 +55,6 @@ kubectl apply -f storage/storage-dashboard.yaml
 kubectl apply -f proxy/traefik-dashboard-service.yaml
 kubectl apply -f proxy/traefik-service-monitor.yaml
 kubectl apply -f proxy/traefik-dashboard.yaml
-kubectl apply -f proxy/traefik-dashboard-loki.yaml
 ```
 
 * General dashboards:
@@ -66,10 +67,7 @@ kubectl apply -f dashboards/cluster-details-namespaces.yaml
 kubectl apply -f dashboards/cluster-details-nodes.yaml
 kubectl apply -f dashboards/volumes-dashboard.yaml
 kubectl apply -f dashboards/node-exporter.yaml
-kubectl apply -f dashboards/vpa-dashboard.yaml
 kubectl apply -f dashboards/hpa-dashboard.yaml
-kubectl apply -f dashboards/event-exporter.yaml
-kubectl apply -f dashboards/loki-search.yaml
 ```
 
 * Load-balancer dashboard (if it has been activated in the helm chart): 

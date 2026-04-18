@@ -12,6 +12,6 @@ config:
 
 
 monitoring:
-  podMonitorEnabled: false
+  podMonitorEnabled: true
   grafanaDashboard:
-    create: false
+    create: true
