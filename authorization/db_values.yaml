@@ -8,19 +8,19 @@ version:
 mode: standalone
 
 cluster:
-  instances: 1
+  instances: 3
 
   # https://cloudnative-pg.io/documentation/current/kubernetes_upgrade/#postgresql-clusters-used-for-development-or-testing
   enablePDB: false
 
   storage:
-    size: 8Gi
-    storageClass: "replicated"
+    size: 15Gi
+    storageClass: "db-storage"
 
   resources:
     requests:
       cpu: 250m
-      memory: 256Mi
+      memory: 512Mi
 
   primaryUpdateMethod: switchover
   primaryUpdateStrategy: unsupervised
