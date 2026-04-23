@@ -56,7 +56,7 @@ data:
                 "steps": [
                   {
                     "color": "green",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "#EAB839",
@@ -100,7 +100,7 @@ data:
               "disableTextWrap": false,
               "editorMode": "code",
               "exemplar": false,
-              "expr": "count(certmanager_certificate_expiration_timestamp_seconds{exported_namespace=~\"$namespace\"} < (time()+(14*24*3600)))",
+              "expr": "count(certmanager_certificate_expiration_timestamp_seconds{exported_namespace=~\"$namespace\"} < (time()+(2*24*3600)))",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "instant": true,
@@ -296,25 +296,26 @@ data:
                 "mode": "thresholds"
               },
               "mappings": [],
+              "max": 7,
               "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
                     "color": "red",
-                    "value": null
+                    "value": 0
                   },
                   {
                     "color": "orange",
-                    "value": 14
+                    "value": 1
                   },
                   {
                     "color": "green",
-                    "value": 30
+                    "value": 2
                   },
                   {
                     "color": "dark-green",
-                    "value": 60
+                    "value": 7
                   }
                 ]
               },
@@ -379,6 +380,7 @@ data:
                 "mode": "thresholds"
               },
               "mappings": [],
+              "max": 7,
               "min": 0,
               "thresholds": {
                 "mode": "absolute",
@@ -520,15 +522,15 @@ data:
                       "steps": [
                         {
                           "color": "rgba(245, 54, 54, 0.9)",
-                          "value": null
+                          "value": 0
                         },
                         {
                           "color": "rgba(237, 129, 40, 0.89)",
-                          "value": 2592000
+                          "value": 86400
                         },
                         {
                           "color": "rgba(50, 172, 45, 0.97)",
-                          "value": 5184000
+                          "value": 172800
                         },
                         {
                           "value": 7776000
@@ -651,6 +653,7 @@ data:
                 }
               },
               "mappings": [],
+              "max": 7,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [

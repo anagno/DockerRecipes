@@ -145,6 +145,40 @@ grafana:
       url: http://{{ printf "%s-alertmanager" (include "kube-prometheus-stack.fullname" .)  }}:9093
       version: 1
 
+  # https://github.com/dotdc/grafana-dashboards-kubernetes/tree/master#install-with-helm-values
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'grafana-dashboards-kubernetes'
+        orgId: 1
+        folder: 'Kubernetes'
+        type: file
+        disableDeletion: true
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/grafana-dashboards-kubernetes
+  dashboards:
+    grafana-dashboards-kubernetes:
+      k8s-system-api-server:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-system-api-server.json
+        token: ''
+      k8s-system-coredns:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-system-coredns.json
+        token: ''
+      k8s-views-global:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-global.json
+        token: ''
+      k8s-views-namespaces:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-namespaces.json
+        token: ''
+      k8s-views-nodes:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-nodes.json
+        token: ''
+      k8s-views-pods:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-pods.json
+        token: ''
+
 prometheus:
   enabled: true
   service:
@@ -316,7 +350,7 @@ kube-state-metrics:
   #                unit: "core"
   selfMonitor:
     enabled: true
-
+# https://github.com/dotdc/grafana-dashboards-kubernetes/tree/master#directly-through-the-prometheus-configuration-file-
 prometheus-node-exporter:
   hostNetwork: false
   hostPID: false
@@ -325,9 +359,5 @@ prometheus-node-exporter:
       relabelings:
         - action: replace
           sourceLabels:
-            - __meta_kubernetes_pod_ip
-          targetLabel: pod_ip
-        - action: replace
-          sourceLabels:
             - __meta_kubernetes_pod_node_name
-          targetLabel: instance
+          targetLabel: nodename

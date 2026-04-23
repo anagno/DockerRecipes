@@ -23,7 +23,7 @@ kubectl create secret generic authentik-secret --namespace monitoring \
   --from-literal=client_secret=SECRET_FROM_AUTHENTIK
 
 helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
-    --version v83.6.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+    --version v83.7.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress-public.yaml
 kubectl apply -f vpa.yaml
 
@@ -62,9 +62,6 @@ kubectl apply -f proxy/traefik-dashboard.yaml
 ```bash
 kubectl apply -f dashboards/alerts-summary-dashboard.yaml
 kubectl apply -f dashboards/alerts-dashboard.yaml
-kubectl apply -f dashboards/cluster-details-dashboard.yaml
-kubectl apply -f dashboards/cluster-details-namespaces.yaml
-kubectl apply -f dashboards/cluster-details-nodes.yaml
 kubectl apply -f dashboards/volumes-dashboard.yaml
 kubectl apply -f dashboards/node-exporter.yaml
 kubectl apply -f dashboards/hpa-dashboard.yaml
