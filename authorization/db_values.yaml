@@ -8,7 +8,7 @@ version:
 mode: standalone
 
 cluster:
-  instances: 3
+  instances: 2
 
   # https://cloudnative-pg.io/documentation/current/kubernetes_upgrade/#postgresql-clusters-used-for-development-or-testing
   enablePDB: false
