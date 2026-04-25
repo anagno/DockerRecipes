@@ -23,6 +23,7 @@ defaultSettings:
   fastReplicaRebuildEnabled: "true"
   nodeDownPodDeletionPolicy: "delete-both-statefulset-and-deployment-pod"
   concurrentReplicaRebuildPerNodeLimit: "1"
+  replicaReplenishmentWaitInterval: "3600"
   allowNodeDrainWithLastHealthyReplica: "false"
   orphanAutoDeletion: "true"
   # https://longhorn.io/kb/troubleshooting-volume-readonly-or-io-error/
