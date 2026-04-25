@@ -56,6 +56,8 @@ global:
 
 server:
 
+  replicas: 2
+
   ingress:
     enabled: false
 

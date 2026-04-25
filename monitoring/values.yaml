@@ -189,6 +189,8 @@ prometheus:
 
   prometheusSpec:
     resources:
+      requests:
+        memory: 4000Mi
       limits:
         memory: 6000Mi
 
