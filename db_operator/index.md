@@ -18,6 +18,8 @@ helm repo add cnpg https://cloudnative-pg.github.io/charts
 helm repo update
 kubectl create namespace databases
 helm install cnpg cnpg/cloudnative-pg -f operator_values.yml --version v0.28.0 --namespace databases
+
+kubectl apply -f snapshots.yml
 ```
 
 We will be also using a special db storage class for the databases based 
@@ -58,6 +60,28 @@ helm install database cnpg/cluster -f non_ha_db_values.yml --version v0.3.1 --na
 
 The non high availability example just has one instance of the database and uses longhorn
 for replication of the data.
+
+## Backup for databases
+
+Currently it is not possible to add automated backups via the [helm charts](https://github.com/cloudnative-pg/charts/pull/359).
+But the cloudnative-pg supports backups via snapshots. So to work around it we will do it manually.
+
+We will have to change the definition of the Cluster manually. For the examples above we have to execute:
+
+```bash
+KUBE_EDITOR="nano" kubectl -n test-database edit cluster database-cluster
+```
+
+and add in the definition of the cluster: 
+
+```bash
+  backup:
+    volumeSnapshot:
+       className: default-snapshot-class
+```
+
+To trigger immediately a backup we can use the `backup.yaml`. In other database we have to change `    name: database-cluster`
+to the right name.
 
 
 ## kubectl plugin

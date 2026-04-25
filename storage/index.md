@@ -80,14 +80,14 @@ ansible-playbook storage/setup_storage.yml
 
 ```bash
 
-# https://longhorn.io/docs/1.10.0/deploy/install/#longhorn-command-line-tool
+# https://longhorn.io/docs/1.11.1/deploy/install/#longhorn-command-line-tool
 curl -sSfL -o longhornctl https://github.com/longhorn/cli/releases/download/v1.11.1/longhornctl-linux-amd64
 chmod +x longhornctl
 kubectl create namespace longhorn-system
 export KUBECONFIG=~/.kube/config
 ./longhornctl check preflight
 ./longhornctl --image longhornio/longhorn-cli:v1.11.1 install preflight
-# https://longhorn.io/docs/1.10.0/v2-data-engine/quick-start/#check-environment
+# https://longhorn.io/docs/1.11.1/v2-data-engine/quick-start/#check-environment
 
 # We have to use the longhrn-system namespace. It is mentioned in the
 # documentation of the helm chart
@@ -110,9 +110,19 @@ helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.ya
 kubectl apply -f dashboard.yml
 
 # Apply our storage classes 
-
 kubectl apply -f RepliccatedStorage.yaml
 kubectl apply -f UnrepliccatedStorage.yaml
+
+
+# Configure the VolumeSnapshots
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/refs/tags/v8.5.0/client/config/crd/snapshot.storage.k8s.io_volumesnapshotclasses.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/refs/tags/v8.5.0/client/config/crd/snapshot.storage.k8s.io_volumesnapshotcontents.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/refs/tags/v8.5.0/client/config/crd/snapshot.storage.k8s.io_volumesnapshots.yaml
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/refs/tags/v8.5.0/deploy/kubernetes/snapshot-controller/rbac-snapshot-controller.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/refs/tags/v8.5.0/deploy/kubernetes/snapshot-controller/setup-snapshot-controller.yaml
+
 kubectl apply -f Snapshots.yaml
 ```
 

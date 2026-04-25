@@ -8,7 +8,7 @@ version:
 mode: standalone
 
 cluster:
-  instances: 3
+  instances: 2
 
   storage:
     size: 8Gi
@@ -29,9 +29,9 @@ cluster:
     podAntiAffinityType: required
 
   monitoring:
-    enabled: false
+    enabled: true
     podMonitor:
-      enabled: false
+      enabled: true
     prometheusRule:
       enabled: false
 

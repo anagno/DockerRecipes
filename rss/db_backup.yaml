@@ -1,0 +1,13 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: backup-database
+  namespace: news
+spec:
+  cluster:
+    name: freshrss-database-cluster
+  # https://pkg.go.dev/github.com/robfig/cron#hdr-CRON_Expression_Format
+  schedule: '0 10 2 * * 0'  
+  backupOwnerReference: self
+  method: volumeSnapshot
+  immediate: true

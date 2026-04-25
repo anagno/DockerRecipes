@@ -32,11 +32,11 @@ cluster:
     podAntiAffinityType: required
 
   monitoring:
-    enabled: false
+    enabled: true
     podMonitor:
-      enabled: false
+      enabled: true
     prometheusRule:
-      enabled: false
+      enabled: true
 
   enableSuperuserAccess: false
   # -- BootstrapInitDB is the configuration of the bootstrap process when initdb is used.

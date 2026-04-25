@@ -9,6 +9,10 @@ kubectl create secret generic freshrss-postgresql --namespace news \
 
 helm install freshrss-database cnpg/cluster -f db_values.yaml --version v0.6.0 --namespace news
 
+# Modify to add backups
+
+kubectl apply -f db_backup.yaml
+
 kubectl create secret generic freshrss-oidc-secret --namespace news \
   --from-literal=client_id=ID_FROM_AUTHENTIK \
   --from-literal=client_secret=SECRET_FROM_AUTHENTIK \

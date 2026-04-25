@@ -1,0 +1,13 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: backup-database
+  namespace: authorization
+spec:
+  cluster:
+    name: authentik-database-cluster
+  # https://pkg.go.dev/github.com/robfig/cron#hdr-CRON_Expression_Format
+  schedule: '0 10 4 * * 0'  
+  backupOwnerReference: self
+  method: volumeSnapshot
+  immediate: true
