@@ -1,0 +1,156 @@
+#  https://github.com/guerzon/vaultwarden/blob/main/charts/vaultwarden/values.yaml
+# Currently there is not official helm chart https://github.com/dani-garcia/vaultwarden/pull/6844
+
+
+replicas: 1
+
+## @param configMapAnnotations Add extra annotations to the configmap
+##
+configMapAnnotations: {}
+dnsConfig:
+  options:
+  - name: ndots
+    value: "1"
+
+
+storage:
+  existingVolumeClaim:
+    claimName: "vaultwarden-data"
+    dataPath: "/data"
+
+database:
+  type: "postgresql"
+  host: "vaultwarden-database-cluster-rw"
+  port: "5432"
+  dbName: "vaultwarden"
+  existingSecret: "vaultwarden-postgresql"
+  existingSecretUserKey: "username"
+  existingSecretPasswordKey: "password"
+
+## Refer to https://github.com/dani-garcia/vaultwarden/wiki/Enabling-Mobile-Client-push-notification for details
+pushNotifications:
+  enabled: false
+
+
+## @param eventsDayRetain Number of days to retain events stored in the database.
+## If unset (the default), events are kept indefinitely and the scheduled job is disabled!
+eventsDayRetain: ""
+## @param trashAutoDeleteDays Number of days to wait before auto-deleting a trashed item.
+## If unset (the default), trashed items are not auto-deleted.
+## This setting applies globally, so make sure to inform all users of any changes to this setting.
+trashAutoDeleteDays: ""
+
+
+domain: "https://vault.anagno.dev"
+
+signupsAllowed: false
+invitationsAllowed: false
+orgEventsEnabled: "true"
+invitationOrgName: "anagno.dev"
+
+emergencyAccessAllowed: "true"
+emailChangeAllowed: "false"
+showPassHint: "false"
+
+ipHeader: "X-Real-IP"
+
+## @param iconBlacklistNonGlobalIps Whether block non-global IPs.
+## Useful to secure your internal environment: See https://en.wikipedia.org/wiki/Reserved_IP_addresses for a list of IPs which it will block
+iconBlacklistNonGlobalIps: "true"
+## @param requireDeviceEmail Require new device emails. When a user logs in an email is required to be sent.
+requireDeviceEmail: "false"
+
+adminToken:
+  existingSecret: "vaultwarden-admin"
+  existingSecretKey: "admin-password"
+
+timeZone: "Europe/Zurich"
+
+smtp:
+  ## @param smtp.existingSecret Name of an existing secret containing the SMTP username and password. Also set smtp.username.existingSecretKey and smtp.password.existingSecretKey.
+  ##
+  existingSecret: ""
+  ## @param smtp.host SMTP host
+  ##
+  host: ""
+  ## @param smtp.security SMTP Encryption method
+  ## Possible values:
+  ##  - starttls: explicit TLS using ports 587 or 25
+  ##  - force_tls: implicit TLS using port 465
+  ##  - off: no encryption, using port 25, unless using STARTTLS
+  ##
+  security: "starttls"
+  ## @param smtp.port SMTP port
+  ##
+  port: 25
+  ## @param smtp.from SMTP sender email address
+  ## Example: juan.delacruz@gmail.com
+  ##
+  from: ""
+  ## @param smtp.fromName SMTP sender FROM
+  ##
+  fromName: ""
+  ## Username for SMTP authentication.
+  ##
+  username:
+    ## @param smtp.username.value Username string for the SMTP authentication.
+    ## Example: juan
+    ##
+    value: ""
+    ## @param smtp.username.existingSecretKey When using an existing secret, specify the key which contains the username.
+    ## Example: SMTP_USERNAME
+    ##
+    existingSecretKey: ""
+  ## Password for SMTP authentication.
+  ##
+  password:
+    ## @param smtp.password.value Password string for the SMTP authentication.
+    ## Example: Sup3rsecurepa$$word
+    ##
+    value: ""
+    ## @param smtp.password.existingSecretKey When using an existing secret, specify the key which contains the password.
+    ## Example: SMTP_PASSWORD
+    ##
+    existingSecretKey: ""
+  ## @param smtp.authMechanism SMTP authentication mechanism
+  ## Possible values: "Plain", "Login", "Xoauth2"
+  ## Multiple options need to be separated by a comma. (not tested)
+  ##
+  authMechanism: "Plain"
+  ## @param smtp.acceptInvalidHostnames Accept Invalid Hostnames
+  ##
+  acceptInvalidHostnames: "false"
+  ## @param smtp.acceptInvalidCerts Accept Invalid Certificates
+  ##
+  acceptInvalidCerts: "false"
+  ## @param smtp.debug SMTP debugging
+  ##
+  debug: false
+
+
+service:
+  ipFamilyPolicy: "RequireDualStack"
+
+rocket:
+  address: "::"
+
+ingress:
+  enabled: false
+
+sso:
+  enabled: true
+  existingSecret: "vaultwarden-oidc-secret"
+  onlySSO: true
+  enforceSSO: true
+  signupsMatchEmail: true
+  ignoreEmailVerification: false
+  authority: "https://auth.anagno.dev/application/o/vault/"
+  scopes: "email profile offline_access"
+  masterPasswordPolicy: '{"enforceOnLogin":false,"minComplexity":3,"minLength":12,"requireLower":true,"requireNumbers":true,"requireSpecial":true,"requireUpper":true}'
+  disableSessionHandling: false
+  cacheExpiration: 0
+  clientId:
+    existingSecretKey: "client_id"
+  clientSecret:
+    existingSecretKey: "client_secret"
+

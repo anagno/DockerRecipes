@@ -12,6 +12,11 @@ phpClientHttpsFix:
   enabled: false
   protocol: https
 
+dnsConfig:
+  options:
+    - name: ndots
+      value: "1"
+
 nextcloud:
   host: cyberlocker.anagno.dev
   existingSecret:

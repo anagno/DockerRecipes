@@ -20,6 +20,7 @@ kubectl create secret generic freshrss-oidc-secret --namespace news \
 
 # Follow the instructions to setup the authentik: https://freshrss.github.io/FreshRSS/en/admins/16_OpenID-Connect-Authentik.html
 
+kubectl apply -f pvc.yaml
 kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
 kubectl apply -f ingressroute.yaml

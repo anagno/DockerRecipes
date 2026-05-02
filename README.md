@@ -30,3 +30,11 @@ completely from start from the beggining.
 Another place that has some similar instructions is the 
 [cookbook](https://geek-cookbook.funkypenguin.co.nz/)
 from Funky Penguin and the [rpi4cluster](https://rpi4cluster.com/). 
+
+
+
+TODOS:
+
+* take a look at https://github.com/FairwindsOps/goldilocks
+* take a look at https://github.com/falcosecurity/falco
+* Fix the warnings/erros from kube-bench (see appendix)

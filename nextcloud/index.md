@@ -49,18 +49,6 @@ kubectl -n cyberlocker get secret nextcloud -o jsonpath="{.data.admin-password}"
 kubectl -n cyberlocker exec -it cyberlocker-postgresql-0 -- psql -d nextcloud -U nextcloud
 ```
 
-I will have to update the deployment to include 
-
-```
-dnsConfig:
-  options:
-    - name: ndots
-      value: "1"
-```
-
-For the deployment to have access to the internet
-
-
 https://grafana.com/grafana/dashboards/17821-nextcloud-log/
 https://okxo.de/monitor-your-nextcloud-logs-for-suspicious-activities/
 https://voidquark.com/blog/parsing-nextcloud-audit-logs-with-grafana-loki/

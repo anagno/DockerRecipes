@@ -24,7 +24,7 @@
 
   # https://github.com/longhorn/longhorn/issues/7927
 - name: Update node
-  hosts: all
+  hosts: homados # amphititre ceto  eurydice # melpomene # aretusa # eris
   any_errors_fatal: true
   ignore_unreachable: true
   serial: 1
@@ -139,6 +139,13 @@
         name: '{{ inventory_hostname }}'
       delegate_to: "{{ groups['masters'][0] }}"
       become: yes
+      
+    - name: Sleep for 120 to wait for the node to be ready before starting the rebuilding of the longhorn storage
+      ansible.builtin.wait_for:
+        timeout: 60
+      delegate_to: localhost
+      when: inventory_hostname in groups['disks'] and
+            reboot_required_file.stat.exists
 
     - name: Continue the rebuilding of the longhorn storage
       delegate_to: localhost
@@ -153,7 +160,7 @@
 
     - name: Sleep for 600 to wait for longhorn to re-balance
       ansible.builtin.wait_for:
-        timeout: 600
+        timeout: 3600
       delegate_to: localhost
       when: inventory_hostname in groups['disks'] and
             reboot_required_file.stat.exists

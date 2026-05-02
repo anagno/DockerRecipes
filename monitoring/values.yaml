@@ -144,6 +144,18 @@ grafana:
       isDefault: false
       url: http://{{ printf "%s-alertmanager" (include "kube-prometheus-stack.fullname" .)  }}:9093
       version: 1
+    #- name: Loki
+    #  type: loki
+    #  url: http://loki:3100
+    #  access: proxy
+    #  uid: loki
+    #- name: Loki
+    #  type: loki
+    #  url: http://loki-gateway
+    #  basicAuth: false
+    #  editable: false
+    #  uudi: loki
+
 
   # https://github.com/dotdc/grafana-dashboards-kubernetes/tree/master#install-with-helm-values
   dashboardProviders:
@@ -194,6 +206,10 @@ prometheus:
       limits:
         memory: 6000Mi
 
+    #enableRemoteWriteReceiver: true
+    #enableFeatures:
+    #  - exemplar-storage
+    #  - native-histograms
     # https://github.com/rook/rook/issues/6680
     # This was necessary to be able to scrap the data for the Kubernetes/Compute Resources/* databoards
     # We need to be able to scrap the data from all the namespaces

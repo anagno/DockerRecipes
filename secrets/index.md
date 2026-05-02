@@ -30,5 +30,7 @@ kubectl -n general create secret generic no-reply-mail --from-literal=password=P
 kubectl -n general annotate secret no-reply-mail replicator.v1.mittwald.de/replicate-to="*"
 ```
 
+For the no-reply-mail we have to create an app password first and use that password in the secret
+
 ## Resources
 * https://appscode.com/products/kubed/v0.12.0/guides/config-syncer/intra-cluster/

@@ -1,0 +1,48 @@
+# https://github.com/cloudnative-pg/charts/blob/main/charts/cluster/values.yaml
+
+type: postgresql
+
+version:
+  postgresql: "18.0"
+
+mode: standalone
+
+cluster:
+  instances: 2
+  storage:
+    size: 8Gi
+    storageClass: "db-storage"
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+  primaryUpdateMethod: switchover
+  primaryUpdateStrategy: unsupervised
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname
+    podAntiAffinityType: required
+
+  monitoring:
+    enabled: true
+    podMonitor:
+      enabled: true
+    prometheusRule:
+      enabled: false
+
+  enableSuperuserAccess: false
+  initdb:
+    database: vaultwarden
+    secret:
+      name: "vaultwarden-postgresql"
+    encoding: UTF8
+
+backups:
+  enabled: false
+  #scheduledBackups:
+  #  - name: daily-backup
+  #    schedule: "0 0 0 * * *"
+  #    backupOwnerReference: self
+  #    method: volumeSnapshot

@@ -22,15 +22,35 @@ kubectl create secret generic authentik-secret --namespace monitoring \
   --from-literal=client_id=ID_FROM_AUTHENTIK \
   --from-literal=client_secret=SECRET_FROM_AUTHENTIK
 
-helm install --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
-    --version v84.1.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+helm upgrade --namespace monitoring monitoring prometheus-community/kube-prometheus-stack -f values.yaml \
+    --version v84.5.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 kubectl apply -f monitoring-ingress-public.yaml
 kubectl apply -f vpa.yaml
 
 
-# https://github.com/grafana/helm-charts/issues/3300
-#helm install --namespace monitoring loki grafana/loki-stack -f loki-values.yaml --version 2.10.2
-# TODO find an alternative for loki and promtail
+# https://medium.com/@rayanee/building-a-complete-monitoring-stack-on-kubernetes-with-prometheus-loki-and-grafana-32d6cc1a45e0
+# https://weepyadmin.com/docs/devops/install_prometheus_loki_in_k8s/
+# https://grafana.com/grafana/dashboards/16976-kubernetes-loki-logs/
+# https://hodovi.cc/blog/kubernetes-events-monitoring-with-loki-alloy-and-grafana/
+
+# https://jay75chauhan.medium.com/kubernetes-observability-metrics-logs-and-traces-with-grafana-stack-d57882dbe639
+# https://github.com/jay75chauhan/k8s-Observability/blob/main/values.yaml
+helm repo add grafana-community https://grafana-community.github.io/helm-charts
+helm upgrade --namespace monitoring loki grafana-community/loki -f loki_values.yaml --version 13.2.4
+
+helm repo add grafana https://grafana.github.io/helm-charts
+helm upgrade --namespace monitoring alloy grafana/alloy -f alloy_values.yaml --version 1.8.0
+# TODO find an alternative for loki and alloy
+# Take a look at https://github.com/grafana/k8s-monitoring-helm/blob/main/charts/k8s-monitoring/values.yaml
+# https://medium.com/@rayanee/building-a-complete-monitoring-stack-on-kubernetes-with-prometheus-loki-and-grafana-32d6cc1a45e0
+
+
+# https://grafana.com/grafana/dashboards/24593-traefik-opentelemetry/
+# https://grafana.com/grafana/dashboards/16976-kubernetes-loki-logs/
+# https://grafana.com/grafana/dashboards/23100-kubernetes-events-overview/
+# https://grafana.com/grafana/dashboards/23101-kubernetes-events-timeline/
+# https://grafana.com/grafana/dashboards/17501-traefik-via-loki/
+# https://grafana.com/grafana/dashboards/24593-traefik-opentelemetry/
 
 ```
 
