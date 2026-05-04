@@ -32,7 +32,7 @@ spec:
           - mountPath: /downloads
             name: transmission-storage
           - mountPath: /config
-            name: transmission-config            
+            name: transmission-config
       volumes:
         - name: transmission-config
           persistentVolumeClaim:
@@ -98,7 +98,13 @@ metadata:
   namespace: torrents
   labels:
     app: samba-server-service
+  annotations:
+    metallb.io/loadBalancerIPs: "192.168.142.235, fd93:142::235"
 spec:
+  ipFamilies:
+    - IPv4
+    - IPv6
+  ipFamilyPolicy: RequireDualStack
   ports:
   - name: netbios
     port: 139
@@ -111,7 +117,6 @@ spec:
   selector:
     app: samba-server
   type: LoadBalancer
-  loadBalancerIP: 192.168.179.235
 ---
 apiVersion: v1
 kind: Service
@@ -130,44 +135,44 @@ spec:
     app: transmission-server
   sessionAffinity: None
 ---
-apiVersion: "autoscaling.k8s.io/v1"
-kind: VerticalPodAutoscaler
-metadata:
-  name: torrents-vpa
-  namespace: torrents
-spec:
-  targetRef:
-    apiVersion: "apps/v1"
-    kind: Deployment
-    name: transmission
-  updatePolicy:
-    updateMode: "Auto"
-  resourcePolicy:
-    containerPolicies:
-      - containerName: '*'
-        maxAllowed:
-          cpu: 500m
-          memory: 250Mi
----
-apiVersion: "autoscaling.k8s.io/v1"
-kind: VerticalPodAutoscaler
-metadata:
-  name: torrents-vpa-samba
-  namespace: torrents
-spec:
-  targetRef:
-    apiVersion: "apps/v1"
-    kind: Deployment
-    name: samba-server
-  updatePolicy:
-    updateMode: "Auto"
-  resourcePolicy:
-    containerPolicies:
-      - containerName: '*'
-        maxAllowed:
-          cpu: 500m
-          memory: 250Mi
-
+#apiVersion: "autoscaling.k8s.io/v1"
+#kind: VerticalPodAutoscaler
+#metadata:
+#  name: torrents-vpa
+#  namespace: torrents
+#spec:
+#  targetRef:
+#    apiVersion: "apps/v1"
+#    kind: Deployment
+#    name: transmission
+#  updatePolicy:
+#    updateMode: "Auto"
+#  resourcePolicy:
+#    containerPolicies:
+#      - containerName: '*'
+#        maxAllowed:
+#          cpu: 500m
+#          memory: 250Mi
+#---
+#apiVersion: "autoscaling.k8s.io/v1"
+#kind: VerticalPodAutoscaler
+#metadata:
+#  name: torrents-vpa-samba
+#  namespace: torrents
+#spec:
+#  targetRef:
+#    apiVersion: "apps/v1"
+#    kind: Deployment
+#    name: samba-server
+#  updatePolicy:
+#    updateMode: "Auto"
+#  resourcePolicy:
+#    containerPolicies:
+#      - containerName: '*'
+#        maxAllowed:
+#          cpu: 500m
+#          memory: 250Mi
+#
 # Referemces:
 # https://github.com/ehough/docker-nfs-server/issues/25
 # https://github.com/ehough/docker-nfs-server/issues/6

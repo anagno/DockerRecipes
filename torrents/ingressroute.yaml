@@ -42,21 +42,3 @@ spec:
     options:
       name: tls-security-headers
       namespace: proxy
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: torrents.anagno.dev-http
-  namespace: torrents
-spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`torrents.anagno.dev`)
-      kind: Rule
-      services:
-        - name: transmission-server-service
-          port: 9091
-      middlewares:
-      - name: https-redirect
-        namespace: proxy

@@ -8,7 +8,7 @@ kubectl apply -f ingressroute.yaml
 ```
 
 After the deployment I should remember to add the black list 
-https://github.com/sayomelu/transmission-blocklist/raw/release/blocklist.gz
+https://gist.github.com/shmup/29566c5268569069c256
 of ips in the torrents
 
 
