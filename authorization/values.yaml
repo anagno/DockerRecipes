@@ -77,12 +77,15 @@ server:
       enabled: true
 
   livenessProbe:
+    periodSeconds: 20
     timeoutSeconds: 10
 
   readinessProbe:
+    periodSeconds: 20
     timeoutSeconds: 10
 
   startupProbe:
+    periodSeconds: 20
     timeoutSeconds: 10
 
 worker:
@@ -93,18 +96,22 @@ worker:
       value: "1"
 
   livenessProbe:
+    periodSeconds: 20
     timeoutSeconds: 10
 
   readinessProbe:
+    periodSeconds: 20
     timeoutSeconds: 10
 
   startupProbe:
+    periodSeconds: 20
     timeoutSeconds: 10
 
+  # until this is released https://github.com/goauthentik/authentik/pull/21324
   metrics:
-    enabled: true
+    enabled: false
     serviceMonitor:
-      enabled: true
+      enabled: false
 
 postgresql:
   # We use an external database

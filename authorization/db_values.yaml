@@ -8,7 +8,7 @@ version:
 mode: standalone
 
 cluster:
-  instances: 2
+  instances: 3
   storage:
     size: 15Gi
     storageClass: "db-storage"
