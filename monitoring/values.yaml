@@ -1,76 +1,117 @@
-# https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
-# https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md
+# https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-metrics-k8s-stack/values.yaml
+
+victoria-metrics-operator:
+  enabled: true
+  crds:
+    enabled: true
+    upgrade:
+      enabled: true
+  operator:
+    enable_converter_ownership: true
+    disable_prometheus_converter: false
+
+defaultDashboards:
+  enabled: true
+  defaultTimezone: utc
 
 defaultRules:
-  disabled:
-    Watchdog: true
+  create: true
+  runbookUrl: https://runbooks.prometheus-operator.dev/runbooks
+  groups:
+    general:
+      create: false
+  extraRules:
+    # I disabled the general rules because it had also a watchdog rule which was firing because of the missing alertmanager configuration.
+    # So I copy the usefull here https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-metrics-k8s-stack/values.yaml
+    general-rules: |
+      groups:
+      - name: general.rules
+        rules:
+        - alert: TargetDown
+          expr: {{ printf "(100 * (count(up == 0) by(%s,job,namespace,service) / count(up) by(%s,job,namespace,service))) > 10" $groupLabels $groupLabels }}
+          annotations:
+            description: '{{`{{`}} printf "%.4g" $value {{`}}`}}% of the {{`{{`}} $labels.job {{`}}`}}/{{`{{`}} $labels.service {{`}}`}} targets in {{`{{`}} $labels.namespace {{`}}`}} namespace are down.'
+            runbook_url: https://runbooks.prometheus-operator.dev/runbooks/general/targetdown
+            summary: One or more targets are unreachable.
+          condition: true
+          for: 10m
+          labels:
+            severity: warning
 
-crds:
+vmsingle:
   enabled: true
-  upgradeJob:
-    enabled: true
+  spec:
+    port: "8428"
+    retentionPeriod: "30d"
+    replicaCount: 1
+    storage:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 40Gi
+
+vmdistributed:
+  enabled: false
+vmcluster:
+  enabled: false
 
 alertmanager:
-  alertmanagerSpec:
-    storage:
-     volumeClaimTemplate:
-       spec:
-         storageClassName: replicated
-         accessModes: ["ReadWriteOnce"]
-         resources:
-           requests:
-             storage: 1Gi
-
-# https://github.com/k3s-io/k3s/issues/3619
-kubeControllerManager:
-  endpoints:
-   - 192.168.142.100
-   - 192.168.142.101
-   - 192.168.142.102
-  service:
-    port: 10257
-    targetPort: 10257
-  serviceMonitor:
-    https: true
-    insecureSkipVerify: true
-
-kubeScheduler:
   enabled: true
-  endpoints:
-   - 192.168.142.100
-   - 192.168.142.101
-   - 192.168.142.102
-  service:
-    port: 10259
-    targetPort: 10259
-  serviceMonitor:
-    https: true
-    insecureSkipVerify: true
+  spec:
+    replicaCount: 1
+    port: "9093"
+    selectAllByDefault: true
+    disableNamespaceMatcher: true 
+  # TODO https://itnext.io/kubernetes-monitoring-a-complete-solution-part-6-visualizing-with-grafana-956499ff4d87
+  # set upd mail receiver and alerting rules
+  useManagedConfig: false
+  config:
+    route:
+      receiver: "blackhole"
+    receivers:
+      - name: blackhole
 
-kubeProxy:
+vmalert:
   enabled: true
-  endpoints:
-   - 192.168.142.100
-   - 192.168.142.101
-   - 192.168.142.102
-  service:
+  spec:
+    evaluationInterval: 60s
 
-    port: 10249
-    targetPort: 10249
+vmauth:
+  enabled: false
 
-kubeEtcd:
+vmagent:
   enabled: true
-  endpoints:
-   - 192.168.142.100
-   - 192.168.142.101
-   - 192.168.142.102
-  service:
-    port: 2381
-    targetPort: 2381
+  spec:
+    scrapeInterval: 30s
+    resources:
+      requests:
+        cpu: 200m
+        memory: 500Mi
+
+defaultDatasources:
+  grafanaOperator:
+    enabled: false
+  victoriametrics:
+    datasources:
+      - name: VictoriaMetrics
+        type: prometheus
+        access: proxy
+        isDefault: true
+      - name: VictoriaMetrics (DS)
+        isDefault: false
+        access: proxy
+        type: victoriametrics-metrics-datasource
+  alertmanager:
+    datasources:
+      - name: Alertmanager
+        access: proxy
+        jsonData:
+          implementation: prometheus
+
 
 grafana:
   enabled: true
-
   dnsConfig:
     options:
     - name: ndots
@@ -84,6 +125,8 @@ grafana:
       readOnly: true
 
   plugins:
+    - victoriametrics-metrics-datasource
+    - victoriametrics-logs-datasource
     # https://grafana.com/grafana/plugins/camptocamp-prometheus-alertmanager-datasource/
     - camptocamp-prometheus-alertmanager-datasource
     - grafana-piechart-panel
@@ -123,259 +166,116 @@ grafana:
       use_refresh_token: true
 
   sidecar:
-    # For adding dashboards and datasources via ConfigMaps
     dashboards:
+      provider:
+        name: default
+        orgid: 1
+      folder: /var/lib/grafana/dashboards
+      defaultFolderName: default
       enabled: true
       label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: "ALL"
       annotations: 
         monitoring-sidecar-dashboard-directory: "/tmp/dashboards/kubernetes"
     datasources:
       enabled: true
-      defaultDatasourceEnabled: true
-      createPrometheusReplicasDatasources: false
       label: grafana_datasource
+      labelValue: "1"
+      #initDatasources: true
+      searchNamespace: "ALL"
       annotations: 
         monitoring-sidecar-datasource-directory: "/tmp/datasource/kubernetes"
 
-  additionalDataSources:
-    - name: Prometheus AlertManager
-      orgId: 1
-      type: camptocamp-prometheus-alertmanager-datasource
-      isDefault: false
-      url: http://{{ printf "%s-alertmanager" (include "kube-prometheus-stack.fullname" .)  }}:9093
-      version: 1
-    #- name: Loki
-    #  type: loki
-    #  url: http://loki:3100
-    #  access: proxy
-    #  uid: loki
-    #- name: Loki
-    #  type: loki
-    #  url: http://loki-gateway
-    #  basicAuth: false
-    #  editable: false
-    #  uudi: loki
+defaultScrapeService:
+  namespace: kube-system
 
-
-  # https://github.com/dotdc/grafana-dashboards-kubernetes/tree/master#install-with-helm-values
-  dashboardProviders:
-    dashboardproviders.yaml:
-      apiVersion: 1
-      providers:
-      - name: 'grafana-dashboards-kubernetes'
-        orgId: 1
-        folder: 'Kubernetes'
-        type: file
-        disableDeletion: true
-        editable: true
-        options:
-          path: /var/lib/grafana/dashboards/grafana-dashboards-kubernetes
-  dashboards:
-    grafana-dashboards-kubernetes:
-      k8s-system-api-server:
-        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-system-api-server.json
-        token: ''
-      k8s-system-coredns:
-        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-system-coredns.json
-        token: ''
-      k8s-views-global:
-        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-global.json
-        token: ''
-      k8s-views-namespaces:
-        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-namespaces.json
-        token: ''
-      k8s-views-nodes:
-        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-nodes.json
-        token: ''
-      k8s-views-pods:
-        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-pods.json
-        token: ''
-
-prometheus:
+prometheus-node-exporter:
   enabled: true
-  service:
-    clusterIP: ""
-    port: 9090
-    externalIPs: []
-    type: ClusterIP
-
-  prometheusSpec:
-    resources:
-      requests:
-        memory: 4000Mi
-      limits:
-        memory: 6000Mi
-
-    #enableRemoteWriteReceiver: true
-    #enableFeatures:
-    #  - exemplar-storage
-    #  - native-histograms
-    # https://github.com/rook/rook/issues/6680
-    # This was necessary to be able to scrap the data for the Kubernetes/Compute Resources/* databoards
-    # We need to be able to scrap the data from all the namespaces
-    serviceMonitorSelectorNilUsesHelmValues: false
-    serviceMonitorSelector: {}
-    podMonitorSelectorNilUsesHelmValues: false
-    podMonitorSelector: {}
-    retention: 30d
-    retentionSize: "25GiB"
-    walCompression: true
-    storageSpec:
-      volumeClaimTemplate:
-        spec:
-          storageClassName: replicated
-          accessModes: ["ReadWriteOnce"]
-          resources:
-            requests:
-              storage: 30Gi
-
-prometheusOperator:
-  enabled: true
-  prometheusConfigReloader:
-    # resource config for prometheusConfigReloader
-    # The default ones are causing some throttling
-    # because the Raspberry pi is not powerfull enough
-    resources: {}
-  # Enable vertical pod autoscaler support for prometheus-operator
-  verticalPodAutoscaler:
-    enabled: false
 
 kube-state-metrics:
-  #rbac:
-  #  extraRules:
-  #    - apiGroups: ["autoscaling.k8s.io"]
-  #      resources: ["verticalpodautoscalers"]
-  #      verbs: ["list", "watch"]
-  prometheus:
-    monitor:
-      enabled: true
-  # https://github.com/kubernetes/kube-state-metrics/blob/main/docs/customresourcestate-metrics.md#verticalpodautoscaler
-  # https://github.com/kubernetes/kube-state-metrics/issues/2041#issuecomment-1614327806
-  # https://github.com/kubernetes/kube-state-metrics/issues/2041#issuecomment-1648307077
-  # https://github.com/kubernetes/kube-state-metrics/issues/2041#issuecomment-1746479076
-  #customResourceState:
-  #  enabled: true
-  #  config:
-  #    kind: CustomResourceStateMetrics
-  #    spec:
-  #      resources:
-  #        - groupVersionKind:
-  #            group: autoscaling.k8s.io
-  #            kind: "VerticalPodAutoscaler"
-  #            version: "v1"
-  #          labelsFromPath:
-  #            verticalpodautoscaler: [metadata, name]
-  #            namespace: [metadata, namespace]
-  #            target_api_version: [apiVersion]
-  #            target_kind: [spec, targetRef, kind]
-  #            target_name: [spec, targetRef, name]
-  #          metrics:
-  #            - name: "vpa_containerrecommendations_target"
-  #              help: "VPA container recommendations for memory."
-  #              each:
-  #                type: Gauge
-  #                gauge:
-  #                  path: [status, recommendation, containerRecommendations]
-  #                  valueFrom: [target, memory]
-  #                  labelsFromPath:
-  #                    container: [containerName]
-  #              commonLabels:
-  #                resource: "memory"
-  #                unit: "byte"
-  #            - name: "vpa_containerrecommendations_lowerbound"
-  #              help: "VPA container recommendations for memory."
-  #              each:
-  #                type: Gauge
-  #                gauge:
-  #                  path: [status, recommendation, containerRecommendations]
-  #                  valueFrom: [lowerBound, memory]
-  #                  labelsFromPath:
-  #                    container: [containerName]
-  #              commonLabels:
-  #                resource: "memory"
-  #                unit: "byte"
-  #            - name: "vpa_containerrecommendations_uncappedtarget"
-  #              help: "VPA container recommendations for memory."
-  #              each:
-  #                type: Gauge
-  #                gauge:
-  #                  path: [status, recommendation, containerRecommendations]
-  #                  valueFrom: [uncappedTarget, memory]
-  #                  labelsFromPath:
-  #                    container: [containerName]
-  #              commonLabels:
-  #                resource: "memory"
-  #                unit: "byte"
-  #            - name: "vpa_containerrecommendations_upperbound"
-  #              help: "VPA container recommendations for memory."
-  #              each:
-  #                type: Gauge
-  #                gauge:
-  #                  path: [status, recommendation, containerRecommendations]
-  #                  valueFrom: [upperBound, memory]
-  #                  labelsFromPath:
-  #                    container: [containerName]
-  #              commonLabels:
-  #                resource: "memory"
-  #                unit: "byte"
-  #            - name: "vpa_containerrecommendations_target"
-  #              help: "VPA container recommendations for cpu."
-  #              each:
-  #                type: Gauge
-  #                gauge:
-  #                  path: [status, recommendation, containerRecommendations]
-  #                  valueFrom: [target, cpu]
-  #                  labelsFromPath:
-  #                    container: [containerName]
-  #              commonLabels:
-  #                resource: "cpu"
-  #                unit: "core"
-  #            - name: "vpa_containerrecommendations_lowerbound"
-  #              help: "VPA container recommendations for cpu."
-  #              each:
-  #                type: Gauge
-  #                gauge:
-  #                  path: [status, recommendation, containerRecommendations]
-  #                  valueFrom: [lowerBound, cpu]
-  #                  labelsFromPath:
-  #                    container: [containerName]
-  #              commonLabels:
-  #                resource: "cpu"
-  #                unit: "core"
-  #            - name: "vpa_containerrecommendations_uncappedtarget"
-  #              help: "VPA container recommendations for cpu."
-  #              each:
-  #                type: Gauge
-  #                gauge:
-  #                  path: [status, recommendation, containerRecommendations]
-  #                  valueFrom: [uncappedTarget, cpu]
-  #                  labelsFromPath:
-  #                    container: [containerName]
-  #              commonLabels:
-  #                resource: "cpu"
-  #                unit: "core"
-  #            - name: "vpa_containerrecommendations_upperbound"
-  #              help: "VPA container recommendations for cpu."
-  #              each:
-  #                type: Gauge
-  #                gauge:
-  #                  path: [status, recommendation, containerRecommendations]
-  #                  valueFrom: [upperBound, cpu]
-  #                  labelsFromPath:
-  #                    container: [containerName]
-  #              commonLabels:
-  #                resource: "cpu"
-  #                unit: "core"
-  selfMonitor:
-    enabled: true
-# https://github.com/dotdc/grafana-dashboards-kubernetes/tree/master#directly-through-the-prometheus-configuration-file-
-prometheus-node-exporter:
-  hostNetwork: false
-  hostPID: false
-  prometheus:
-    monitor:
-      relabelings:
-        - action: replace
-          sourceLabels:
-            - __meta_kubernetes_pod_node_name
-          targetLabel: nodename
+  enabled: true
+  # https://itnext.io/kubernetes-monitoring-a-complete-solution-part-3-metrics-using-the-victoria-metrics-k8s-stack-515d64b5f3ba
+  replicas: 1 
+
+kubelet:
+  enabled: true
+
+kubeApiServer:
+  enabled: true
+
+kubeControllerManager:
+  enabled: true
+  endpoints:
+   - 192.168.142.100
+   - 192.168.142.101
+   - 192.168.142.102
+  service:
+    port: 10257
+    targetPort: 10257
+  vmScrape:
+    spec:
+      endpoints:
+        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          port: http-metrics
+          scheme: https
+          tlsConfig:
+            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            serverName: localhost
+            insecureSkipVerify: true
+
+kubeDns:
+  enabled: false
+
+coreDns:
+  enabled: true
+
+kubeEtcd:
+  enabled: true
+  endpoints:
+   - 192.168.142.100
+   - 192.168.142.101
+   - 192.168.142.102
+  service:
+    port: 2381
+    targetPort: 2381
+  vmScrape:
+    spec:
+      endpoints:
+        - port: http-metrics
+          scheme: http
+
+kubeScheduler:
+  enabled: true
+  endpoints:
+   - 192.168.142.100
+   - 192.168.142.101
+   - 192.168.142.102
+  service:
+    port: 10259
+    targetPort: 10259
+  vmScrape:
+    spec:
+      endpoints:
+        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          port: http-metrics
+          scheme: https
+          tlsConfig:
+            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            serverName: 127.0.0.1
+            insecureSkipVerify: true
+
+kubeProxy:
+  enabled: true
+  endpoints:
+   - 192.168.142.100
+   - 192.168.142.101
+   - 192.168.142.102
+  service:
+    port: 10249
+    targetPort: 10249
+  vmScrape:
+    spec:
+      endpoints:
+        - port: http-metrics
+          scheme: http

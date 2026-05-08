@@ -46,7 +46,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -113,7 +113,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "expr": "count(ALERTS{environment=~\"$environment\", service=~\"$service\", job=~\"$job\", alertname=~\"$alertname\", alertstate=~\"$alertstate\",severity=\"alert\"} > 0) OR on() vector(0)",
               "format": "time_series",
@@ -128,7 +128,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -191,7 +191,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "expr": "count(up)",
               "format": "time_series",
@@ -207,7 +207,7 @@ data:
           "dashboardTags": [],
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "gridPos": {
             "h": 20,
@@ -245,7 +245,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "refId": "A"
             }
@@ -258,7 +258,7 @@ data:
           "dashboardTags": [],
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "gridPos": {
             "h": 20,
@@ -300,7 +300,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "refId": "A"
             }
@@ -313,7 +313,7 @@ data:
           "dashboardTags": [],
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "gridPos": {
             "h": 20,
@@ -349,7 +349,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "refId": "A"
             }

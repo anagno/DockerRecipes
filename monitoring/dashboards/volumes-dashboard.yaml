@@ -39,7 +39,7 @@ data:
           "collapsed": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "gridPos": {
             "h": 1,
@@ -53,7 +53,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "refId": "A"
             }

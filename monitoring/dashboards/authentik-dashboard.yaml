@@ -47,7 +47,7 @@ data:
           "collapsed": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "gridPos": {
             "h": 1,
@@ -61,7 +61,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "refId": "A"
             }
@@ -72,7 +72,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -152,7 +152,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "avg by (flow_slug) (rate(authentik_flows_plan_time_sum{namespace=~\"$namespace\"}[5m]) / rate(authentik_flows_plan_time_count{namespace=~\"$namespace\"}[5m]))",
@@ -168,7 +168,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -251,7 +251,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "sum(authentik_system_tasks{namespace=~\"$namespace\",status=\"TaskResultStatus.ERROR\"})",
@@ -264,7 +264,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "sum(authentik_system_tasks{namespace=~\"$namespace\",status=\"TaskResultStatus.SUCCESSFUL\"})",
@@ -282,7 +282,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "gridPos": {
             "h": 5,
@@ -305,7 +305,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "refId": "A"
             }
@@ -316,7 +316,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -372,7 +372,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "max(authentik_admin_workers{namespace=~\"$namespace\"})",
@@ -388,7 +388,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "description": "",
           "fieldConfig": {
@@ -441,7 +441,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "sum(authentik_policies_cached{namespace=~\"$namespace\"})",
@@ -453,7 +453,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "sum(authentik_models{namespace=~\"$namespace\",app=\"authentik_policies\", model_name=\"policy\"}) - authentik_policies_cached",
@@ -471,7 +471,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -527,7 +527,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "sum(authentik_outposts_connected{namespace=~\"$namespace\"})",
@@ -543,7 +543,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "description": "",
           "fieldConfig": {
@@ -597,7 +597,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "avg by (task_name) (authentik_system_tasks{namespace=~\"$namespace\"})",
@@ -614,7 +614,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -694,7 +694,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "topk(5, avg by(binding_target_type) (rate(authentik_policies_execution_time_sum{namespace=~\"$namespace\"}[5m]) / rate(authentik_policies_execution_time_count{namespace=~\"$namespace\"}[5m])))",
@@ -710,7 +710,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -790,7 +790,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "topk(5, avg by(object_type) (rate(authentik_policies_execution_time_sum{namespace=~\"$namespace\"}[5m]) / rate(authentik_policies_execution_time_count{namespace=~\"$namespace\"}[5m])))",
@@ -807,7 +807,7 @@ data:
           "collapsed": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "gridPos": {
             "h": 1,
@@ -822,7 +822,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "refId": "A"
             }
@@ -833,7 +833,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -906,7 +906,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "sum by (host) (rate(authentik_outpost_proxy_requests_sum{namespace=~\"$namespace\", outpost_name=\"$outpost_proxy\"}[5m]))",
@@ -922,7 +922,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "description": "",
           "fieldConfig": {
@@ -996,7 +996,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "sum by (host) (rate(authentik_outpost_proxy_requests_sum{outpost_name=\"$outpost_proxy\", namespace=~\"$namespace\",user=\"\"}[5m]))",
@@ -1013,7 +1013,7 @@ data:
           "collapsed": false,
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "gridPos": {
             "h": 1,
@@ -1028,7 +1028,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "refId": "A"
             }
@@ -1039,7 +1039,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -1112,7 +1112,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "avg by (dn) (rate(authentik_outpost_ldap_requests_bucket{namespace=~\"$namespace\", outpost_name=\"$outpost_ldap\"}[5m]))",
@@ -1128,7 +1128,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -1201,7 +1201,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "avg by (reason) (rate(authentik_outpost_ldap_requests_rejected{namespace=~\"$namespace\", outpost_name=\"$outpost_ldap\"}[5m]))",
@@ -1217,7 +1217,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -1290,7 +1290,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "avg by (flow) (rate(authentik_outpost_flow_timing_get_bucket{namespace=~\"$namespace\"}[5m]))",
@@ -1302,7 +1302,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "avg by (flow) (rate(authentik_outpost_flow_timing_post_bucket{namespace=~\"$namespace\"}[5m]))",
@@ -1319,7 +1319,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -1366,7 +1366,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "group by (type) (authentik_outpost_ldap_requests_sum)",
@@ -1383,7 +1383,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "description": "",
           "fieldConfig": {
@@ -1431,7 +1431,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "group by (reason) (authentik_outpost_ldap_requests_rejected)",
@@ -1460,7 +1460,7 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "prometheus"
+              "uid": "VictoriaMetrics"
             },
             "definition": "authentik_outpost_connection",
             "hide": 0,
@@ -1487,7 +1487,7 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "prometheus"
+              "uid": "VictoriaMetrics"
             },
             "definition": "authentik_outpost_info{outpost_type=\"proxy\"}",
             "hide": 2,
@@ -1514,7 +1514,7 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "prometheus"
+              "uid": "VictoriaMetrics"
             },
             "definition": "authentik_outpost_info{outpost_type=\"ldap\"}",
             "hide": 2,

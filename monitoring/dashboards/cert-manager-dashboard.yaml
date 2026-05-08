@@ -116,7 +116,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -443,7 +443,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -706,7 +706,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -788,7 +788,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "editorMode": "code",
               "expr": "sum(rate(certmanager_http_acme_client_request_count[2m])) BY (status, path)",

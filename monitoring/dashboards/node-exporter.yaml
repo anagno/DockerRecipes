@@ -945,7 +945,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "description": "",
           "fieldConfig": {
@@ -1075,7 +1075,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "exemplar": true,
               "expr": "node_hwmon_temp_celsius",
@@ -1088,7 +1088,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "hide": false,
               "refId": "B"

@@ -587,7 +587,7 @@ data:
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "prometheus"
+              "uid": "VictoriaMetrics"
             },
             "filters": [],
             "hide": 0,

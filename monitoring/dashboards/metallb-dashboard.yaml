@@ -45,7 +45,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "description": "",
           "fieldConfig": {
@@ -127,7 +127,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "expr": "metallb_allocator_addresses_total",
               "instant": false,
@@ -138,7 +138,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "expr": "metallb_allocator_addresses_in_use_total",
               "interval": "",
@@ -152,7 +152,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -200,7 +200,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "expr": "sum(metallb_k8s_client_config_stale_bool)",
               "format": "time_series",
@@ -216,7 +216,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -297,7 +297,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "expr": "rate(metallb_layer2_gratuitous_sent{instance=~\"$layer2instance\"}[5m])",
               "hide": false,
@@ -309,7 +309,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "expr": "rate(metallb_layer2_requests_received{instance=~\"$layer2instance\"}[5m])",
               "hide": false,
@@ -320,7 +320,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "expr": "rate(metallb_layer2_responses_sent{instance=~\"$layer2instance\"}[5m])",
               "hide": false,
@@ -335,7 +335,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "VictoriaMetrics"
           },
           "fieldConfig": {
             "defaults": {
@@ -416,7 +416,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "expr": "rate(metallb_k8s_client_update_errors_total[5m])",
               "interval": "",
@@ -426,7 +426,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "VictoriaMetrics"
               },
               "expr": "rate(metallb_k8s_client_updates_total[5m])",
               "interval": "",
@@ -453,7 +453,7 @@ data:
             },
             "datasource": {
               "type": "prometheus",
-              "uid": "prometheus"
+              "uid": "VictoriaMetrics"
             },
             "definition": "label_values(metallb_layer2_gratuitous_sent,instance)",
             "hide": 0,
