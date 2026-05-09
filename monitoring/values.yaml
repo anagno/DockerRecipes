@@ -44,6 +44,10 @@ vmsingle:
     port: "8428"
     retentionPeriod: "30d"
     replicaCount: 1
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1000Mi
     storage:
       accessModes:
         - ReadWriteOnce
