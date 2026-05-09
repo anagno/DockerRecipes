@@ -135,44 +135,44 @@ spec:
     app: transmission-server
   sessionAffinity: None
 ---
-#apiVersion: "autoscaling.k8s.io/v1"
-#kind: VerticalPodAutoscaler
-#metadata:
-#  name: torrents-vpa
-#  namespace: torrents
-#spec:
-#  targetRef:
-#    apiVersion: "apps/v1"
-#    kind: Deployment
-#    name: transmission
-#  updatePolicy:
-#    updateMode: "Auto"
-#  resourcePolicy:
-#    containerPolicies:
-#      - containerName: '*'
-#        maxAllowed:
-#          cpu: 500m
-#          memory: 250Mi
-#---
-#apiVersion: "autoscaling.k8s.io/v1"
-#kind: VerticalPodAutoscaler
-#metadata:
-#  name: torrents-vpa-samba
-#  namespace: torrents
-#spec:
-#  targetRef:
-#    apiVersion: "apps/v1"
-#    kind: Deployment
-#    name: samba-server
-#  updatePolicy:
-#    updateMode: "Auto"
-#  resourcePolicy:
-#    containerPolicies:
-#      - containerName: '*'
-#        maxAllowed:
-#          cpu: 500m
-#          memory: 250Mi
-#
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: torrents-vpa
+  namespace: torrents
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: transmission
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 500m
+          memory: 250Mi
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: torrents-vpa-samba
+  namespace: torrents
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: samba-server
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 500m
+          memory: 250Mi
+
 # Referemces:
 # https://github.com/ehough/docker-nfs-server/issues/25
 # https://github.com/ehough/docker-nfs-server/issues/6

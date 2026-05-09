@@ -9,7 +9,7 @@ spec:
     kind: Deployment
     name: portainer
   updatePolicy:
-    updateMode: "Auto"
+    updateMode: "InPlaceOrRecreate"
   resourcePolicy:
     containerPolicies:
       - containerName: '*'

@@ -9,7 +9,7 @@ spec:
     kind: Deployment
     name: external-dns
   updatePolicy:
-    updateMode: "Auto"
+    updateMode: "InPlaceOrRecreate"
 ---
 apiVersion: "autoscaling.k8s.io/v1"
 kind: VerticalPodAutoscaler
@@ -22,7 +22,7 @@ spec:
     kind: Deployment
     name: ddns-updater-anagno-me
   updatePolicy:
-    updateMode: "Auto"
+    updateMode: "InPlaceOrRecreate"
   resourcePolicy:
     containerPolicies:
       - containerName: '*'
@@ -41,7 +41,7 @@ spec:
     kind: Deployment
     name: ddns-updater-anagno-dev
   updatePolicy:
-    updateMode: "Auto"
+    updateMode: "InPlaceOrRecreate"
   resourcePolicy:
     containerPolicies:
       - containerName: '*'

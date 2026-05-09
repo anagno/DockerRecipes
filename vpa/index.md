@@ -9,9 +9,9 @@ an unofficial one
 
 ``` bash
 kubectl create namespace scaler
-helm repo add cowboysysop https://cowboysysop.github.io/charts/
+helm repo add autoscalers https://kubernetes.github.io/autoscaler
 helm repo update
-helm install vpa cowboysysop/vertical-pod-autoscaler --namespace scaler -f values.yaml --version v11.0.1
+helm install vpa autoscalers/vertical-pod-autoscaler --namespace scaler -f values.yaml --version 0.9.0
 ```
 
 !!!Note

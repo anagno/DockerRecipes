@@ -78,22 +78,22 @@ spec:
             claimName: news-data
             readOnly: false
 ---
-#apiVersion: "autoscaling.k8s.io/v1"
-#kind: VerticalPodAutoscaler
-#metadata:
-#  name: news-vpa
-#  namespace: news
-#spec:
-#  targetRef:
-#    apiVersion: "apps/v1"
-#    kind: Deployment
-#    name: freshrss
-#  updatePolicy:
-#    updateMode: "Auto"
-#  resourcePolicy:
-#    containerPolicies:
-#      - containerName: '*'
-#        maxAllowed:
-#          cpu: 1
-#          memory: 1024Mi
-#---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: news-vpa
+  namespace: news
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: freshrss
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 1
+          memory: 1024Mi
+---

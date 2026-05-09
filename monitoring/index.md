@@ -54,6 +54,7 @@ kubectl apply -f dashboards/volumes-dashboard.yaml
 kubectl apply -f dashboards/spegel.yaml
 kubectl apply -f dashboards/node-exporter.yaml
 kubectl apply -f dashboards/hpa-dashboard.yaml
+kubectl apply -f dashboards/vpa-dashboard.yaml
 ```
 
 * Load-balancer dashboard (if it has been activated in the helm chart): 

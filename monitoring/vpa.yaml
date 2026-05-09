@@ -2,43 +2,28 @@
 apiVersion: "autoscaling.k8s.io/v1"
 kind: VerticalPodAutoscaler
 metadata:
-  name: prometheus-monitoring-kube-prometheus-prometheus-vpa
+  name: vmsingle-monitoring-victoria-metrics-k8s-stack-vpa
   namespace: monitoring
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: StatefulSet
-    name: prometheus-monitoring-kube-prometheus-prometheus
+    name: vmsingle-monitoring-victoria-metrics-k8s-stack
   updatePolicy:
-    updateMode: "Auto"
-  resourcePolicy:
-    containerPolicies:
-      - containerName: 'prometheus'
-        maxAllowed:
-          memory: 6000Mi
-      - containerName: '*'
+    updateMode: "InPlaceOrRecreate"
 ---
 apiVersion: "autoscaling.k8s.io/v1"
 kind: VerticalPodAutoscaler
 metadata:
-  name: alertmanager-monitoring-kube-prometheus-alertmanager-vpa
+  name: vmalertmanager-monitoring-victoria-metrics-k8s-stack-vpa
   namespace: monitoring
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: StatefulSet
-    name: alertmanager-monitoring-kube-prometheus-alertmanager
+    name: vmalertmanager-monitoring-victoria-metrics-k8s-stack
   updatePolicy:
-    updateMode: "Auto"
-  resourcePolicy:
-    containerPolicies:
-      - containerName: '*'
-        maxAllowed:
-          cpu: 2
-          memory: 512Mi
-        minAllowed:
-          cpu: 500m
-          memory: 100Mi
+    updateMode: "InPlaceOrRecreate"
 ---
 apiVersion: "autoscaling.k8s.io/v1"
 kind: VerticalPodAutoscaler
@@ -51,4 +36,30 @@ spec:
     kind: Deployment
     name: monitoring-grafana
   updatePolicy:
-    updateMode: "Auto"
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: vmalert-monitoring-victoria-metrics-k8s-stack-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: vmalert-monitoring-victoria-metrics-k8s-stack
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: monitoring-victoria-metrics-operator-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: monitoring-victoria-metrics-operator
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
