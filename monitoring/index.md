@@ -51,6 +51,7 @@ kubectl apply -f proxy/traefik-dashboard.yaml
 kubectl apply -f dashboards/alerts-summary-dashboard.yaml
 kubectl apply -f dashboards/alerts-dashboard.yaml
 kubectl apply -f dashboards/volumes-dashboard.yaml
+kubectl apply -f dashboards/spegel.yaml
 kubectl apply -f dashboards/node-exporter.yaml
 kubectl apply -f dashboards/hpa-dashboard.yaml
 ```
