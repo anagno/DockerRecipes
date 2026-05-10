@@ -84,6 +84,10 @@ vmalert:
   enabled: true
   spec:
     evaluationInterval: 60s
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
 
 vmauth:
   enabled: false
