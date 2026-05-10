@@ -90,7 +90,7 @@ data:
                           },
                           "spec": {
                             "editorMode": "code",
-                            "expr": "count(spegel_advertised_content_digests{node=~\"$node\"})",
+                            "expr": "sum(group by(registry) (spegel_advertised_content_digests{node=~\"$node\"}))",
                             "legendFormat": "__auto",
                             "range": true
                           }
@@ -262,7 +262,7 @@ data:
                           "spec": {
                             "editorMode": "code",
                             "exemplar": false,
-                            "expr": "spegel_advertised_image_digests{node=~\"$node\", registry=~\"$registry\"}",
+                            "expr": "sum by(registry) (spegel_advertised_image_digests{node=~\"$node\", registry=~\"$registry\"})",
                             "format": "table",
                             "instant": true,
                             "legendFormat": "__auto",
@@ -286,7 +286,7 @@ data:
                           "spec": {
                             "editorMode": "code",
                             "exemplar": false,
-                            "expr": "spegel_advertised_content_digests{node=~\"$node\", registry=~\"$registry\"} ",
+                            "expr": "sum by(registry) (spegel_advertised_content_digests{node=~\"$node\", registry=~\"$registry\"})",
                             "format": "table",
                             "instant": true,
                             "legendFormat": "__auto",
@@ -1826,7 +1826,7 @@ data:
           "hideTimepicker": false,
           "fiscalYearStartMonth": 0
         },
-        "title": "Spegel stateless cluster local OCI registry mirror Copy",
+        "title": "Spegel stateless cluster local OCI registry mirror",
         "variables": [
           {
             "kind": "DatasourceVariable",
