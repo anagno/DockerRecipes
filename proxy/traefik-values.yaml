@@ -107,33 +107,33 @@ ports:
 
 service:
   enabled: true
-  type: LoadBalancer
   spec:
+    type: LoadBalancer
     # https://metallb.io/usage/#cluster-traffic-policy
     externalTrafficPolicy: Local
+    ipFamilyPolicy: RequireDualStack
   annotations:
     metallb.io/loadBalancerIPs: "192.168.142.240,fd93:142::240"
-  ipFamilyPolicy: RequireDualStack
   additionalServices:
     ipv6-1:
       # https://github.com/traefik/traefik-helm-chart/issues/1233#issuecomment-2435187894
       single: true
-      type: LoadBalancer
       spec:
+        type: LoadBalancer
         # https://metallb.io/usage/#cluster-traffic-policy
         externalTrafficPolicy: Local
+        ipFamilies: [ "IPv6" ]
       annotations:
         metallb.io/loadBalancerIPs: "2a02:169:3af:7::240"
-      ipFamilies: [ "IPv6" ]
     ipv6-2:
       single: true
-      type: LoadBalancer
       spec:
+        type: LoadBalancer
         # https://metallb.io/usage/#cluster-traffic-policy
         externalTrafficPolicy: Local
+        ipFamilies: [ "IPv6" ]
       annotations:
         metallb.io/loadBalancerIPs: "2a02:169:3af:6::240"
-      ipFamilies: [ "IPv6" ]
 
 resources:
   requests:
