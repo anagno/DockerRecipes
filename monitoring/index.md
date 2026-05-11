@@ -21,7 +21,7 @@ kubectl create secret generic authentik-secret --namespace monitoring \
   --from-literal=client_secret=SECRET_FROM_AUTHENTIK
 
 
-helm install --namespace monitoring prometheus-crds oci://ghcr.io/prometheus-community/charts/prometheus-operator-crds --version 28.0.1
+helm install --namespace monitoring prometheus-crds oci://ghcr.io/prometheus-community/charts/prometheus-operator-crds --version 29.0.0
 helm install --namespace monitoring monitoring vm/victoria-metrics-k8s-stack  -f values.yaml \
     --version v0.77.0 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
