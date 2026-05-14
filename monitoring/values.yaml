@@ -9,13 +9,17 @@ victoria-metrics-operator:
   operator:
     enable_converter_ownership: true
     disable_prometheus_converter: false
+  env:
+    - name: VM_ENABLETCP6
+      value: "true"
+
 
 defaultDashboards:
   enabled: true
   defaultTimezone: utc
 
 defaultRules:
-  create: true
+  create: true 
   runbookUrl: https://runbooks.prometheus-operator.dev/runbooks
   groups:
     general:
@@ -54,6 +58,9 @@ vmsingle:
       resources:
         requests:
           storage: 40Gi
+    extraArgs:
+      enableTCP6: "true"
+
 
 vmdistributed:
   enabled: false
