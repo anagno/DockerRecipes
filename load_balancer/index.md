@@ -12,7 +12,7 @@ to update the kube-vip daemon set and activate the `--service` parameter.
 Metallb provides a helm chart. So the installation is quite simple:
 
 ``` bash
-ansible-playbook proxy/firewall.yml
+ansible-playbook load_balancer/firewall.yml
 helm repo add metallb https://metallb.github.io/metallb
 kubectl create namespace load-balancer
 helm install --namespace load-balancer load-balancer metallb/metallb -f values.yaml --version 0.15.3
