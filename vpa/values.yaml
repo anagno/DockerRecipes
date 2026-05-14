@@ -6,6 +6,9 @@ admissionController:
   replicas: 1
   revisionHistoryLimit: 10
 
+  podDisruptionBudget:
+    enabled: false
+
 recommender:
   enabled: true
 
@@ -21,6 +24,8 @@ recommender:
     # - "--history-resolution=1h"
     - "--recommender-interval=30s"
 
+  podDisruptionBudget:
+    enabled: false
 
 updater:
   enabled: true
@@ -29,3 +34,6 @@ updater:
   revisionHistoryLimit: 10
   extraArgs:
     - "--min-replicas=1"
+
+  podDisruptionBudget:
+    enabled: false

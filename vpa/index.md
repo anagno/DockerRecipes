@@ -16,9 +16,7 @@ helm install vpa autoscalers/vertical-pod-autoscaler --namespace scaler -f value
 
 !!!Note
     VPA can retrieve data also from Prometheus, but I do not want to couple 
-    VPA with my monitoring stack. So for the moment I do not use prometheus 
-    to retrieve data
-
+    VPA with my monitoring stack.
 
 For the reason for not defining limits, take a look at: 
 * https://www.linkedin.com/pulse/kubernetes-make-your-services-faster-removing-cpu-limits-eric-khun/
