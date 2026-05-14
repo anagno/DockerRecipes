@@ -26,7 +26,7 @@ We can use [kube-no-trouble](https://github.com/doitintl/kube-no-trouble) :
 
 ```sh
 docker pull ghcr.io/doitintl/kube-no-trouble:latest
-docker run -it --rm -v "${HOME}/.kube/config:/.kubeconfig" ghcr.io/doitintl/kube-no-trouble:latest -k /.kubeconfig -t v1.33.0+k3s1
+docker run -it --rm -v "${HOME}/.kube/config:/.kubeconfig" ghcr.io/doitintl/kube-no-trouble:latest -k /.kubeconfig -t v1.35.4+k3s1
 ```
 
 
@@ -37,6 +37,8 @@ ansible all --forks 1 -b -m apt -a "autoremove=yes"
 ansible aretusa -b -m apt -a "upgrade=yes update_cache=yes"
 ansible all -b -m shell -a "cat /var/run/reboot-required"
 ansible aretusa -m shell -a "lsblk | grep /media/storage"
+# To remove unused images
+ansible all -b -m shell -a "k3s crictl rmi --prune"
 ```
 
 ## Check also 
