@@ -1,15 +1,15 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: cyberlocker.anagno.dev
-  namespace: cyberlocker
+  name: locker.anagno.dev
+  namespace: locker
 spec:
-  commonName: cyberlocker.anagno.dev
-  secretName: cyberlocker-anagno-dev-cert
+  commonName: locker.anagno.dev
+  secretName: locker-anagno-dev-cert
   privateKey:
     rotationPolicy: Always
   dnsNames:
-    - cyberlocker.anagno.dev
+    - locker.anagno.dev
   issuerRef:
     name: letsencrypt-issuer
     kind: ClusterIssuer
@@ -18,7 +18,7 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: dav
-  namespace: cyberlocker
+  namespace: locker
 spec:
   redirectRegex:
     regex: https://(.*)/.well-known/(card|cal)dav
@@ -26,50 +26,41 @@ spec:
     permanent: true
 ---
 apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: override-headers
+  namespace: locker
+spec:
+  headers:
+    contentSecurityPolicy: "default-src 'self'; frame-ancestors 'none'; img-src https: data:; font-src 'self' data:; object-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"
+---
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: cyberlocker.anagno.dev
-  namespace: cyberlocker
+  name: locker.anagno.dev
+  namespace: locker
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: cyberlocker.anagno.dev
+    external-dns.alpha.kubernetes.io/hostname: locker.anagno.dev
     external-dns.alpha.kubernetes.io/target: zh.anagno.dev
     kubernetes.io/ingressClassName: traefik
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`cyberlocker.anagno.dev`)
+    - match: Host(`locker.anagno.dev`)
       kind: Rule
       services:
-        - name: cyberlocker-nextcloud
+        - name: locker-nextcloud
           port: 80
       middlewares:
-      - name: https-redirect
-        namespace: proxy
+      - name: override-headers
+        namespace: locker
       - name: security-headers
         namespace: proxy
       - name: dav
-        namespace: cyberlocker
+        namespace: locker
   tls:
-    secretName: cyberlocker-anagno-dev-cert
+    secretName: locker-anagno-dev-cert
     options:
       name: tls-security-headers
       namespace: proxy
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: cyberlocker.anagno.dev-http
-  namespace: cyberlocker
-spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`cyberlocker.anagno.dev`)
-      kind: Rule
-      services:
-        - name: cyberlocker-nextcloud
-          port: 80
-      middlewares:
-      - name: https-redirect
-        namespace: proxy
