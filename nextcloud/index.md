@@ -9,7 +9,7 @@ kubectl create secret generic nextcloud-postgresql --namespace locker \
     --from-literal=username=nextcloud \
     --from-literal=password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
-helm install nextcloud-database cnpg/cluster -f db_values.yaml --version v0.6.0 --namespace locker
+helm install nextcloud-database cnpg/cluster -f db_values.yaml --version v0.6.1 --namespace locker
 
 # Modify to add backups. See the instructions in databases folder
 kubectl apply -f db_backup.yaml

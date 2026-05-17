@@ -8,7 +8,7 @@ version:
 mode: standalone
 
 cluster:
-  instances: 2
+  instances: 3
   storage:
     size: 8Gi
     storageClass: "db-storage"
@@ -32,7 +32,7 @@ cluster:
     podMonitor:
       enabled: true
     prometheusRule:
-      enabled: false
+      enabled: true
 
   enableSuperuserAccess: false
   # -- BootstrapInitDB is the configuration of the bootstrap process when initdb is used.
