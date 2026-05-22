@@ -23,7 +23,7 @@ spec:
             value: "1"
       containers:
       - name: freshrss-server
-        image: freshrss/freshrss:1.29.0
+        image: freshrss/freshrss:1.29.1
         imagePullPolicy: IfNotPresent
         env:
         - name: DATA_PATH
