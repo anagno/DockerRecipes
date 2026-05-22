@@ -33,6 +33,13 @@ global:
 #        secretKeyRef:
 #          name: no-reply-mail
 #          key: password
+    - name: AUTHENTIK_POSTGRESQL__HOST
+      value: "authentik-database-cluster-rw"
+    - name: AUTHENTIK_POSTGRESQL__USER
+      valueFrom:
+        secretKeyRef:
+          name: authentik-postgresql
+          key: username
     - name: AUTHENTIK_POSTGRESQL__PASSWORD
       valueFrom:
         secretKeyRef:
@@ -90,6 +97,8 @@ server:
 
 worker:
 
+  replicas: 1
+
   dnsConfig:
     options:
     - name: ndots
@@ -107,11 +116,10 @@ worker:
     periodSeconds: 20
     timeoutSeconds: 10
 
-  # until this is released https://github.com/goauthentik/authentik/pull/21324
   metrics:
-    enabled: false
+    enabled: true
     serviceMonitor:
-      enabled: false
+      enabled: true
 
 postgresql:
   # We use an external database

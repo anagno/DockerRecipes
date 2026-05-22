@@ -10,6 +10,11 @@ spec:
     name: authentik-worker
   updatePolicy:
     updateMode: "InPlaceOrRecreate"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: "*"
+        maxAllowed:
+          memory: "2Gi"
 ---
 apiVersion: "autoscaling.k8s.io/v1"
 kind: VerticalPodAutoscaler
@@ -23,3 +28,8 @@ spec:
     name: authentik-server
   updatePolicy:
     updateMode: "InPlaceOrRecreate"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: "*"
+        maxAllowed:
+          memory: "2Gi"
