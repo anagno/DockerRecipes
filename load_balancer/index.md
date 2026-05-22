@@ -15,7 +15,7 @@ Metallb provides a helm chart. So the installation is quite simple:
 ansible-playbook load_balancer/firewall.yml
 helm repo add metallb https://metallb.github.io/metallb
 kubectl create namespace load-balancer
-helm install --namespace load-balancer load-balancer metallb/metallb -f values.yaml --version 0.15.3
+helm install --namespace load-balancer load-balancer metallb/metallb -f values.yaml --version 0.16.0
 # Wait for the full deployment of the services
 kubectl apply -f IPAddressPool.yaml
 kubectl apply -f vpa.yaml

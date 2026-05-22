@@ -3,8 +3,11 @@
 prometheus:
   serviceAccount: "prometheus-k8s"
   namespace: "monitoring"
+  # https://github.com/metallb/metallb/pull/3055
   podMonitor:
-    enabled: true
+    enabled: false
+  prometheusRule:
+    enabled: false
 
 controller:
   image:
@@ -13,3 +16,10 @@ controller:
 speaker:
   image:
     pullPolicy: IfNotPresent
+
+frrk8s:
+  # this is used for BGP peering, which is not used in this setup
+  enabled: false
+
+frr-k8s:
+  enabled: false
