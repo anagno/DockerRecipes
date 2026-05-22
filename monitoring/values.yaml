@@ -5,7 +5,7 @@ victoria-metrics-operator:
   crds:
     enabled: true
     upgrade:
-      enabled: true
+      enabled: false
   operator:
     enable_converter_ownership: true
     disable_prometheus_converter: false
@@ -43,29 +43,54 @@ defaultRules:
             severity: warning
 
 vmsingle:
-  enabled: true
-  spec:
-    port: "8428"
-    retentionPeriod: "30d"
-    replicaCount: 1
-    resources:
-      requests:
-        cpu: 500m
-        memory: 1000Mi
-    storage:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 40Gi
-    extraArgs:
-      enableTCP6: "true"
-
+  enabled: false
 
 vmdistributed:
   enabled: false
 vmcluster:
-  enabled: false
+  enabled: true
+  spec:
+    retentionPeriod: "30d"
+    replicationFactor: 1
+    vmstorage:
+      replicaCount: 1
+      extraArgs:
+        enableTCP6: "true"
+      resources:
+        requests:
+          cpu: 250m
+          memory: 500Mi
+      storage:
+        volumeClaimTemplate:
+          spec:
+            resources:
+              requests:
+                storage: 40Gi
+    vmselect:
+      enabled: true
+      replicaCount: 1
+      extraArgs:
+        enableTCP6: "true"
+      resources:
+        requests:
+          cpu: 200m
+          memory: 500Mi
+      storage:
+        volumeClaimTemplate:
+          spec:
+            resources:
+              requests:
+                storage: 8Gi
+    vminsert:
+      enabled: true
+      replicaCount: 1
+      extraArgs:
+        enableTCP6: "true"
+      resources:
+        requests:
+          cpu: 200m
+          memory: 256Mi
+
 
 alertmanager:
   enabled: true
