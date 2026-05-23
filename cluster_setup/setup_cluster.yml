@@ -30,7 +30,7 @@
 
     # https://docs.k3s.io/installation/registry-mirror#enabling-registry-mirroring
     # This is duplicated only in master nodes. We do not have to duplicate everywhere the images
-    - name: Copy the registries files to activate the regkstry mirror
+    - name: Copy the registries files to activate the registry mirror
       copy:
         src: "registries.yaml"
         dest: "/etc/rancher/k3s/registries.yaml"

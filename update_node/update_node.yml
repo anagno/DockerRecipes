@@ -142,7 +142,7 @@
       
     - name: Sleep for 120 to wait for the node to be ready before starting the rebuilding of the longhorn storage
       ansible.builtin.wait_for:
-        timeout: 60
+        timeout: 120
       delegate_to: localhost
       when: inventory_hostname in groups['disks'] and
             reboot_required_file.stat.exists
@@ -158,7 +158,7 @@
             concurrentReplicaRebuildPerNodeLimit: 1
       when: inventory_hostname in groups['disks']
 
-    - name: Sleep for 600 to wait for longhorn to re-balance
+    - name: Sleep for 3600 to wait for longhorn to re-balance
       ansible.builtin.wait_for:
         timeout: 3600
       delegate_to: localhost
