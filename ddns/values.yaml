@@ -16,6 +16,7 @@ dnsPolicy: Default
 sources:
   # https://kubernetes-sigs.github.io/external-dns/v0.21.0/docs/sources/traefik-proxy/
   - traefik-proxy
+  - service
 
 policy: sync
 
