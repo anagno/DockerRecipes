@@ -19,11 +19,11 @@ defaultDashboards:
   defaultTimezone: utc
 
 defaultRules:
-  create: true 
+  enabled: true 
   runbookUrl: https://runbooks.prometheus-operator.dev/runbooks
   groups:
     general:
-      create: false
+      enabled: false
   extraRules:
     # I disabled the general rules because it had also a watchdog rule which was firing because of the missing alertmanager configuration.
     # So I copy the usefull here https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-metrics-k8s-stack/values.yaml
