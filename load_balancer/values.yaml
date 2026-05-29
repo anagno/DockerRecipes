@@ -3,11 +3,11 @@
 prometheus:
   serviceAccount: "prometheus-k8s"
   namespace: "monitoring"
-  # https://github.com/metallb/metallb/pull/3055
-  podMonitor:
-    enabled: false
+  metricsPort: 7472
+  serviceMonitor:
+    enabled: true
   prometheusRule:
-    enabled: false
+    enabled: true
 
 controller:
   image:
