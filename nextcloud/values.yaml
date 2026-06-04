@@ -117,6 +117,11 @@ cronjob:
   # If the instance is not ready it will cause errors
   enabled: true
   type: sidecar
+  sidecar:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
 
 service:
   type: ClusterIP
@@ -127,23 +132,27 @@ persistence:
   existingClaim: nextcloud-pvc
 
 livenessProbe:
-  enabled: false
+  # TODO:remember to disable during upgrades
+  enabled: true
   #enabled: true
   initialDelaySeconds: 60
   periodSeconds: 60
   timeoutSeconds: 15
 readinessProbe:
-  enabled: false
+  # TODO:remember to disable during upgrades
+  enabled: true
   #enabled: true
   initialDelaySeconds: 60
   periodSeconds: 60
   timeoutSeconds: 15
 startupProbe:
-  enabled: false
+  # TODO:remember to disable during upgrades
+  enabled: true
   #enabled: true
 
 hpa:
-  enabled: false
+  # TODO:remember to disable during upgrades
+  enabled: true
   cputhreshold: 80
   minPods: 1
   maxPods: 2
