@@ -112,6 +112,6 @@ spec:
     apiVersion: "apps/v1"
     kind: DaemonSet
     # This has to be update manually each time we update the enging
-    name: engine-image-ei-c9fa6d45
+    name: engine-image-ei-a4d05f02
   updatePolicy:
     updateMode: "InPlaceOrRecreate"

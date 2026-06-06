@@ -103,7 +103,7 @@ kubectl create secret generic longhorn-crypto --namespace longhorn-system \
   --from-literal=CRYPTO_KEY_VALUE=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) \
   --from-literal=CRYPTO_KEY_PROVIDER=secret
 
-helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.11.2
+helm install longhorn longhorn/longhorn --namespace longhorn-system -f values.yaml --version 1.12.0
 
 # The vpa is causing instability in the longhorn. So do not activate it for the moment
 #kubectl apply -f vpa.yml

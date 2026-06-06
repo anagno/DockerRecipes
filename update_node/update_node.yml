@@ -35,6 +35,8 @@
       kubernetes.core.helm:
         name: longhorn
         chart_ref: longhorn/longhorn
+        # TODO: update with longhorn updates
+        chart_version: 1.12.0
         release_namespace: longhorn-system
         values:
           defaultSettings:
@@ -152,6 +154,8 @@
       kubernetes.core.helm:
         name: longhorn
         chart_ref: longhorn/longhorn
+        # TODO: update with longhorn updates
+        chart_version: 1.12.0
         release_namespace: longhorn-system
         values:
           defaultSettings:
