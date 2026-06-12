@@ -122,7 +122,7 @@ vmalert:
         memory: 256Mi
 
 vmauth:
-  enabled: false
+  enabled: true
 
 vmagent:
   enabled: true
