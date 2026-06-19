@@ -7,7 +7,7 @@ kubectl create secret generic vaultwarden-postgresql --namespace vault \
     --from-literal=username=vaultwarden \
     --from-literal=password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
-helm install vaultwarden-database cnpg/cluster -f db_values.yaml --version v0.6.1 --namespace vault
+helm install vaultwarden-database cnpg/cluster -f db_values.yaml --version v0.7.0 --namespace vault
 
 # Modify to add backups. See the instructions in databases folder
 kubectl apply -f db_backup.yaml

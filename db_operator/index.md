@@ -40,7 +40,7 @@ kubectl create secret generic db-user-pass --namespace test-database \
     --from-literal=username=app \
     --from-literal=password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
-helm install database cnpg/cluster -f ha_db_values.yml --version v0.3.1 --namespace test-database
+helm install database cnpg/cluster -f ha_db_values.yml --version v0.7.0 --namespace test-database
 ```
 The high availability one, does not replicate the data on the level of longhorn, but each database
 has their own non duplicate volume and they sync the data between the instances of the databases
@@ -55,7 +55,7 @@ kubectl create secret basic-auth db-user-pass --namespace test-database \
     --from-literal=username=app \
     --from-literal=password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
-helm install database cnpg/cluster -f non_ha_db_values.yml --version v0.3.1 --namespace test-database
+helm install database cnpg/cluster -f non_ha_db_values.yml --version v0.7.0 --namespace test-database
 ```
 
 The non high availability example just has one instance of the database and uses longhorn
