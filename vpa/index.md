@@ -11,7 +11,7 @@ an unofficial one
 kubectl create namespace scaler
 helm repo add autoscalers https://kubernetes.github.io/autoscaler
 helm repo update
-helm install vpa autoscalers/vertical-pod-autoscaler --namespace scaler -f values.yaml --version 0.9.0
+helm install vpa autoscalers/vertical-pod-autoscaler --namespace scaler -f values.yaml --version 0.10.0
 ```
 
 !!!Note
