@@ -62,13 +62,13 @@ gateway:
     #  certificateRefs:
     #  mode: "Terminate"
 
-logs:
-  general:
-    level: INFO
-    format: json
-  access:
-    enabled: true
-    format: json
+log:
+  level: INFO
+  format: json
+
+accessLog:
+  enabled: true
+  format: json
 
 metrics:
   prometheus:
