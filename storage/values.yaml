@@ -1,4 +1,4 @@
-# https://github.com/longhorn/charts/blob/master/charts/longhorn/values.yaml
+# https://github.com/longhorn/charts/blob/v1.12.x/charts/longhorn/values.yaml
 
 service:
   ui:
@@ -10,9 +10,11 @@ persistence:
   defaultReplicaAutoBalance: least-effort
   reclaimPolicy: Delete
 
+defaultBackupStore:
+  backupTarget: cifs://192.168.142.250/backup
+  backupTargetCredentialSecret: longhorn-backup 
+
 defaultSettings:
-  backupTarget: cifs://gateway.internal/backup
-  backupTargetCredentialSecret: longhorn-backup
   defaultDataPath: /media/storage/
   createDefaultDiskLabeledNodes: false
   storageOverProvisioningPercentage: "100"
@@ -25,8 +27,8 @@ defaultSettings:
   concurrentReplicaRebuildPerNodeLimit: "1"
   replicaReplenishmentWaitInterval: "3600"
   allowNodeDrainWithLastHealthyReplica: "false"
-  orphanAutoDeletion: "true"
+  orphanResourceAutoDeletionGracePeriod: "replica-data;instance"
+  orphanResourceAutoDeletionGracePeriod: "3600"
   # https://longhorn.io/kb/troubleshooting-volume-readonly-or-io-error/
   # https://github.com/longhorn/longhorn/issues/1691
-  guaranteedEngineManagerCPU: 18
-  guaranteedReplicaManagerCPU: 18
+  guaranteedInstanceManagerCPU: 18
