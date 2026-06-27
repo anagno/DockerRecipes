@@ -9,8 +9,6 @@ k3s_initialization_parameters: >-
   --embedded-registry
   --kubelet-arg="image-gc-high-threshold=50"
   --kubelet-arg="image-gc-low-threshold=45"
-  --kubelet-arg="system-reserved=cpu=200m,memory=64Mi"
-  --kubelet-arg="kube-reserved=cpu=300m,memory=64Mi"
   --kube-controller-manager-arg "terminated-pod-gc-threshold=10"
   --etcd-expose-metrics=true
   --kube-controller-manager-arg="bind-address=0.0.0.0"
@@ -35,11 +33,6 @@ k3s_initialization_parameters: >-
 #       https://docs.k3s.io/installation/registry-mirror#enabling-the-distributed-oci-registry-mirror
 #   * --kubelet-arg="-image-gc-high-threshold=60"
 #     --kubelet-arg="-image-gc-low-threshold=55"
-#   * --kubelet-arg="system-reserved=cpu=200m,memory=64Mi"
-#     --kubelet-arg="kube-reserved=cpu=300m,memory=64Mi"
-#    This is to reserve some resources for the system and the kubelet. This is necessary because otherwise the node 
-#    can become unresponsive when the resources are fully used by the pods.
-#    https://docs.k3s.io/installation/requirements#hardware
 #   * --etcd-expose-metrics=true 
 #   * --kube-controller-manager-arg="bind-address=0.0.0.0" 
 #   * --kube-proxy-arg="metrics-bind-address=0.0.0.0" 
@@ -51,12 +44,36 @@ k3s_initialization_parameters: >-
 k3s_common_parameters_for_all_nodes: >-
   --resolv-conf /run/systemd/resolve/resolv.conf
 
-k3s_init_parameters_for_workers: >-
-  --node-label "node_type=worker"
-
 # Explanations of parameters:
 #   * --resolve-conf: To enable the coredns to forward requests to my router
 #     https://github.com/k3s-io/k3s/issues/4087#issuecomment-929374460
+
+k3s_init_parameters_for_workers: >-
+  --node-label "node_type=worker"
+  --kubelet-arg="system-reserved=cpu=250m,memory=128Mi"
+  --kubelet-arg="kube-reserved=cpu=400m,memory=128Mi"
+  --kubelet-arg="eviction-hard=memory.available<100Mi"
+
+# Explanations of parameters:
+#   * --kubelet-arg="system-reserved"
+#     --kubelet-arg="kube-reserved"
+#    This is to reserve some resources for the system and the kubelet. This is necessary because otherwise the node 
+#    can become unresponsive when the resources are fully used by the pods.
+#    https://docs.k3s.io/installation/requirements#hardware
+#    https://docs.k3s.io/reference/resource-profiling#minimum-resource-requirements-for-k3s
+
+k3s_init_parameters_for_control_planes: >-
+  --kubelet-arg="system-reserved=cpu=300m,memory=1000Mi"
+  --kubelet-arg="kube-reserved=cpu=200m,memory=500Mi"
+  --kubelet-arg="eviction-hard=memory.available<200Mi"
+
+# Explanations of parameters:
+#   * --kubelet-arg="system-reserved"
+#     --kubelet-arg="kube-reserved"
+#    This is to reserve some resources for the system and the kubelet. This is necessary because otherwise the node 
+#    can become unresponsive when the resources are fully used by the pods.
+#    https://docs.k3s.io/installation/requirements#hardware
+#    https://docs.k3s.io/reference/resource-profiling#minimum-resource-requirements-for-k3s
 
 # # Resources
 # * https://www.danielstechblog.io/setting-custom-upstream-nameservers-for-coredns-in-azure-kubernetes-service/

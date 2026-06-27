@@ -112,6 +112,7 @@
         curl -sfL https://get.k3s.io |
         sh -s - server --cluster-init --tls-san zeus.internal
         {{ k3s_common_parameters_for_all_nodes }}
+        {{ k3s_init_parameters_for_control_planes }}
         {{ k3s_initialization_parameters }}
       become: true
       when: "'k3s.service' not in ansible_facts.services"
@@ -209,6 +210,7 @@
         K3S_TOKEN="{{ hostvars[groups['masters'][0]]['cluster_token'] }}"
         sh -s - server --server https://zeus.internal:6443
         {{ k3s_common_parameters_for_all_nodes }}
+        {{ k3s_init_parameters_for_control_planes }}
         {{ k3s_initialization_parameters }}
       become: true
       when: "'k3s.service' not in ansible_facts.services"
