@@ -23,7 +23,7 @@ kubectl apply -f storage.yaml
 
 helm repo add nextcloud https://nextcloud.github.io/helm/
 helm repo update
-helm install locker nextcloud/nextcloud -f values.yaml --namespace locker --version 9.1.3
+helm install locker nextcloud/nextcloud -f values.yaml --namespace locker --version 9.1.4
 
 kubectl apply -f ingressroute.yaml
 ```
