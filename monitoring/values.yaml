@@ -13,35 +13,129 @@ victoria-metrics-operator:
     - name: VM_ENABLETCP6
       value: "true"
 
+# https://github.com/VictoriaMetrics/helm-charts/issues/3040
+syncJob:
+  enabled: true
+  prune: true
+  useOwnerReferences: true
+  resourcePrefix: ""
+  dnsConfig:
+    options:
+    - name: ndots
+      value: "1"
+
 
 defaultDashboards:
   enabled: true
-  defaultTimezone: utc
 
 defaultRules:
   enabled: true 
   runbookUrl: https://runbooks.prometheus-operator.dev/runbooks
-  groups:
-    general:
-      enabled: false
-  extraRules:
-    # I disabled the general rules because it had also a watchdog rule which was firing because of the missing alertmanager configuration.
-    # So I copy the usefull here https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-metrics-k8s-stack/values.yaml
-    general-rules: |
-      groups:
-      - name: general.rules
-        rules:
-        - alert: TargetDown
-          expr: {{ printf "(100 * (count(up == 0) by(%s,job,namespace,service) / count(up) by(%s,job,namespace,service))) > 10" $groupLabels $groupLabels }}
-          annotations:
-            description: '{{`{{`}} printf "%.4g" $value {{`}}`}}% of the {{`{{`}} $labels.job {{`}}`}}/{{`{{`}} $labels.service {{`}}`}} targets in {{`{{`}} $labels.namespace {{`}}`}} namespace are down.'
-            runbook_url: https://runbooks.prometheus-operator.dev/runbooks/general/targetdown
-            summary: One or more targets are unreachable.
-          condition: true
-          for: 10m
-          labels:
-            severity: warning
 
+#vlcluster:
+#  enabled: true
+#  spec:
+#    retentionPeriod: "15d"
+#    vlstorage:
+#      replicaCount: 1
+#      storage:
+#        volumeClaimTemplate:
+#          spec:
+#            resources:
+#              requests:
+#                storage: 40Gi
+#      extraArgs:
+#        enableTCP6: "true"
+#        envflag.enable: "true"
+#        loggerFormat: json
+#        http.shutdownDelay: 15s
+#      resources:
+#        requests:
+#          cpu: 250m
+#          memory: 256Mi
+#
+#    vlselect:
+#      enabled: true
+#      replicaCount: 1
+#      extraArgs:
+#        enableTCP6: "true"
+#        envflag.enable: "true"
+#        loggerFormat: json
+#        http.shutdownDelay: 15s
+#      storage:
+#        volumeClaimTemplate:
+#          spec:
+#            resources:
+#              requests:
+#                storage: 2Gi
+#      resources:
+#        requests:
+#          cpu: 100m
+#          memory: 200Mi
+#
+#    vlinsert:
+#      enabled: true
+#      port: "9481"
+#      replicaCount: 1
+#      extraArgs:
+#        enableTCP6: "true"
+#        envflag.enable: "true"
+#        loggerFormat: json
+#        http.shutdownDelay: 15s
+#      resources:
+#        requests:
+#          cpu: 100m
+#          memory: 200Mi
+#
+#    requestsLoadBalancer:
+#      enabled: true
+#      spec:
+#       replicaCount: 1
+#
+#vlagent:
+#  enabled: false
+#  spec:
+#    image:
+#      tag: v1.51.0
+#    tolerations:
+#      - key: "node-role.kubernetes.io/control-plane"
+#        operator: "Exists"
+#        effect: "NoSchedule"
+#    resources:
+#      requests:
+#        cpu: 100m
+#        memory: 128Mi
+#    extraArgs:
+#      enableTCP6: "true"
+#      envflag.enable: "true"
+#      envflag.prefix: VL_
+#      loggerFormat: json
+#      tmpDataPath: /var/lib/vl-collector
+#    serviceSpec:
+#      useAsDefault: true
+#      spec:
+#        ipFamilyPolicy: "RequireDualStack"
+#        ipFamilies:
+#          - IPv4
+#          - IPv6
+#      useAsDefault: true
+#    k8sCollector:
+#      enabled: true
+#      includePodLabels: true
+#      includePodAnnotations: true
+#      includeNodeLabels: true
+#      includeNodeAnnotations: true
+#      msgFields:
+#        - message
+#        - msg
+#        - log
+#
+#
+#vtsingle:
+#  enabled: false
+#vtcluster:
+#  enabled: false
+#
 vmsingle:
   enabled: false
 
@@ -54,12 +148,22 @@ vmcluster:
     replicationFactor: 1
     vmstorage:
       replicaCount: 1
+      hpa:
+        minReplicas: 1
+        maxReplicas: 2
+      #serviceSpec:
+      #  useAsDefault: true
+      #  spec:
+      #    ipFamilyPolicy: "RequireDualStack"
+      #    ipFamilies:
+      #      - IPv4
+      #      - IPv6
       extraArgs:
         enableTCP6: "true"
       resources:
         requests:
-          cpu: 250m
-          memory: 500Mi
+          cpu: 750m
+          memory: 1500Mi
       storage:
         volumeClaimTemplate:
           spec:
@@ -69,12 +173,22 @@ vmcluster:
     vmselect:
       enabled: true
       replicaCount: 1
+      hpa:
+        minReplicas: 1
+        maxReplicas: 2
+      #serviceSpec:
+      #  useAsDefault: true
+      #  spec:
+      #    ipFamilyPolicy: "RequireDualStack"
+      #    ipFamilies:
+      #      - IPv4
+      #      - IPv6
       extraArgs:
         enableTCP6: "true"
       resources:
         requests:
-          cpu: 200m
-          memory: 500Mi
+          cpu: 250m
+          memory: 256Mi
       storage:
         volumeClaimTemplate:
           spec:
@@ -84,24 +198,63 @@ vmcluster:
     vminsert:
       enabled: true
       replicaCount: 1
+      hpa:
+        minReplicas: 1
+        maxReplicas: 3
+      #serviceSpec:
+      #  useAsDefault: true
+      #  spec:
+      #    ipFamilyPolicy: "RequireDualStack"
+      #    ipFamilies:
+      #      - IPv4
+      #      - IPv6
       extraArgs:
         enableTCP6: "true"
       resources:
         requests:
-          cpu: 200m
+          cpu: 250m
           memory: 256Mi
-
+    requestsLoadBalancer:
+      enabled: true
+      spec:
+        replicaCount: 1
+        hpa:
+          minReplicas: 1
+          maxReplicas: 2
+          resources:
+        requests:
+          cpu: 100m
+          memory: 100Mi
+        extraArgs:
+          enableTCP6: "true"
+        #serviceSpec:
+        #  useAsDefault: true
+        #  spec:
+        #    ipFamilyPolicy: "RequireDualStack"
+        #    ipFamilies:
+        #      - IPv4
+        #      - IPv6
 
 alertmanager:
   enabled: true
   spec:
     replicaCount: 1
+    hpa:
+      minReplicas: 1
+      maxReplicas: 2
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
     port: "9093"
     selectAllByDefault: true
     disableNamespaceMatcher: true 
     resources:
       requests:
-        cpu: 100m
+        cpu: 250m
         memory: 256Mi
   # TODO https://itnext.io/kubernetes-monitoring-a-complete-solution-part-6-visualizing-with-grafana-956499ff4d87
   # set upd mail receiver and alerting rules
@@ -115,23 +268,55 @@ alertmanager:
 vmalert:
   enabled: true
   spec:
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
     evaluationInterval: 60s
     resources:
       requests:
-        cpu: 200m
+        cpu: 250m
         memory: 256Mi
+    extraArgs:
+      enableTCP6: "true"
 
 vmauth:
   enabled: true
+  spec:
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    extraArgs:
+      enableTCP6: "true"
 
 vmagent:
   enabled: true
   spec:
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
     scrapeInterval: 30s
     resources:
       requests:
-        cpu: 200m
-        memory: 500Mi
+        cpu: 250m
+        memory: 256Mi
+    extraArgs:
+      enableTCP6: "true"
 
 defaultDatasources:
   grafanaOperator:
@@ -141,18 +326,32 @@ defaultDatasources:
       - name: VictoriaMetrics
         type: prometheus
         access: proxy
+        uid: VictoriaMetrics
         isDefault: true
       - name: VictoriaMetrics (DS)
         isDefault: false
         access: proxy
+        uid: VictoriaMetricsDS
         type: victoriametrics-metrics-datasource
+  #victorialogs:
+  #  datasources:
+  #    - name: VictoriaLogs (DS)
+  #      access: proxy
+  #      uid: VictoriaLogs
+  #      type: victoriametrics-logs-datasource
+  #victoriatraces:
+  #  datasources:
+  #    - name: VictoriaTraces
+  #      access: proxy
+  #      uid: VictoriaTraces
+  #      type: jaeger
   alertmanager:
     datasources:
       - name: Alertmanager
         access: proxy
+        uid: Alertmanager
         jsonData:
           implementation: prometheus
-
 
 grafana:
   enabled: true

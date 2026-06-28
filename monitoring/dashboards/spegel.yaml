@@ -681,7 +681,7 @@ data:
                           "group": "prometheus",
                           "version": "v0",
                           "datasource": {
-                            "name": "P4169E866C3094E38"
+                            "name": "${datasource}"
                           },
                           "spec": {
                             "editorMode": "code",
@@ -801,7 +801,7 @@ data:
                           "group": "prometheus",
                           "version": "v0",
                           "datasource": {
-                            "name": "P4169E866C3094E38"
+                            "name": "${datasource}"
                           },
                           "spec": {
                             "editorMode": "code",
@@ -923,7 +923,7 @@ data:
                           "group": "prometheus",
                           "version": "v0",
                           "datasource": {
-                            "name": "P4169E866C3094E38"
+                            "name": "${datasource}"
                           },
                           "spec": {
                             "editorMode": "code",
@@ -1007,7 +1007,7 @@ data:
                           "group": "prometheus",
                           "version": "v0",
                           "datasource": {
-                            "name": "P4169E866C3094E38"
+                            "name": "${datasource}"
                           },
                           "spec": {
                             "editorMode": "code",
@@ -1091,7 +1091,7 @@ data:
                           "group": "prometheus",
                           "version": "v0",
                           "datasource": {
-                            "name": "P4169E866C3094E38"
+                            "name": "${datasource}"
                           },
                           "spec": {
                             "editorMode": "builder",
@@ -1216,7 +1216,7 @@ data:
                           "group": "prometheus",
                           "version": "v0",
                           "datasource": {
-                            "name": "P4169E866C3094E38"
+                            "name": "${datasource}"
                           },
                           "spec": {
                             "editorMode": "builder",
@@ -1338,7 +1338,7 @@ data:
                           "group": "prometheus",
                           "version": "v0",
                           "datasource": {
-                            "name": "P4169E866C3094E38"
+                            "name": "${datasource}"
                           },
                           "spec": {
                             "editorMode": "builder",
@@ -1463,7 +1463,7 @@ data:
                           "group": "prometheus",
                           "version": "v0",
                           "datasource": {
-                            "name": "P4169E866C3094E38"
+                            "name": "${datasource}"
                           },
                           "spec": {
                             "editorMode": "builder",
@@ -1867,7 +1867,7 @@ data:
                 "group": "prometheus",
                 "version": "v0",
                 "datasource": {
-                  "name": "P4169E866C3094E38"
+                  "name": "${datasource}"
                 },
                 "spec": {
                   "qryType": 1,
