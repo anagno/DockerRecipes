@@ -63,8 +63,8 @@ k3s_init_parameters_for_workers: >-
 #    https://docs.k3s.io/reference/resource-profiling#minimum-resource-requirements-for-k3s
 
 k3s_init_parameters_for_control_planes: >-
-  --kubelet-arg="system-reserved=cpu=300m,memory=1000Mi"
-  --kubelet-arg="kube-reserved=cpu=200m,memory=500Mi"
+  --kubelet-arg="system-reserved=cpu=500m,memory=1000Mi"
+  --kubelet-arg="kube-reserved=cpu=1500m,memory=500Mi"
   --kubelet-arg="eviction-hard=memory.available<200Mi"
 
 # Explanations of parameters:

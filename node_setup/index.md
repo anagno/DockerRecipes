@@ -107,6 +107,13 @@ To set-up a signle node we can execute:
 ansible-playbook node_setup/setup_node.yml --limit "node"
 ```
 
+## Other firewall rules when services are already running
+
+```bash
+ansible-playbook monitoring/firewall.yml --limit "node"
+ansible-playbook load_balancer/firewall.yml --limit "node"
+```
+
 ## Resources
 
 * https://opensource.com/article/20/6/kubernetes-raspberry-pi
