@@ -17,7 +17,7 @@ the most mature and has a lot of contributors so it shoud be future proof.
 helm repo add cnpg https://cloudnative-pg.github.io/charts
 helm repo update
 kubectl create namespace databases
-helm install cnpg cnpg/cloudnative-pg -f operator_values.yml --version v0.28.3 --namespace databases
+helm install cnpg cnpg/cloudnative-pg -f operator_values.yml --version v0.29.0 --namespace databases
 
 kubectl apply -f snapshots.yml
 ```
