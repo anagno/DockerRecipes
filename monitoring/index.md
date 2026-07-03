@@ -23,7 +23,7 @@ kubectl create secret generic authentik-secret --namespace monitoring \
 
 helm install --namespace monitoring prometheus-crds oci://ghcr.io/prometheus-community/charts/prometheus-operator-crds --version 29.0.0
 helm install --namespace monitoring monitoring vm/victoria-metrics-k8s-stack  -f values.yaml \
-    --version v0.85.7 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
+    --version v0.85.10 --set grafana.adminPassword=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
 kubectl apply -f monitoring-ingress-public.yaml
 ```
@@ -86,18 +86,13 @@ kubectl create namespace siemens
 kubectl delete -f x200.yaml
 ```
 
-TODOs:
-
-helm install --namespace monitoring logs vm/victoria-logs-single  -f values-logs.yaml --version v0.12.4
-kubectl apply -f logs-config.yaml
-https://itnext.io/kubernetes-monitoring-a-complete-solution-part-9-talos-linux-system-logs-with-victorialogs-and-65c1f1e44a23
-
 ## Usefull commands:
 
 ```
 kubectl -n monitoring port-forward service/vmsingle-monitoring-victoria-metrics-k8s-stack 9090:8428
 kubectl -n monitoring port-forward service/vmagent-monitoring-victoria-metrics-k8s-stack 9090:8429
 kubectl -n monitoring port-forward service/vmalert-monitoring-victoria-metrics-k8s-stack 9090:8080
+kubectl -n monitoring logs -f -l "app.kubernetes.io/name=vmagent"
 ```
 
 TODO add as dashboard 

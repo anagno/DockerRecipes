@@ -32,216 +32,106 @@ defaultRules:
   enabled: true 
   runbookUrl: https://runbooks.prometheus-operator.dev/runbooks
 
-#vlcluster:
-#  enabled: true
-#  spec:
-#    retentionPeriod: "15d"
-#    vlstorage:
-#      replicaCount: 1
-#      storage:
-#        volumeClaimTemplate:
-#          spec:
-#            resources:
-#              requests:
-#                storage: 40Gi
-#      extraArgs:
-#        enableTCP6: "true"
-#        envflag.enable: "true"
-#        loggerFormat: json
-#        http.shutdownDelay: 15s
-#      resources:
-#        requests:
-#          cpu: 250m
-#          memory: 256Mi
-#
-#    vlselect:
-#      enabled: true
-#      replicaCount: 1
-#      extraArgs:
-#        enableTCP6: "true"
-#        envflag.enable: "true"
-#        loggerFormat: json
-#        http.shutdownDelay: 15s
-#      storage:
-#        volumeClaimTemplate:
-#          spec:
-#            resources:
-#              requests:
-#                storage: 2Gi
-#      resources:
-#        requests:
-#          cpu: 100m
-#          memory: 200Mi
-#
-#    vlinsert:
-#      enabled: true
-#      port: "9481"
-#      replicaCount: 1
-#      extraArgs:
-#        enableTCP6: "true"
-#        envflag.enable: "true"
-#        loggerFormat: json
-#        http.shutdownDelay: 15s
-#      resources:
-#        requests:
-#          cpu: 100m
-#          memory: 200Mi
-#
-#    requestsLoadBalancer:
-#      enabled: true
-#      spec:
-#       replicaCount: 1
-#
-#vlagent:
-#  enabled: false
-#  spec:
-#    image:
-#      tag: v1.51.0
-#    tolerations:
-#      - key: "node-role.kubernetes.io/control-plane"
-#        operator: "Exists"
-#        effect: "NoSchedule"
-#    resources:
-#      requests:
-#        cpu: 100m
-#        memory: 128Mi
-#    extraArgs:
-#      enableTCP6: "true"
-#      envflag.enable: "true"
-#      envflag.prefix: VL_
-#      loggerFormat: json
-#      tmpDataPath: /var/lib/vl-collector
-#    serviceSpec:
-#      useAsDefault: true
-#      spec:
-#        ipFamilyPolicy: "RequireDualStack"
-#        ipFamilies:
-#          - IPv4
-#          - IPv6
-#      useAsDefault: true
-#    k8sCollector:
-#      enabled: true
-#      includePodLabels: true
-#      includePodAnnotations: true
-#      includeNodeLabels: true
-#      includeNodeAnnotations: true
-#      msgFields:
-#        - message
-#        - msg
-#        - log
-#
-#
+
+vlsingle:
+  enabled: true
+  spec:
+    retentionPeriod: "15d"
+    replicaCount: 1
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
+    extraArgs: 
+      enableTCP6: "true"
+    storage:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 40Gi
+
+# Too many resources are used by the cluster. It is not needed for the current use case.
+vlcluster:
+  enabled: false
+
+vlagent:
+  enabled: true
+  spec:
+    tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    extraArgs:
+      enableTCP6: "true"
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
+    k8sCollector:
+      enabled: true
+      includePodLabels: true
+      includePodAnnotations: true
+      includeNodeLabels: true
+      includeNodeAnnotations: true
+      msgFields:
+        - message
+        - msg
+        - log
+
 #vtsingle:
 #  enabled: false
 #vtcluster:
 #  enabled: false
-#
+
 vmsingle:
-  enabled: false
+  enabled: true
+  spec:
+    port: "8428"
+    retentionPeriod: "30d"
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1000Mi
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
+    extraArgs:
+      enableTCP6: "true"
+      dedup.minScrapeInterval: 30s
+    storage:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 40Gi
 
 vmdistributed:
   enabled: false
+
+# Cluster uses too many resources unfortunately. It is not needed for the current use case.
 vmcluster:
-  enabled: true
-  spec:
-    retentionPeriod: "30d"
-    replicationFactor: 1
-    vmstorage:
-      replicaCount: 1
-      hpa:
-        minReplicas: 1
-        maxReplicas: 2
-      #serviceSpec:
-      #  useAsDefault: true
-      #  spec:
-      #    ipFamilyPolicy: "RequireDualStack"
-      #    ipFamilies:
-      #      - IPv4
-      #      - IPv6
-      extraArgs:
-        enableTCP6: "true"
-      resources:
-        requests:
-          cpu: 750m
-          memory: 1500Mi
-      storage:
-        volumeClaimTemplate:
-          spec:
-            resources:
-              requests:
-                storage: 40Gi
-    vmselect:
-      enabled: true
-      replicaCount: 1
-      hpa:
-        minReplicas: 1
-        maxReplicas: 2
-      #serviceSpec:
-      #  useAsDefault: true
-      #  spec:
-      #    ipFamilyPolicy: "RequireDualStack"
-      #    ipFamilies:
-      #      - IPv4
-      #      - IPv6
-      extraArgs:
-        enableTCP6: "true"
-      resources:
-        requests:
-          cpu: 250m
-          memory: 256Mi
-      storage:
-        volumeClaimTemplate:
-          spec:
-            resources:
-              requests:
-                storage: 8Gi
-    vminsert:
-      enabled: true
-      replicaCount: 1
-      hpa:
-        minReplicas: 1
-        maxReplicas: 3
-      #serviceSpec:
-      #  useAsDefault: true
-      #  spec:
-      #    ipFamilyPolicy: "RequireDualStack"
-      #    ipFamilies:
-      #      - IPv4
-      #      - IPv6
-      extraArgs:
-        enableTCP6: "true"
-      resources:
-        requests:
-          cpu: 250m
-          memory: 256Mi
-    requestsLoadBalancer:
-      enabled: true
-      spec:
-        replicaCount: 1
-        hpa:
-          minReplicas: 1
-          maxReplicas: 2
-          resources:
-        requests:
-          cpu: 100m
-          memory: 100Mi
-        extraArgs:
-          enableTCP6: "true"
-        #serviceSpec:
-        #  useAsDefault: true
-        #  spec:
-        #    ipFamilyPolicy: "RequireDualStack"
-        #    ipFamilies:
-        #      - IPv4
-        #      - IPv6
+  enabled: false
 
 alertmanager:
   enabled: true
   spec:
     replicaCount: 1
-    hpa:
-      minReplicas: 1
-      maxReplicas: 2
     serviceSpec:
       useAsDefault: true
       spec:
@@ -284,21 +174,7 @@ vmalert:
       enableTCP6: "true"
 
 vmauth:
-  enabled: true
-  spec:
-    serviceSpec:
-      useAsDefault: true
-      spec:
-        ipFamilyPolicy: "RequireDualStack"
-        ipFamilies:
-          - IPv4
-          - IPv6
-    resources:
-      requests:
-        cpu: 250m
-        memory: 256Mi
-    extraArgs:
-      enableTCP6: "true"
+  enabled: false
 
 vmagent:
   enabled: true
@@ -310,48 +186,30 @@ vmagent:
         ipFamilies:
           - IPv4
           - IPv6
-    scrapeInterval: 30s
+    replicaCount: 1
+    # https://docs.victoriametrics.com/operator/resources/vmagent/#sharding
+    shardCount: 2
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 50
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  shard-num: '%SHARD_NUM%'
+              topologyKey: kubernetes.io/hostname
+    scrapeInterval: 15s
     resources:
       requests:
         cpu: 250m
         memory: 256Mi
     extraArgs:
       enableTCP6: "true"
+      promscrape.streamParse: "true"
 
 defaultDatasources:
   grafanaOperator:
     enabled: false
-  victoriametrics:
-    datasources:
-      - name: VictoriaMetrics
-        type: prometheus
-        access: proxy
-        uid: VictoriaMetrics
-        isDefault: true
-      - name: VictoriaMetrics (DS)
-        isDefault: false
-        access: proxy
-        uid: VictoriaMetricsDS
-        type: victoriametrics-metrics-datasource
-  #victorialogs:
-  #  datasources:
-  #    - name: VictoriaLogs (DS)
-  #      access: proxy
-  #      uid: VictoriaLogs
-  #      type: victoriametrics-logs-datasource
-  #victoriatraces:
-  #  datasources:
-  #    - name: VictoriaTraces
-  #      access: proxy
-  #      uid: VictoriaTraces
-  #      type: jaeger
-  alertmanager:
-    datasources:
-      - name: Alertmanager
-        access: proxy
-        uid: Alertmanager
-        jsonData:
-          implementation: prometheus
 
 grafana:
   enabled: true
@@ -409,6 +267,13 @@ grafana:
       use_refresh_token: true
 
   sidecar:
+    datasources:
+      enabled: true
+      label: grafana_datasource
+      labelValue: "1"
+      searchNamespace: "ALL"
+      annotations: 
+        monitoring-sidecar-datasource-directory: "/tmp/datasource/kubernetes"
     dashboards:
       provider:
         name: default
@@ -416,19 +281,17 @@ grafana:
       folder: /var/lib/grafana/dashboards
       defaultFolderName: default
       enabled: true
+      multicluster: false
       label: grafana_dashboard
       labelValue: "1"
       searchNamespace: "ALL"
       annotations: 
         monitoring-sidecar-dashboard-directory: "/tmp/dashboards/kubernetes"
-    datasources:
-      enabled: true
-      label: grafana_datasource
-      labelValue: "1"
-      #initDatasources: true
-      searchNamespace: "ALL"
-      annotations: 
-        monitoring-sidecar-datasource-directory: "/tmp/datasource/kubernetes"
+
+  deploymentStrategy:
+    # There are not enough resources available in the cluster to run multiple grafana pods.
+    # Therefore, the deployment strategy is set to Recreate.
+    type: Recreate
 
   resources: 
     requests:
@@ -660,3 +523,20 @@ kubeProxy:
       endpoints:
         - port: http-metrics
           scheme: http
+
+internal:
+  vmauth:
+    spec:
+      serviceSpec:
+        useAsDefault: true
+        spec:
+          ipFamilyPolicy: "RequireDualStack"
+          ipFamilies:
+            - IPv4
+            - IPv6
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+      extraArgs:
+        enableTCP6: "true"

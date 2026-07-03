@@ -39,7 +39,7 @@ data:
                 "group": "datasource",
                 "version": "v0",
                 "datasource": {
-                  "name": "grafana"
+                  "name": "VictoriaMetrics"
                 },
                 "spec": {
                   "limit": 100,
@@ -619,7 +619,7 @@ data:
                           "group": "prometheus",
                           "version": "v0",
                           "datasource": {
-                            "name": "P4169E866C3094E38"
+                            "name": "${datasource}"
                           },
                           "spec": {
                             "editorMode": "code",
@@ -792,7 +792,7 @@ data:
                           "group": "prometheus",
                           "version": "v0",
                           "datasource": {
-                            "name": "P4169E866C3094E38"
+                            "name": "${datasource}"
                           },
                           "spec": {
                             "editorMode": "code",
@@ -815,7 +815,7 @@ data:
                           "group": "prometheus",
                           "version": "v0",
                           "datasource": {
-                            "name": "P4169E866C3094E38"
+                            "name": "${datasource}"
                           },
                           "spec": {
                             "editorMode": "code",
@@ -1559,7 +1559,7 @@ data:
                 "group": "prometheus",
                 "version": "v0",
                 "datasource": {
-                  "name": "P4169E866C3094E38"
+                  "name": "${datasource}"
                 },
                 "spec": {
                   "qryType": 1,
