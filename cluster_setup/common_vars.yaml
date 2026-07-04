@@ -51,7 +51,7 @@ k3s_common_parameters_for_all_nodes: >-
 k3s_init_parameters_for_workers: >-
   --node-label "node_type=worker"
   --kubelet-arg="system-reserved=cpu=250m,memory=128Mi"
-  --kubelet-arg="kube-reserved=cpu=400m,memory=128Mi"
+  --kubelet-arg="kube-reserved=cpu=450m,memory=128Mi"
   --kubelet-arg="eviction-hard=memory.available<100Mi"
 
 # Explanations of parameters:
