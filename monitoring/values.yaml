@@ -27,6 +27,20 @@ syncJob:
 
 defaultDashboards:
   enabled: true
+  sources:
+    vm-alerts-statistics:
+      url: https://raw.githubusercontent.com/VictoriaMetrics/VictoriaMetrics/master/dashboards/alert-statistics.json
+      enabled: 'true'
+    vm-auth:
+      url: https://raw.githubusercontent.com/VictoriaMetrics/VictoriaMetrics/master/dashboards/vmauth.json
+      enabled: 'true'
+    vl-internal:
+      url: https://raw.githubusercontent.com/VictoriaMetrics/VictoriaLogs/master/dashboards/victorialogs-internal.json
+      enabled: 'true'
+    vl-kubernetes-explorer:
+      url: https://raw.githubusercontent.com/VictoriaMetrics/VictoriaLogs/master/dashboards/victorialogs-kubernetes-explorer.json
+      enabled: 'true'
+
 
 defaultRules:
   enabled: true 
@@ -88,6 +102,7 @@ vlagent:
         - message
         - msg
         - log
+        - record
 
 #vtsingle:
 #  enabled: false
