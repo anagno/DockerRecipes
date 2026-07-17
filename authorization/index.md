@@ -11,7 +11,7 @@ kubectl create secret generic authentik-postgresql --namespace authorization \
     --from-literal=username=authentik \
     --from-literal=password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
-helm install authentik-database cnpg/cluster -f db_values.yaml --version v0.7.0 --namespace authorization
+helm install authentik-database cnpg/cluster -f db_values.yaml --version v0.8.0 --namespace authorization
 
 kubectl create secret generic authentik-general --namespace authorization \
   --from-literal=secret-key=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64) \
