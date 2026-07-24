@@ -194,6 +194,10 @@ vmauth:
 vmagent:
   enabled: true
   spec:
+    dnsConfig:
+      options:
+      - name: ndots
+        value: "1"
     serviceSpec:
       useAsDefault: true
       spec:
