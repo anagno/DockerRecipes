@@ -7,7 +7,7 @@ kubectl create secret generic freshrss-postgresql --namespace news \
     --from-literal=username=freshrss \
     --from-literal=password=$(head -c 512 /dev/urandom | LC_CTYPE=C tr -cd 'a-zA-Z0-9' | head -c 64)
 
-helm install freshrss-database cnpg/cluster -f db_values.yaml --version v0.8.0 --namespace news
+helm install freshrss-database cnpg/cluster -f db_values.yaml --version v0.8.1 --namespace news
 
 # Modify to add backups
 
