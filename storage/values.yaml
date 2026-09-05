@@ -27,7 +27,7 @@ defaultSettings:
   concurrentReplicaRebuildPerNodeLimit: "1"
   replicaReplenishmentWaitInterval: "3600"
   allowNodeDrainWithLastHealthyReplica: "false"
-  orphanResourceAutoDeletionGracePeriod: "replica-data;instance"
+  orphanResourceAutoDeletion: "replica-data;instance"
   orphanResourceAutoDeletionGracePeriod: "3600"
   # https://longhorn.io/kb/troubleshooting-volume-readonly-or-io-error/
   # https://github.com/longhorn/longhorn/issues/1691
