@@ -18,6 +18,9 @@
     - fd93:142::/60
     - 2a02:169:3af:6::/64
     - 2a02:169:3af:7::/64
+    # VPN tunnel
+    - 10.0.242.0/24
+    - fd00:0:fd93:242::/64
 
 - name: UFW - Allow HTTP connections
   community.general.ufw:
