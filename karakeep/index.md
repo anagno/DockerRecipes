@@ -18,7 +18,7 @@ kubectl create secret generic karakeep-meilesearch --namespace bookmarks \
 
 helm repo add karakeep-app https://karakeep-app.github.io/helm-charts
 helm repo update
-helm upgrade --namespace bookmarks karakeep karakeep-app/karakeep -f values.yaml --version 0.32.0
+helm install --namespace bookmarks karakeep karakeep-app/karakeep -f values.yaml --version 0.33.1
 
 # If we activate scraping the metrics
 # kubectl apply -f servicemonitor.yaml
