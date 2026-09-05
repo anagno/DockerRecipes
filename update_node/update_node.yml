@@ -62,7 +62,7 @@
         kubectl drain {{ inventory_hostname|lower }}
         --ignore-daemonsets
         --delete-emptydir-data
-        --pod-selector='app!=csi-attacher,app!=csi-provisioner,longhorn.io/component!=instance-manager,app!=longhorn-admission-webhook,app!=longhorn-conversion-webhook'
+        --pod-selector='app!=csi-attacher,app!=csi-provisioner,longhorn.io/component!=instance-manager,app!=longhorn-admission-webhook,app!=longhorn-conversion-webhook,app.kubernetes.io/managed-by!=cloudnative-pg'
         --kubeconfig /etc/rancher/k3s/k3s.yaml
       delegate_to: "{{ groups['masters'][0] }}"
       become: yes
