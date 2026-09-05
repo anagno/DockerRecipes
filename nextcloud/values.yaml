@@ -134,21 +134,18 @@ persistence:
 livenessProbe:
   # TODO:remember to disable during upgrades
   enabled: true
-  #enabled: true
   initialDelaySeconds: 60
   periodSeconds: 60
   timeoutSeconds: 15
 readinessProbe:
   # TODO:remember to disable during upgrades
   enabled: true
-  #enabled: true
   initialDelaySeconds: 60
   periodSeconds: 60
   timeoutSeconds: 15
 startupProbe:
   # TODO:remember to disable during upgrades
   enabled: true
-  #enabled: true
 
 hpa:
   # TODO:remember to disable during upgrades
