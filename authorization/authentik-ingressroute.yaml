@@ -20,8 +20,8 @@ metadata:
   name: auth.anagno.dev
   namespace: authorization
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: auth.anagno.dev
-    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    external-dns.kubernetes.io/hostname: auth.anagno.dev
+    external-dns.kubernetes.io/target: zh.anagno.dev
     kubernetes.io/ingressClassName: traefik
 spec:
   entryPoints:

@@ -45,8 +45,8 @@ metadata:
   name: news.anagno.dev
   namespace: news
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: news.anagno.dev
-    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    external-dns.kubernetes.io/hostname: news.anagno.dev
+    external-dns.kubernetes.io/target: zh.anagno.dev
     kubernetes.io/ingressClassName: traefik
 spec:
   entryPoints:

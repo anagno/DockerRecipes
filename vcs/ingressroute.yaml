@@ -20,8 +20,8 @@ metadata:
   name: vcs.anagno.dev
   namespace: vcs
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: vcs.anagno.dev
-    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    external-dns.kubernetes.io/hostname: vcs.anagno.dev
+    external-dns.kubernetes.io/target: zh.anagno.dev
     kubernetes.io/ingressClassName: traefik  
 spec:
   entryPoints:

@@ -30,8 +30,8 @@ metadata:
   name: vault.anagno.dev
   namespace: vault
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: vault.anagno.dev
-    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    external-dns.kubernetes.io/hostname: vault.anagno.dev
+    external-dns.kubernetes.io/target: zh.anagno.dev
     kubernetes.io/ingressClassName: traefik
 spec:
   entryPoints:

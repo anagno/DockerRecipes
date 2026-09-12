@@ -20,8 +20,8 @@ metadata:
   name: proxy.anagno.dev
   namespace: proxy
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: proxy.anagno.dev
-    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    external-dns.kubernetes.io/hostname: proxy.anagno.dev
+    external-dns.kubernetes.io/target: zh.anagno.dev
     kubernetes.io/ingressClassName: traefik
 spec:
   entryPoints:
