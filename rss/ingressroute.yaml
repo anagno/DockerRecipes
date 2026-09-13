@@ -16,6 +16,15 @@ spec:
     kind: ClusterIssuer
 ---
 apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: override-headers
+  namespace: news
+spec:
+  headers:
+    contentSecurityPolicy: "default-src 'self'; img-src https: data:; object-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"
+---
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: news.anagno.dev-api
@@ -31,6 +40,8 @@ spec:
         - name: freshrss-service
           port: 80
       middlewares:
+      - name: override-headers
+        namespace: news
       - name: security-headers
         namespace: proxy
   tls:
@@ -59,6 +70,8 @@ spec:
         - name: freshrss-service
           port: 80
       middlewares:
+      - name: override-headers
+        namespace: news
       - name: security-headers
         namespace: proxy
   tls:
