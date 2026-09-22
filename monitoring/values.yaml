@@ -113,7 +113,7 @@ vmsingle:
   enabled: true
   spec:
     port: "8428"
-    retentionPeriod: "30d"
+    retentionPeriod: "14d"
     replicaCount: 1
     resources:
       requests:
