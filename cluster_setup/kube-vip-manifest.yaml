@@ -43,14 +43,13 @@ subjects:
 - kind: ServiceAccount
   name: kube-vip
   namespace: kube-system
-
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   labels:
     app.kubernetes.io/name: kube-vip-ds
-    app.kubernetes.io/version: v1.2.2
+    app.kubernetes.io/version: v1.2.4
   name: kube-vip-ds
   namespace: kube-system
 spec:
@@ -61,7 +60,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: kube-vip-ds
-        app.kubernetes.io/version: v1.2.2
+        app.kubernetes.io/version: v1.2.4
     spec:
       affinity:
         nodeAffinity:
@@ -117,7 +116,7 @@ spec:
           value: zeus.internal
         - name: prometheus_server
           value: :2112
-        image: ghcr.io/kube-vip/kube-vip:v1.2.2
+        image: ghcr.io/kube-vip/kube-vip:v1.2.4
         imagePullPolicy: IfNotPresent
         name: kube-vip
         resources: {}
