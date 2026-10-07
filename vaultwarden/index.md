@@ -25,7 +25,7 @@ kubectl create secret generic vaultwarden-oidc-secret --namespace vault \
 
 helm repo add vaultwarden https://guerzon.github.io/vaultwarden
 helm repo update
-helm install --namespace vault vaultwarden vaultwarden/vaultwarden -f values.yaml --version v0.46.2
+helm install --namespace vault vaultwarden vaultwarden/vaultwarden -f values.yaml --version v0.46.3
 
 kubectl apply -f ingressroute.yaml
 
