@@ -1,0 +1,25 @@
+# https://github.com/metallb/metallb/blob/main/charts/metallb/values.yaml
+
+prometheus:
+  serviceAccount: "prometheus-k8s"
+  namespace: "monitoring"
+  metricsPort: 7472
+  serviceMonitor:
+    enabled: true
+  prometheusRule:
+    enabled: true
+
+controller:
+  image:
+    pullPolicy: IfNotPresent
+
+speaker:
+  image:
+    pullPolicy: IfNotPresent
+
+frrk8s:
+  # this is used for BGP peering, which is not used in this setup
+  enabled: false
+
+frr-k8s:
+  enabled: false

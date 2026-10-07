@@ -1,0 +1,55 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vault.anagno.dev
+  namespace: vault
+spec:
+  commonName: vault.anagno.dev
+  secretName: vault.anagno.dev
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - vault.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: override-headers
+  namespace: vault
+spec:
+  headers:
+    contentSecurityPolicy: "default-src 'self'; connect-src 'self' https://api.pwnedpasswords.com; frame-ancestors 'none'; img-src https: data:; object-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval';"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: vault.anagno.dev
+  namespace: vault
+  annotations:
+    external-dns.kubernetes.io/hostname: vault.anagno.dev
+    external-dns.kubernetes.io/target: zh.anagno.dev
+    kubernetes.io/ingressClassName: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`vault.anagno.dev`)
+      kind: Rule
+      priority: 1 
+      services:
+        - name: vaultwarden
+          port: http
+      middlewares:
+      - name: override-headers
+        namespace: vault
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: vault.anagno.dev
+    options:
+      name: tls-security-headers
+      namespace: proxy

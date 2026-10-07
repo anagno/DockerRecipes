@@ -1,0 +1,128 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: monitoring-grafana-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: monitoring-grafana
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 1000m
+          memory: 1300Mi
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: monitoring-victoria-metrics-operator-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: monitoring-victoria-metrics-operator
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: monitoring-kube-state-metrics-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: monitoring-kube-state-metrics
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: vlsingle-monitoring-victoria-metrics-k8s-stack-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: vlsingle-monitoring-victoria-metrics-k8s-stack
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: vmalert-monitoring-victoria-metrics-k8s-stack-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: vmalert-monitoring-victoria-metrics-k8s-stack
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: vmauth-monitoring-victoria-metrics-k8s-stack-internal-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: vmauth-monitoring-victoria-metrics-k8s-stack-internal
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: vmsingle-monitoring-victoria-metrics-k8s-stack-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: vmsingle-monitoring-victoria-metrics-k8s-stack
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 1700m
+          memory: 2500Mi
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: vmalertmanager-monitoring-victoria-metrics-k8s-stack-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: StatefulSet
+    name: vmalertmanager-monitoring-victoria-metrics-k8s-stack
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: monitoring-prometheus-node-exporter-vpa
+  namespace: monitoring
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: DaemonSet
+    name: monitoring-prometheus-node-exporter
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"

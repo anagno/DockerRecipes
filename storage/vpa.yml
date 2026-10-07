@@ -1,0 +1,117 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-manager-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: DaemonSet
+    name: longhorn-manager
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-csi-plugin-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: DaemonSet
+    name: longhorn-csi-plugin
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: csi-attacher-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: csi-attacher
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: csi-provisioner-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: csi-provisioner
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: csi-resizer-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: csi-resizer
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: csi-snapshotter-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: csi-snapshotter
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-driver-deployer-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: longhorn-driver-deployer
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-ui-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: longhorn-ui
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: longhorn-image-ei-vpa
+  namespace: longhorn-system
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: DaemonSet
+    # This has to be update manually each time we update the enging
+    name: engine-image-ei-a4d05f02
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"

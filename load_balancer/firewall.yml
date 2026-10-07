@@ -1,0 +1,40 @@
+---
+# Enable the firewall and the rules needed for gathering metrics for the monitoring stack.
+
+- name: Prerequisites 
+  hosts: all
+  become: yes
+  tasks:
+
+  - name: Install ufw
+    ansible.builtin.apt:
+      name: ufw
+      state: present
+      update_cache: yes
+
+  # https://metallb.io/#requirements
+  - name: UFW - Allow metallb
+    community.general.ufw:
+      rule: allow
+      port: "7946"
+      proto: tcp
+      from_ip: '{{ item }}'
+    loop:
+      - 192.168.142.0/24
+      - fd93:142::/60
+      - 2a02:169:3af:6::/64
+      - 2a02:169:3af:7::/64
+
+  - name: UFW - Allow metallb metrics
+    community.general.ufw:
+      rule: allow
+      port: "7472"
+      from_ip: '{{ item }}'
+    loop:
+      - 192.168.142.0/24
+      - fd93:142::/60
+      - 2a02:169:3af:6::/64
+      - 2a02:169:3af:7::/64
+
+  - name: UFW - Reload firewall
+    ansible.builtin.command: ufw reload

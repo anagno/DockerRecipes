@@ -1,0 +1,50 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: general-external-dns
+  namespace: general
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: external-dns
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: ddns-updater-anagno-me-vpa
+  namespace: general
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: ddns-updater-anagno-me
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 100m
+          memory: 100Mi
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: ddns-updater-anagno-dev-vpa
+  namespace: general
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: ddns-updater-anagno-dev
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        maxAllowed:
+          cpu: 100m
+          memory: 100Mi

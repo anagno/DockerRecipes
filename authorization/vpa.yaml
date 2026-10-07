@@ -1,0 +1,35 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: authentik-worker-vpa
+  namespace: authorization
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: authentik-worker
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: "*"
+        maxAllowed:
+          memory: "2Gi"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: authentik-server-vpa
+  namespace: authorization
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: authentik-server
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+  resourcePolicy:
+    containerPolicies:
+      - containerName: "*"
+        maxAllowed:
+          memory: "2Gi"

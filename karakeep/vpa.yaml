@@ -1,0 +1,39 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: karakeep-vpa
+  namespace: bookmarks
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: karakeep
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: karakeep-chrome-vpa
+  namespace: bookmarks
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: karakeep-chrome
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  name: karakeep-meilisearch-vpa
+  namespace: bookmarks
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: StatefulSet
+    name: karakeep-meilisearch
+  updatePolicy:
+    updateMode: "InPlaceOrRecreate"
+---

@@ -1,0 +1,12 @@
+[Unit]
+Description=Hardware PWM control for Raspberry Pi 4 Case Fan
+After=syslog.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/sbin/pi_fan_hwpwm
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

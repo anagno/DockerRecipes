@@ -1,0 +1,146 @@
+# https://github.com/traefik/traefik-helm-chart/blob/master/traefik/values.yaml
+
+image:
+  #tag: "v2.11.0"
+  pullPolicy: IfNotPresent
+
+deployment:
+  enabled: true
+  kind: Deployment
+  replicas: 2
+
+ingressClass:
+  # needed from cert-manager to create certificates
+  enabled: true
+  isDefaultClass: false
+
+# We will create our IngressRoute for the dashboard
+ingressRoute:
+  dashboard:
+    enabled: false
+
+providers:
+  kubernetesCRD:
+    enabled: true
+    allowCrossNamespace: true
+    allowExternalNameServices: true
+  kubernetesIngress:
+    enabled: true
+    allowExternalNameServices: true
+  kubernetesGateway:
+    enabled: false
+    # This option currently enables support for TCPRoute and TLSRoute.
+    experimentalChannel: false
+
+gatewayClass:  # @schema additionalProperties: false
+  name: "default"
+
+gateway:
+  # Do not enable for the moment since we are not using it
+  enable: false
+  # This gateway will be mainly be used from cert-manager
+  # to create certificates for the other gateways
+  name: "default-gateway"
+  annotations:
+    cert-manager.io/issuer: selfsigned-issuer
+    external-dns.kubernetes.io/target: zh.anagno.dev
+  listeners:
+    web:
+      protocol: HTTP
+      port: 80
+      namespacePolicy:
+        from: All
+    # We can not activate by default the https in the default
+    # because we need to have certificates defined
+    # So we activate the HTTP, to be able to get certificates
+    # with let`s encrypt and then we can define new gateways
+    # specific to the domains we are interested
+    # websecure:
+    #  protocol: HTTPS
+    #  namespacePolicy:
+    #    from: All
+    #  certificateRefs:
+    #  mode: "Terminate"
+
+log:
+  level: INFO
+  format: json
+
+accessLog:
+  enabled: true
+  format: json
+
+metrics:
+  prometheus:
+    entryPoint: metrics
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+    manualRouting: false
+    service:
+      enabled: false
+
+ports:
+  web:
+    port: 80
+    expose:
+      default: true
+      ipv6-1: true
+      ipv6-2: true
+    allowACMEByPass: true
+    http:
+      redirections:
+        entryPoint: 
+          to: websecure
+          scheme: https
+  websecure:
+    port: 443
+    expose:
+      default: true
+      ipv6-1: true
+      ipv6-2: true
+    http3:
+      enabled: true
+  metrics:
+    # It has to be the same with the traefik-dashboard-service.yaml in monitoring
+    port: 9100
+
+service:
+  enabled: true
+  spec:
+    type: LoadBalancer
+    # https://metallb.io/usage/#cluster-traffic-policy
+    externalTrafficPolicy: Local
+    ipFamilyPolicy: RequireDualStack
+  annotations:
+    metallb.io/loadBalancerIPs: "192.168.142.240,fd93:142::240"
+  additionalServices:
+    ipv6-1:
+      # https://github.com/traefik/traefik-helm-chart/issues/1233#issuecomment-2435187894
+      single: true
+      spec:
+        type: LoadBalancer
+        # https://metallb.io/usage/#cluster-traffic-policy
+        externalTrafficPolicy: Local
+        ipFamilies: [ "IPv6" ]
+      annotations:
+        metallb.io/loadBalancerIPs: "2a02:169:3af:7::240"
+    ipv6-2:
+      single: true
+      spec:
+        type: LoadBalancer
+        # https://metallb.io/usage/#cluster-traffic-policy
+        externalTrafficPolicy: Local
+        ipFamilies: [ "IPv6" ]
+      annotations:
+        metallb.io/loadBalancerIPs: "2a02:169:3af:6::240"
+
+resources:
+  requests:
+    cpu: "250m"
+    memory: "100Mi"
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 5

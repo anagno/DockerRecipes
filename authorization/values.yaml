@@ -1,0 +1,132 @@
+# https://github.com/goauthentik/helm/blob/main/charts/authentik/values.yaml
+
+authentik:
+  avatars: none
+  email:
+    host: "smtp.office365.com"
+    port: 587
+    username: "no-reply-anagno-me@outlook.com"
+    use_tls: true
+    use_ssl: false
+    timeout: 30
+    from: "no-reply-anagno-me@outlook.com"
+  postgresql:
+    host: "authentik-database-cluster-rw"
+    name: "authentik"
+    user: "authentik"
+
+global:
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-general
+          key: secret-key
+    # https://docs.goauthentik.io/install-config/automated-install/#authentik_bootstrap_password
+    - name: AUTHENTIK_BOOTSTRAP_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-general
+          key: ak-admin-pass
+#    - name: AUTHENTIK_EMAIL__PASSWORD
+#      valueFrom:
+#        secretKeyRef:
+#          name: no-reply-mail
+#          key: password
+    - name: AUTHENTIK_POSTGRESQL__HOST
+      value: "authentik-database-cluster-rw"
+    - name: AUTHENTIK_POSTGRESQL__USER
+      valueFrom:
+        secretKeyRef:
+          name: authentik-postgresql
+          key: username
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-postgresql
+          key: password
+  # we have to create first the ingressroute, so the secrets are available
+  # https://goauthentik.io/docs/core/certificates#web-certificates
+  volumes:
+    - name: web-keys
+      secret:
+        secretName: auth-anagno-dev-cert
+        items:
+        - key: tls.crt
+          path: auth.anagno.dev.pem
+        - key: tls.key
+          path: auth.anagno.dev.key
+  volumeMounts:
+    - name: web-keys
+      readOnly: true
+      mountPath: "/certs"
+
+server:
+
+  replicas: 2
+
+  ingress:
+    enabled: false
+
+  service:
+    type: ClusterIP
+    servicePortHttp: 80
+    servicePortHttpName: http
+
+  dnsConfig:
+    options:
+    - name: ndots
+      value: "1"
+
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+  livenessProbe:
+    periodSeconds: 20
+    timeoutSeconds: 10
+
+  readinessProbe:
+    periodSeconds: 20
+    timeoutSeconds: 10
+
+  startupProbe:
+    periodSeconds: 20
+    timeoutSeconds: 10
+
+worker:
+
+  replicas: 1
+
+  dnsConfig:
+    options:
+    - name: ndots
+      value: "1"
+
+  livenessProbe:
+    periodSeconds: 20
+    timeoutSeconds: 10
+
+  readinessProbe:
+    periodSeconds: 20
+    timeoutSeconds: 10
+
+  startupProbe:
+    periodSeconds: 20
+    timeoutSeconds: 10
+
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+
+postgresql:
+  # We use an external database
+  enabled: false
+
+# https://github.com/goauthentik/helm/blob/480a5546b6d6b3d089e14dea357d9726439086fb/charts/authentik/ci/manfiests/blueprint.yaml
+# https://github.com/goauthentik/helm/blob/480a5546b6d6b3d089e14dea357d9726439086fb/charts/authentik/ci/ct-values.yaml#L39
+# https://github.com/goauthentik/helm/issues/127
+# https://github.com/FruitCast/authentik-manager
+# https://github.com/dsluijk/authentik-operator

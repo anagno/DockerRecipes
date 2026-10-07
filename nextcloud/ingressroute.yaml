@@ -1,0 +1,66 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: locker.anagno.dev
+  namespace: locker
+spec:
+  commonName: locker.anagno.dev
+  secretName: locker-anagno-dev-cert
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - locker.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: dav
+  namespace: locker
+spec:
+  redirectRegex:
+    regex: https://(.*)/.well-known/(card|cal)dav
+    replacement: https://$1/remote.php/dav/
+    permanent: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: override-headers
+  namespace: locker
+spec:
+  headers:
+    contentSecurityPolicy: "default-src 'self'; frame-ancestors 'none'; img-src https: data:; font-src 'self' data:; object-src 'none'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: locker.anagno.dev
+  namespace: locker
+  annotations:
+    external-dns.kubernetes.io/hostname: locker.anagno.dev
+    external-dns.kubernetes.io/target: zh.anagno.dev
+    kubernetes.io/ingressClassName: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`locker.anagno.dev`)
+      kind: Rule
+      services:
+        - name: locker-nextcloud
+          port: 80
+      middlewares:
+      - name: override-headers
+        namespace: locker
+      - name: security-headers
+        namespace: proxy
+      - name: dav
+        namespace: locker
+  tls:
+    secretName: locker-anagno-dev-cert
+    options:
+      name: tls-security-headers
+      namespace: proxy

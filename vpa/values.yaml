@@ -1,0 +1,39 @@
+# https://raw.githubusercontent.com/kubernetes/autoscaler/refs/heads/master/vertical-pod-autoscaler/charts/vertical-pod-autoscaler/values.yaml
+
+admissionController:
+  enabled: true
+
+  replicas: 1
+  revisionHistoryLimit: 10
+
+  podDisruptionBudget:
+    enabled: false
+
+recommender:
+  enabled: true
+
+  replicas: 1
+  revisionHistoryLimit: 10
+  extraArgs:
+    - "--pod-recommendation-min-memory-mb=50"
+    - "--target-cpu-percentile=0.90"
+    # - "--prometheus-address=http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090"
+    # - "--prometheus-cadvisor-job-name=kubernetes-cadvisor"
+    # - "--prometheus-query-timeout=5m"
+    # - "--history-length=8d"
+    # - "--history-resolution=1h"
+    - "--recommender-interval=30s"
+
+  podDisruptionBudget:
+    enabled: false
+
+updater:
+  enabled: true
+
+  replicas: 1
+  revisionHistoryLimit: 10
+  extraArgs:
+    - "--min-replicas=1"
+
+  podDisruptionBudget:
+    enabled: false

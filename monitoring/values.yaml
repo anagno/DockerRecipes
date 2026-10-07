@@ -1,0 +1,561 @@
+# https://github.com/VictoriaMetrics/helm-charts/blob/master/charts/victoria-metrics-k8s-stack/values.yaml
+
+victoria-metrics-operator:
+  enabled: true
+  crds:
+    enabled: true
+    upgrade:
+      enabled: false
+  operator:
+    enable_converter_ownership: true
+    disable_prometheus_converter: false
+  env:
+    - name: VM_ENABLETCP6
+      value: "true"
+
+# https://github.com/VictoriaMetrics/helm-charts/issues/3040
+syncJob:
+  enabled: true
+  prune: true
+  useOwnerReferences: true
+  resourcePrefix: ""
+  dnsConfig:
+    options:
+    - name: ndots
+      value: "1"
+
+
+defaultDashboards:
+  enabled: true
+  sources:
+    vm-alerts-statistics:
+      url: https://raw.githubusercontent.com/VictoriaMetrics/VictoriaMetrics/master/dashboards/alert-statistics.json
+      enabled: 'true'
+    vm-auth:
+      url: https://raw.githubusercontent.com/VictoriaMetrics/VictoriaMetrics/master/dashboards/vmauth.json
+      enabled: 'true'
+    vl-internal:
+      url: https://raw.githubusercontent.com/VictoriaMetrics/VictoriaLogs/master/dashboards/victorialogs-internal.json
+      enabled: 'true'
+    vl-kubernetes-explorer:
+      url: https://raw.githubusercontent.com/VictoriaMetrics/VictoriaLogs/master/dashboards/victorialogs-kubernetes-explorer.json
+      enabled: 'true'
+
+
+defaultRules:
+  enabled: true 
+  runbookUrl: https://runbooks.prometheus-operator.dev/runbooks
+
+
+vlsingle:
+  enabled: true
+  spec:
+    retentionPeriod: "15d"
+    replicaCount: 1
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
+    extraArgs: 
+      enableTCP6: "true"
+    storage:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 40Gi
+
+# Too many resources are used by the cluster. It is not needed for the current use case.
+vlcluster:
+  enabled: false
+
+vlagent:
+  enabled: true
+  spec:
+    tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    extraArgs:
+      enableTCP6: "true"
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
+    k8sCollector:
+      enabled: true
+      includePodLabels: true
+      includePodAnnotations: true
+      includeNodeLabels: true
+      includeNodeAnnotations: true
+      msgFields:
+        - message
+        - msg
+        - log
+        - record
+
+#vtsingle:
+#  enabled: false
+#vtcluster:
+#  enabled: false
+
+vmsingle:
+  enabled: true
+  spec:
+    port: "8428"
+    retentionPeriod: "14d"
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1000Mi
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
+    extraArgs:
+      enableTCP6: "true"
+      dedup.minScrapeInterval: 30s
+    storage:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 40Gi
+
+vmdistributed:
+  enabled: false
+
+# Cluster uses too many resources unfortunately. It is not needed for the current use case.
+vmcluster:
+  enabled: false
+
+alertmanager:
+  enabled: true
+  spec:
+    replicaCount: 1
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
+    port: "9093"
+    selectAllByDefault: true
+    disableNamespaceMatcher: true 
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+  # TODO https://itnext.io/kubernetes-monitoring-a-complete-solution-part-6-visualizing-with-grafana-956499ff4d87
+  # set upd mail receiver and alerting rules
+  useManagedConfig: false
+  config:
+    route:
+      receiver: "blackhole"
+    receivers:
+      - name: blackhole
+
+vmalert:
+  enabled: true
+  spec:
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
+    evaluationInterval: 60s
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    extraArgs:
+      enableTCP6: "true"
+
+vmauth:
+  enabled: false
+
+vmagent:
+  enabled: true
+  spec:
+    dnsConfig:
+      options:
+      - name: ndots
+        value: "1"
+    serviceSpec:
+      useAsDefault: true
+      spec:
+        ipFamilyPolicy: "RequireDualStack"
+        ipFamilies:
+          - IPv4
+          - IPv6
+    replicaCount: 1
+    # https://docs.victoriametrics.com/operator/resources/vmagent/#sharding
+    shardCount: 2
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 50
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  shard-num: '%SHARD_NUM%'
+              topologyKey: kubernetes.io/hostname
+    scrapeInterval: 15s
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    extraArgs:
+      enableTCP6: "true"
+      promscrape.streamParse: "true"
+
+defaultDatasources:
+  grafanaOperator:
+    enabled: false
+
+grafana:
+  enabled: true
+  dnsConfig:
+    options:
+    - name: ndots
+      value: "1"
+
+  extraSecretMounts:
+    - name: auth-generic-oauth-secret-mount
+      secretName: authentik-secret
+      defaultMode: 0440
+      mountPath: /etc/secrets/auth_generic_oauth
+      readOnly: true
+
+  plugins:
+    - victoriametrics-metrics-datasource
+    - victoriametrics-logs-datasource
+    # https://grafana.com/grafana/plugins/camptocamp-prometheus-alertmanager-datasource/
+    - camptocamp-prometheus-alertmanager-datasource
+    - grafana-piechart-panel
+
+  # https://github.com/grafana/helm-charts/blob/19a40de8f7953a2c1fd13bdfa72eb75e5784559d/charts/grafana/values.yaml#L1305
+  # It is missbehaving with auth.generic_oauth.client_secret although the secret is not exposed.
+  assertNoLeakedSecrets: false
+
+  grafana.ini:
+    analytics:
+      check_for_updates: true
+    log:
+      mode: console
+    grafana_net:
+      url: https://grafana.net
+    users:
+      allow_sign_up: false
+      auto_assign_org: true
+      auto_assign_org_role: Editor
+    server:
+      root_url: "https://monitoring.anagno.dev"
+    auth:
+      signout_redirect_url: "https://auth.anagno.dev/application/o/monitoring/end-session/"
+      oauth_auto_login: true
+    auth.generic_oauth:
+      name: auth.anagno.dev
+      auto_sign_up: true
+      enabled: true
+      # https://github.com/helm/charts/issues/22473#issuecomment-662361020
+      client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
+      client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
+      scopes: "openid email profile"
+      auth_url: "https://auth.anagno.dev/application/o/authorize/"
+      token_url: "https://auth.anagno.dev/application/o/token/"
+      api_url: "https://auth.anagno.dev/application/o/userinfo/"
+      role_attribute_path: contains(groups[*], 'caretakers') && 'Admin' || 'Viewer'
+      use_refresh_token: true
+
+  sidecar:
+    datasources:
+      enabled: true
+      label: grafana_datasource
+      labelValue: "1"
+      searchNamespace: "ALL"
+      annotations: 
+        monitoring-sidecar-datasource-directory: "/tmp/datasource/kubernetes"
+    dashboards:
+      provider:
+        name: default
+        orgid: 1
+      folder: /var/lib/grafana/dashboards
+      defaultFolderName: default
+      enabled: true
+      multicluster: false
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: "ALL"
+      annotations: 
+        monitoring-sidecar-dashboard-directory: "/tmp/dashboards/kubernetes"
+
+  deploymentStrategy:
+    # There are not enough resources available in the cluster to run multiple grafana pods.
+    # Therefore, the deployment strategy is set to Recreate.
+    type: Recreate
+
+  resources: 
+    requests:
+      cpu: 500m
+      memory: 1000Mi
+
+defaultScrapeService:
+  namespace: kube-system
+
+prometheus-node-exporter:
+  enabled: true
+
+kube-state-metrics:
+  enabled: true
+  # https://itnext.io/kubernetes-monitoring-a-complete-solution-part-3-metrics-using-the-victoria-metrics-k8s-stack-515d64b5f3ba
+  replicas: 1
+  # https://gist.github.com/rverchere/780bd988b8f385a00644a1ec9f425be3
+  # https://medium.com/h7w/scaling-your-kubernetes-deployments-vertically-a-cool-in-depth-guide-94fe834ea3d8/
+  # https://github.com/kubernetes/kube-state-metrics/blob/cd5430fd1834f43ffd093e3e22c2af1a625dbe2e/docs/metrics/extend/customresourcestate-metrics.md?plain=1#L378
+  rbac:
+    extraRules:
+      - apiGroups: ["autoscaling.k8s.io"]
+        resources: ["verticalpodautoscalers"]
+        verbs: ["list", "watch"]
+  customResourceState:
+    enabled: true
+    config:
+      kind: CustomResourceStateMetrics
+      spec:
+        resources:
+          - groupVersionKind:
+              group: autoscaling.k8s.io
+              kind: "VerticalPodAutoscaler"
+              version: "v1"
+            labelsFromPath:
+              namespace: [metadata, namespace]
+              target_api_version: [spec, targetRef, apiVersion]
+              target_kind: [spec, targetRef, kind]
+              target_name: [spec, targetRef, name]
+              verticalpodautoscaler: [metadata, name]
+            errorLogV: 10
+            metrics:
+              # Labels
+              - name: "verticalpodautoscaler_labels"
+                help: "VPA container recommendations. Kubernetes labels converted to Prometheus labels"
+                each:
+                  type: Info
+                  info:
+                    labelsFromPath:
+                      annotation_*: [metadata, annotations]
+                      name: [metadata, name]
+              # Memory Information
+              - name: "verticalpodautoscaler_status_recommendation_containerrecommendations_target"
+                help: "VPA container recommendations for memory. Target resources the VerticalPodAutoscaler recommends for the container."
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [target, memory]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "memory"
+                  unit: "byte"
+              - name: "verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound"
+                help: "VPA container recommendations for memory. Minimum resources the container can use before the VerticalPodAutoscaler updater evicts it"
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [lowerBound, memory]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "memory"
+                  unit: "byte"
+              - name: "verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound"
+                help: "VPA container recommendations for memory. Maximum resources the container can use before the VerticalPodAutoscaler updater evicts it"
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [upperBound, memory]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "memory"
+                  unit: "byte"
+              - name: "verticalpodautoscaler_status_recommendation_containerrecommendations_uncappedtarget"
+                help: "VPA container recommendations for memory. Target resources the VerticalPodAutoscaler recommends for the container ignoring bounds"
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [uncappedTarget, memory]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "memory"
+                  unit: "byte"
+              # CPU Information
+              - name: "verticalpodautoscaler_status_recommendation_containerrecommendations_target"
+                help: "VPA container recommendations for cpu. Target resources the VerticalPodAutoscaler recommends for the container."
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [target, cpu]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "cpu"
+                  unit: "core"
+              - name: "verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound"
+                help: "VPA container recommendations for cpu. Minimum resources the container can use before the VerticalPodAutoscaler updater evicts it"
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [lowerBound, cpu]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "cpu"
+                  unit: "core"
+              - name: "verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound"
+                help: "VPA container recommendations for cpu. Maximum resources the container can use before the VerticalPodAutoscaler updater evicts it"
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [upperBound, cpu]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "cpu"
+                  unit: "core"
+              - name: "verticalpodautoscaler_status_recommendation_containerrecommendations_uncappedtarget"
+                help: "VPA container recommendations for cpu. Target resources the VerticalPodAutoscaler recommends for the container ignoring bounds"
+                each:
+                  type: Gauge
+                  gauge:
+                    path: [status, recommendation, containerRecommendations]
+                    valueFrom: [uncappedTarget, cpu]
+                    labelsFromPath:
+                      container: [containerName]
+                commonLabels:
+                  resource: "cpu"
+                  unit: "core"
+
+kubelet:
+  enabled: true
+
+kubeApiServer:
+  enabled: true
+
+kubeControllerManager:
+  enabled: true
+  endpoints:
+   - 192.168.142.100
+   - 192.168.142.101
+   - 192.168.142.102
+  service:
+    port: 10257
+    targetPort: 10257
+  vmScrape:
+    spec:
+      endpoints:
+        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          port: http-metrics
+          scheme: https
+          tlsConfig:
+            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            serverName: localhost
+            insecureSkipVerify: true
+
+kubeDns:
+  enabled: false
+
+coreDns:
+  enabled: true
+
+kubeEtcd:
+  enabled: true
+  endpoints:
+   - 192.168.142.100
+   - 192.168.142.101
+   - 192.168.142.102
+  service:
+    port: 2381
+    targetPort: 2381
+  vmScrape:
+    spec:
+      endpoints:
+        - port: http-metrics
+          scheme: http
+
+kubeScheduler:
+  enabled: true
+  endpoints:
+   - 192.168.142.100
+   - 192.168.142.101
+   - 192.168.142.102
+  service:
+    port: 10259
+    targetPort: 10259
+  vmScrape:
+    spec:
+      endpoints:
+        - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          port: http-metrics
+          scheme: https
+          tlsConfig:
+            caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            serverName: 127.0.0.1
+            insecureSkipVerify: true
+
+kubeProxy:
+  enabled: true
+  endpoints:
+   - 192.168.142.100
+   - 192.168.142.101
+   - 192.168.142.102
+  service:
+    port: 10249
+    targetPort: 10249
+  vmScrape:
+    spec:
+      endpoints:
+        - port: http-metrics
+          scheme: http
+
+internal:
+  vmauth:
+    spec:
+      serviceSpec:
+        useAsDefault: true
+        spec:
+          ipFamilyPolicy: "RequireDualStack"
+          ipFamilies:
+            - IPv4
+            - IPv6
+      resources:
+        requests:
+          cpu: 250m
+          memory: 256Mi
+      extraArgs:
+        enableTCP6: "true"

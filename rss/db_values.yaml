@@ -1,0 +1,60 @@
+# https://github.com/cloudnative-pg/charts/blob/main/charts/cluster/values.yaml
+
+type: postgresql
+
+version:
+  postgresql: "18.0"
+
+mode: standalone
+
+cluster:
+  instances: 3
+  storage:
+    size: 8Gi
+    storageClass: "db-storage"
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+  primaryUpdateMethod: switchover
+  primaryUpdateStrategy: unsupervised
+
+  # https://cloudnative-pg.io/documentation/current/scheduling/#isolating-postgresql-workloads
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname
+    podAntiAffinityType: required
+
+  monitoring:
+    enabled: true
+    podMonitor:
+      enabled: true
+    prometheusRule:
+      enabled: true
+
+  enableSuperuserAccess: false
+  # -- BootstrapInitDB is the configuration of the bootstrap process when initdb is used.
+  # See: https://cloudnative-pg.io/documentation/current/bootstrap/
+  # See: https://cloudnative-pg.io/documentation/current/cloudnative-pg.v1/#postgresql-cnpg-io-v1-bootstrapinitdb
+  initdb:
+    database: freshrss
+    # owner: "" # Defaults to the database name
+    secret:
+      name: "freshrss-postgresql"
+    # https://cloudnative-pg.io/documentation/current/bootstrap/#passing-options-to-initdb
+    # options: []
+    encoding: UTF8
+    # postInitSQL:
+    #   - CREATE EXTENSION IF NOT EXISTS vector;
+    # postInitApplicationSQL: []
+    # postInitTemplateSQL: []
+
+backups:
+  enabled: false
+  #scheduledBackups:
+  #  - name: daily-backup
+  #    schedule: "0 0 0 * * *"
+  #    backupOwnerReference: self
+  #    method: volumeSnapshot

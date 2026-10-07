@@ -1,0 +1,18 @@
+kind: VolumeSnapshotClass
+apiVersion: snapshot.storage.k8s.io/v1
+metadata:
+  name: default-snapshot-class
+  namespace: longhorn-system
+driver: driver.longhorn.io
+deletionPolicy: Delete
+parameters:
+  # Create of cluster backups
+  type: bak
+  backupMode: full
+
+# https://longhorn.io/docs/1.11.1/snapshots-and-backups/csi-snapshot-support/enable-csi-snapshot-support/
+# https://blog.devgenius.io/cloudnativepg-backup-restore-with-volumesnapshots-5f8de27780e5
+
+# https://oneuptime.com/blog/post/2026-03-20-longhorn-csi-snapshotter/view
+# https://oneuptime.com/blog/post/2026-01-30-longhorn-volume-snapshots/view
+# https://longhorn.io/docs/1.11.1/snapshots-and-backups/csi-snapshot-support/enable-csi-snapshot-support/

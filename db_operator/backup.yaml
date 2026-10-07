@@ -1,0 +1,10 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Backup
+metadata: 
+  name: backup-snapshot-2
+  namespace: test-database
+spec:
+  method: volumeSnapshot
+  cluster:
+    name: database-cluster

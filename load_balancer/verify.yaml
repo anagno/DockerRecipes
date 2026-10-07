@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-verify
+  namespace: kube-verify
+  labels:
+    app: kube-verify
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kube-verify
+  template:
+    metadata:
+      labels:
+        app: kube-verify
+    spec:
+      containers:
+      - name: nginx
+        image: quay.io/clcollins/kube-verify:01
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-verify
+  namespace: kube-verify
+  annotations:
+    #metallb.io/loadBalancerIPs: "192.168.142.220,fd93:142::220,2a02:169:3af:7::220,2a02:169:3af:6::220"
+    metallb.io/loadBalancerIPs: "192.168.142.220, fd93:142::220"
+spec:
+  ipFamilies:
+    - IPv4
+    - IPv6
+  ipFamilyPolicy: RequireDualStack
+  # https://metallb.io/usage/#cluster-traffic-policy
+  # externalTrafficPolicy: Local
+  selector:
+    app: kube-verify
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+---
+# For multiple public ips we have to define the service multiple times
+# https://github.com/metallb/metallb/issues/2410
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-verify-public-1
+  namespace: kube-verify
+  annotations:
+    metallb.io/loadBalancerIPs: "2a02:169:3af:7::220"
+spec:
+  ipFamilies:
+    - IPv6
+  ipFamilyPolicy: SingleStack
+  # https://metallb.io/usage/#cluster-traffic-policy
+  # externalTrafficPolicy: Local
+  selector:
+    app: kube-verify
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-verify-public-2
+  namespace: kube-verify
+  annotations:
+    metallb.io/loadBalancerIPs: "2a02:169:3af:6::220"
+spec:
+  ipFamilies:
+    - IPv6
+  ipFamilyPolicy: SingleStack
+  # https://metallb.io/usage/#cluster-traffic-policy
+  # externalTrafficPolicy: Local
+  selector:
+    app: kube-verify
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer

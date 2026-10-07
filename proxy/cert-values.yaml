@@ -1,0 +1,21 @@
+# https://github.com/jetstack/cert-manager/blob/master/deploy/charts/cert-manager/values.yaml
+
+crds:
+  enabled: true
+
+replicaCount: 1
+
+enableCertificateOwnerRef: true
+
+#https://github.com/jetstack/cert-manager/issues/959
+podDnsPolicy: "Default"
+
+serviceIPFamilyPolicy: "RequireDualStack"
+
+webhook:
+  serviceIPFamilyPolicy: "RequireDualStack"
+
+prometheus:
+  enabled: true
+  servicemonitor:
+    enabled: true

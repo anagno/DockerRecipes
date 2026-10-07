@@ -1,0 +1,120 @@
+# https://github.com/karakeep-app/helm-charts/blob/main/charts/karakeep/values.yaml
+
+applicationProtocol: https
+applicationHost: bookmarks.anagno.dev
+applicationSecretKey: ~
+meilisearchMasterKey: ~
+
+defaultPodOptions:
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "1"
+
+controllers:
+  karakeep:
+    # https://github.com/karakeep-app/helm-charts/issues/2
+    type: deployment
+    containers:
+      karakeep:
+        env:
+          # WORKERS_PORT is used for metrics and not for the main application
+          # https://grafana.com/grafana/dashboards/24365-karakeep/
+          #WORKERS_PORT: "9090"
+          #WORKERS_HOST: "::"
+          #PROMETHEUS_AUTH_TOKEN:
+          #  valueFrom:
+          #    secretKeyRef:
+          #      name: karakeep
+          #      key: NEXTAUTH_SECRET
+          CRAWLER_SCREENSHOT_TIMEOUT_SEC: "30"
+          DISABLE_PASSWORD_AUTH: "true"
+          DISABLE_SIGNUPS: "false"
+          OAUTH_AUTO_REDIRECT: "true"
+          OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING: "true"
+          OAUTH_PROVIDER_NAME: auth.anagno.dev
+          OAUTH_SCOPE: openid email profile
+          OAUTH_WELLKNOWN_URL: https://auth.anagno.dev/application/o/bookmarks/.well-known/openid-configuration
+          OAUTH_CLIENT_ID:
+            valueFrom:
+              secretKeyRef:
+                name: karakeep-oidc-secret
+                key: client_id
+          OAUTH_CLIENT_SECRET:
+            valueFrom:
+              secretKeyRef:
+                name: karakeep-oidc-secret
+                key: client_secret
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              initialDelaySeconds: 60
+              httpGet:
+                path: /api/health
+                port: 3000
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              initialDelaySeconds: 30
+              httpGet:
+                path: /api/health
+                port: 3000
+
+    statefulset:
+      volumeClaimTemplates: []
+
+  chrome:
+    type: deployment
+    containers:
+      chrome:
+        resources:
+          requests:
+            memory: 200Mi
+            cpu: 500m
+        probes:
+          liveness:
+            enabled: true
+            spec:
+              initialDelaySeconds: 60
+              httpGet:
+                path: /
+                port: 9222
+          readiness:
+            enabled: true
+            spec:
+              initialDelaySeconds: 30
+              httpGet:
+                path: /
+                port: 9222
+
+#service:
+#  karakeep:
+#    controller: karakeep
+#    ports:
+#      metrics:
+#        port: 9090
+
+secrets:
+  karakeep:
+    enabled: false
+  meilesearch:
+    enabled: false
+
+# to disable the ingress, because we are using ingressroute instead
+ingress: []
+
+meilisearch:
+  auth:
+    existingMasterKeySecret: "{{ .Release.Name }}-meilesearch"
+
+persistence:
+  data:
+    enabled: true
+    retain: true
+    mountPath: /data
+    size: 10Gi
+    storageClass: "replicated"
+    accessMode: ReadWriteMany

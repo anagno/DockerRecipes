@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nextcloud-pvc
+  namespace: locker
+  labels:
+    app: nextcloud
+spec:
+  storageClassName: replicated
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 150Gi

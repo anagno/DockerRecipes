@@ -1,0 +1,39 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: storage.internal
+  namespace: longhorn-system
+spec:
+  commonName: storage.internal
+  secretName: storage.internal
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - storage.internal
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: storage.internal
+  namespace: longhorn-system
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`storage.internal`)
+      kind: Rule
+      services:
+        - name: longhorn-frontend
+          port: 80
+      middlewares:
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: storage.internal
+    options:
+      name: tls-security-headers
+      namespace: proxy
+---

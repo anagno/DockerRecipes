@@ -1,0 +1,44 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bookmarks.anagno.dev
+  namespace: bookmarks
+spec:
+  commonName: bookmarks.anagno.dev
+  secretName: bookmarks.anagno.dev
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - bookmarks.anagno.dev
+  issuerRef:
+    name: letsencrypt-issuer
+    kind: ClusterIssuer
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bookmarks.anagno.dev
+  namespace: bookmarks
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: bookmarks.anagno.dev
+    external-dns.alpha.kubernetes.io/target: zh.anagno.dev
+    kubernetes.io/ingressClassName: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`bookmarks.anagno.dev`)
+      kind: Rule
+      priority: 1 
+      services:
+        - name: karakeep
+          port: 3000
+      middlewares:
+      - name: security-headers
+        namespace: proxy
+  tls:
+    secretName: bookmarks.anagno.dev
+    options:
+      name: tls-security-headers
+      namespace: proxy

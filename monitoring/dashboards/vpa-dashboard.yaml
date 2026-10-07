@@ -1,0 +1,1091 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-configmap-vpa-overview
+  namespace: monitoring  
+  labels:
+    grafana_dashboard: "1"
+  annotations:
+    monitoring-sidecar-dashboard-directory: "/tmp/dashboards/[FODLER]"
+data:
+  #https://grafana.com/grafana/dashboards/22168-kubernetes-autoscaling-vertical-pod-autoscaler/
+  vpa-overview.json: |
+    {
+      "__inputs": [],
+      "__requires": [],
+      "description": "A dashboard that monitors Vertical Pod Autoscalers. The dashboards were generated using [kubernetes-autoscaling-mixin](https://github.com/adinhodovic/kubernetes-autoscaling-mixin). Open issues and create feature requests in the repository.",
+      "editable": true,
+      "links": [
+        {
+          "asDropdown": true,
+          "includeVars": false,
+          "keepTime": true,
+          "tags": [
+            "kubernetes",
+            "autoscaling",
+            "kubernetes-autoscaling-mixin"
+          ],
+          "targetBlank": true,
+          "title": "Kubernetes / Autoscaling",
+          "type": "dashboards"
+        }
+      ],
+      "panels": [
+        {
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "id": 1,
+          "title": "Namespace $namespace Summary",
+          "type": "row"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "description": "CPU resource recommendations for VPAs.",
+          "fieldConfig": {
+            "defaults": {
+              "links": [],
+              "thresholds": {
+                "steps": []
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Lower Bound"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "dark-red",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Target"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Upper Bound"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 1
+          },
+          "id": 2,
+          "options": {
+            "footer": {
+              "enablePagination": true
+            },
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Vertical Pod Autoscaler"
+              }
+            ]
+          },
+          "pluginVersion": "v11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  label_replace(\n    max(\n      kube_pod_container_resource_requests{\n        cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n        resource=\"cpu\"\n      }\n    ) by (cluster, job, namespace, pod, container, resource),\n    \"verticalpodautoscaler\", \"$1\", \"pod\", \"^(.*?)(?:-[a-f0-9]{8,10}-[a-z0-9]{5}|-[0-9]+|-[a-z0-9]{5,16})$\"\n  )\n  + on(cluster, job, namespace, container, resource, verticalpodautoscaler) group_left()\n  0 *\n  max(\n    kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n      cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n      resource=\"cpu\"\n    }\n  ) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n)\nby (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  label_replace(\n    max(\n      kube_pod_container_resource_limits{\n        cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n        resource=\"cpu\"\n      }\n    ) by (cluster, job, namespace, pod, container, resource),\n    \"verticalpodautoscaler\", \"$1\", \"pod\", \"^(.*?)(?:-[a-f0-9]{8,10}-[a-z0-9]{5}|-[0-9]+|-[a-z0-9]{5,16})$\"\n  )\n  + on(cluster, job, namespace, container, resource, verticalpodautoscaler) group_left()\n  0 *\n  max(\n    kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n      cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n      resource=\"cpu\"\n    }\n  ) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n)\nby (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound{\n    cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n    resource=\"cpu\"\n  }\n) by (job, cluster, namespace, verticalpodautoscaler, container, resource)\n",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n    cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n    resource=\"cpu\"\n  }\n) by (job, cluster, namespace, verticalpodautoscaler, container, resource)\n",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound{\n    cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n    resource=\"cpu\"\n  }\n) by (job, cluster, namespace, verticalpodautoscaler, container, resource)\n",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "title": "CPU Resource Recommendations",
+          "transformations": [
+            {
+              "id": "merge"
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "cluster": true,
+                  "job": true,
+                  "resource": true
+                },
+                "indexByName": {
+                  "Value #A": 3,
+                  "Value #B": 4,
+                  "Value #C": 5,
+                  "Value #D": 6,
+                  "Value #E": 7,
+                  "container": 2,
+                  "namespace": 0,
+                  "verticalpodautoscaler": 1
+                },
+                "renameByName": {
+                  "Value #A": "Requests",
+                  "Value #B": "Limits",
+                  "Value #C": "Lower Bound",
+                  "Value #D": "Target",
+                  "Value #E": "Upper Bound",
+                  "cluster": "Cluster",
+                  "container": "Container",
+                  "namespace": "Namespace",
+                  "verticalpodautoscaler": "Vertical Pod Autoscaler"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "description": "Memory resource recommendations for VPAs.",
+          "fieldConfig": {
+            "defaults": {
+              "links": [],
+              "thresholds": {
+                "steps": []
+              },
+              "unit": "bytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Lower Bound"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "dark-red",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Target"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Upper Bound"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  },
+                  {
+                    "id": "custom.cellOptions",
+                    "value": {
+                      "mode": "basic",
+                      "type": "color-background"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 9
+          },
+          "id": 3,
+          "options": {
+            "footer": {
+              "enablePagination": true
+            },
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "Vertical Pod Autoscaler"
+              }
+            ]
+          },
+          "pluginVersion": "v11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  label_replace(\n    max(\n      kube_pod_container_resource_requests{\n        cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n        resource=\"memory\"\n      }\n    ) by (cluster, job, namespace, pod, container, resource),\n    \"verticalpodautoscaler\", \"$1\", \"pod\", \"^(.*?)(?:-[a-f0-9]{8,10}-[a-z0-9]{5}|-[0-9]+|-[a-z0-9]{5,16})$\"\n  )\n  + on(cluster, job, namespace, container, resource, verticalpodautoscaler) group_left()\n  0 *\n  max(\n    kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n      cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n      resource=\"memory\"\n    }\n  ) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n)\nby (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  label_replace(\n    max(\n      kube_pod_container_resource_limits{\n        cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n        resource=\"memory\"\n      }\n    ) by (cluster, job, namespace, pod, container, resource),\n    \"verticalpodautoscaler\", \"$1\", \"pod\", \"^(.*?)(?:-[a-f0-9]{8,10}-[a-z0-9]{5}|-[0-9]+|-[a-z0-9]{5,16})$\"\n  )\n  + on(cluster, job, namespace, container, resource, verticalpodautoscaler) group_left()\n  0 *\n  max(\n    kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n      cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n      resource=\"memory\"\n    }\n  ) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n)\nby (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound{\n    cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n    resource=\"memory\"\n  }\n) by (job, cluster, namespace, verticalpodautoscaler, container, resource)\n",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n    cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n    resource=\"memory\"\n  }\n) by (job, cluster, namespace, verticalpodautoscaler, container, resource)\n",
+              "format": "table",
+              "instant": true
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound{\n    cluster=~\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\n    resource=\"memory\"\n  }\n) by (job, cluster, namespace, verticalpodautoscaler, container, resource)\n",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "title": "Memory Resource Recommendations",
+          "transformations": [
+            {
+              "id": "merge"
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "cluster": true,
+                  "job": true,
+                  "resource": true
+                },
+                "indexByName": {
+                  "Value #A": 3,
+                  "Value #B": 4,
+                  "Value #C": 5,
+                  "Value #D": 6,
+                  "Value #E": 7,
+                  "container": 2,
+                  "namespace": 0,
+                  "verticalpodautoscaler": 1
+                },
+                "renameByName": {
+                  "Value #A": "Requests",
+                  "Value #B": "Limits",
+                  "Value #C": "Lower Bound",
+                  "Value #D": "Target",
+                  "Value #E": "Upper Bound",
+                  "cluster": "Cluster",
+                  "container": "Container",
+                  "namespace": "Namespace",
+                  "verticalpodautoscaler": "Vertical Pod Autoscaler"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 17
+          },
+          "id": 4,
+          "repeat": "container",
+          "title": "$verticalpodautoscaler / $container",
+          "type": "row"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "description": "CPU Guaranteed QoS recommendations (requests = limits) for the selected VPA.",
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [],
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "CPU Requests"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "CPU Limits"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 0,
+            "y": 18
+          },
+          "id": 5,
+          "options": {
+            "graphMode": "area",
+            "percentChangeColorMode": "standard",
+            "showPercentChange": false
+          },
+          "pluginVersion": "v11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n    cluster=\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\nverticalpodautoscaler=~\"$verticalpodautoscaler\",\ncontainer=~\"$container\"\n,\n    resource=\"cpu\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "instant": false,
+              "legendFormat": "CPU Requests"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n    cluster=\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\nverticalpodautoscaler=~\"$verticalpodautoscaler\",\ncontainer=~\"$container\"\n,\n    resource=\"cpu\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "instant": false,
+              "legendFormat": "CPU Limits"
+            }
+          ],
+          "title": "CPU Guaranteed QoS",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "description": "CPU Burstable QoS recommendations (requests < limits) for the selected VPA.",
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [],
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "CPU Requests"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "CPU Limits"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 6,
+            "y": 18
+          },
+          "id": 6,
+          "options": {
+            "graphMode": "area",
+            "percentChangeColorMode": "standard",
+            "showPercentChange": false
+          },
+          "pluginVersion": "v11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound{\n    cluster=\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\nverticalpodautoscaler=~\"$verticalpodautoscaler\",\ncontainer=~\"$container\"\n,\n    resource=\"cpu\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "instant": false,
+              "legendFormat": "CPU Requests"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound{\n    cluster=\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\nverticalpodautoscaler=~\"$verticalpodautoscaler\",\ncontainer=~\"$container\"\n,\n    resource=\"cpu\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "instant": false,
+              "legendFormat": "CPU Limits"
+            }
+          ],
+          "title": "CPU Burstable QoS",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "description": "Memory Guaranteed QoS recommendations (requests = limits) for the selected VPA.",
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [],
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Memory Requests"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Memory Limits"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 12,
+            "y": 18
+          },
+          "id": 7,
+          "options": {
+            "graphMode": "area",
+            "percentChangeColorMode": "standard",
+            "showPercentChange": false
+          },
+          "pluginVersion": "v11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n    cluster=\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\nverticalpodautoscaler=~\"$verticalpodautoscaler\",\ncontainer=~\"$container\"\n,\n    resource=\"memory\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "instant": false,
+              "legendFormat": "Memory Requests"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n    cluster=\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\nverticalpodautoscaler=~\"$verticalpodautoscaler\",\ncontainer=~\"$container\"\n,\n    resource=\"memory\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "instant": false,
+              "legendFormat": "Memory Limits"
+            }
+          ],
+          "title": "Memory Guaranteed QoS",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "description": "Memory Burstable QoS recommendations (requests < limits) for the selected VPA.",
+          "fieldConfig": {
+            "defaults": {
+              "mappings": [],
+              "thresholds": {
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Memory Requests"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Memory Limits"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 6,
+            "x": 18,
+            "y": 18
+          },
+          "id": 8,
+          "options": {
+            "graphMode": "area",
+            "percentChangeColorMode": "standard",
+            "showPercentChange": false
+          },
+          "pluginVersion": "v11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound{\n    cluster=\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\nverticalpodautoscaler=~\"$verticalpodautoscaler\",\ncontainer=~\"$container\"\n,\n    resource=\"memory\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "instant": false,
+              "legendFormat": "Memory Requests"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound{\n    cluster=\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\nverticalpodautoscaler=~\"$verticalpodautoscaler\",\ncontainer=~\"$container\"\n,\n    resource=\"memory\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "instant": false,
+              "legendFormat": "Memory Limits"
+            }
+          ],
+          "title": "Memory Burstable QoS",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "description": "CPU recommendations, usage, requests, and limits over time for the selected VPA.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "fillOpacity": 0
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 23
+          },
+          "id": 9,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "pluginVersion": "v11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound{\n    cluster=\"$cluster\",\njob=~\"$job\",\nnamespace=~\"$namespace\"\n,\nverticalpodautoscaler=~\"$verticalpodautoscaler\",\ncontainer=~\"$container\"\n,\n    resource=\"cpu\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "legendFormat": "Lower Bound"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n    cluster=\"$cluster\",\n    job=~\"$job\",\n    namespace=~\"$namespace\",\n    verticalpodautoscaler=~\"$verticalpodautoscaler\",\n    container=~\"$container\",\n    resource=\"cpu\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "legendFormat": "Target"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound{\n    cluster=\"$cluster\",\n    job=~\"$job\",\n    namespace=~\"$namespace\",\n    verticalpodautoscaler=~\"$verticalpodautoscaler\",\n    container=~\"$container\",\n    resource=\"cpu\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "legendFormat": "Upper Bound"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "avg(\n  node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{\n    cluster=\"$cluster\",\n    namespace=~\"$namespace\",\n    container=~\"$container\",\n    container!=\"\"\n  }\n) by (cluster, container)\n",
+              "legendFormat": "Usage"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "max(\n  kube_pod_container_resource_requests{\n    cluster=~\"$cluster\",\n    job=~\"$job\",\n    namespace=~\"$namespace\",\n    resource=~\"cpu\",\n    container=~\"$container\"\n  }\n) by (cluster, container)\n",
+              "legendFormat": "Requests"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "max(\n  kube_pod_container_resource_limits{\n    cluster=~\"$cluster\",\n    job=~\"$job\",\n    namespace=~\"$namespace\",\n    resource=~\"cpu\",\n    container=~\"$container\"\n  }\n) by (cluster, container)\n",
+              "legendFormat": "Limits"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P4169E866C3094E38"
+              },
+              "expr": "sum(\n    rate(\n        container_cpu_cfs_throttled_seconds_total{\n            namespace=~\"$namespace\",\n            image!=\"\",\n            container=~\"$container\",\n            cluster=~\"$cluster\"\n        }\n    [$__rate_interval])\n) by(container,cluster) > 0",
+              "instant": false,
+              "legendFormat": "Throttling"
+            }
+          ],
+          "title": "VPA CPU Recommendations Over Time",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "VictoriaMetrics"
+          },
+          "description": "Memory recommendations, usage, requests, and limits over time for the selected VPA.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "fillOpacity": 0
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 23
+          },
+          "id": 10,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true,
+              "sortBy": "Mean",
+              "sortDesc": true
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "pluginVersion": "v11.4.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_lowerbound{\n    cluster=\"$cluster\",\n    job=~\"$job\",\n    namespace=~\"$namespace\",\n    verticalpodautoscaler=~\"$verticalpodautoscaler\",\n    container=~\"$container\",\n    resource=\"memory\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "legendFormat": "Lower Bound"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{\n    cluster=\"$cluster\",\n    job=~\"$job\",\n    namespace=~\"$namespace\",\n    verticalpodautoscaler=~\"$verticalpodautoscaler\",\n    container=~\"$container\",\n    resource=\"memory\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "legendFormat": "Target"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "max(\n  kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_upperbound{\n    cluster=\"$cluster\",\n    job=~\"$job\",\n    namespace=~\"$namespace\",\n    verticalpodautoscaler=~\"$verticalpodautoscaler\",\n    container=~\"$container\",\n    resource=\"memory\"\n  }\n) by (cluster, job, namespace, verticalpodautoscaler, container, resource)\n",
+              "legendFormat": "Upper Bound"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "avg(\n  container_memory_working_set_bytes{\n    cluster=\"$cluster\",\n    namespace=~\"$namespace\",\n    container=~\"$container\",\n    container!=\"\"\n  }\n) by (cluster, container)\n",
+              "legendFormat": "Usage"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "max(\n  kube_pod_container_resource_requests{\n    cluster=~\"$cluster\",\n    job=~\"$job\",\n    namespace=~\"$namespace\",\n    resource=~\"memory\",\n    container=~\"$container\"\n  }\n) by (cluster, container)\n",
+              "legendFormat": "Requests"
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "VictoriaMetrics"
+              },
+              "exemplar": false,
+              "expr": "max(\n  kube_pod_container_resource_limits{\n    cluster=~\"$cluster\",\n    job=~\"$job\",\n    namespace=~\"$namespace\",\n    resource=~\"memory\",\n    container=~\"$container\"\n  }\n) by (cluster, container)\n",
+              "legendFormat": "Limits"
+            }
+          ],
+          "title": "VPA Memory Recommendations Over Time",
+          "type": "timeseries"
+        }
+      ],
+      "schemaVersion": 39,
+      "tags": [
+        "kubernetes",
+        "autoscaling",
+        "kubernetes-autoscaling-mixin",
+        "kubernetes-core"
+      ],
+      "templating": {
+        "list": [
+          {
+            "current": {
+              "selected": true,
+              "text": "default",
+              "value": "default"
+            },
+            "label": "Data source",
+            "name": "datasource",
+            "query": "prometheus",
+            "type": "datasource"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "hide": 2,
+            "label": "Cluster",
+            "name": "cluster",
+            "query": "label_values(kube_pod_info{job=~\"kube-state-metrics\"}, cluster)",
+            "refresh": 2,
+            "sort": 1,
+            "type": "query"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "label": "Job",
+            "name": "job",
+            "query": "label_values(kube_customresource_verticalpodautoscaler_labels{cluster=\"$cluster\"}, job)",
+            "refresh": 2,
+            "sort": 1,
+            "type": "query"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "label": "Namespace",
+            "multi": true,
+            "name": "namespace",
+            "query": "label_values(kube_customresource_verticalpodautoscaler_labels{cluster=\"$cluster\", job=~\"$job\"}, namespace)",
+            "refresh": 2,
+            "sort": 1,
+            "type": "query"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "label": "Vertical Pod Autoscaler",
+            "name": "verticalpodautoscaler",
+            "query": "label_values(kube_customresource_verticalpodautoscaler_labels{cluster=\"$cluster\", job=~\"$job\", namespace=~\"$namespace\"}, verticalpodautoscaler)",
+            "refresh": 2,
+            "sort": 1,
+            "type": "query"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${datasource}"
+            },
+            "includeAll": true,
+            "label": "Container",
+            "multi": true,
+            "name": "container",
+            "query": "label_values(kube_customresource_verticalpodautoscaler_status_recommendation_containerrecommendations_target{cluster=\"$cluster\", job=~\"$job\", namespace=~\"$namespace\", verticalpodautoscaler=~\"$verticalpodautoscaler\"}, container)",
+            "refresh": 2,
+            "sort": 1,
+            "type": "query"
+          }
+        ]
+      },
+      "time": {
+        "from": "now-6h",
+        "to": "now"
+      },
+      "timezone": "utc",
+      "title": "Kubernetes / Autoscaling / Vertical Pod Autoscaler",
+      "uid": "kubernetes-autoscaling-mixin-vpa-jkwq",
+      "gnetId": 22168
+    }

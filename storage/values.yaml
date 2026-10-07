@@ -1,0 +1,34 @@
+# https://github.com/longhorn/charts/blob/v1.12.x/charts/longhorn/values.yaml
+
+service:
+  ui:
+    type: ClusterIP
+
+persistence:
+  defaultClassReplicaCount: 3
+  defaultDataLocality: best-effort
+  defaultReplicaAutoBalance: least-effort
+  reclaimPolicy: Delete
+
+defaultBackupStore:
+  backupTarget: cifs://192.168.142.250/backup
+  backupTargetCredentialSecret: longhorn-backup 
+
+defaultSettings:
+  defaultDataPath: /media/storage/
+  createDefaultDiskLabeledNodes: false
+  storageOverProvisioningPercentage: "100"
+  storageMinimalAvailablePercentage: "15"
+  replicaAutoBalance: "least-effort"
+  defaultDataLocality: "disabled"
+  snapshotDataIntegrity: "enabled"
+  fastReplicaRebuildEnabled: "true"
+  nodeDownPodDeletionPolicy: "delete-both-statefulset-and-deployment-pod"
+  concurrentReplicaRebuildPerNodeLimit: "1"
+  replicaReplenishmentWaitInterval: "3600"
+  allowNodeDrainWithLastHealthyReplica: "false"
+  orphanResourceAutoDeletion: "replica-data;instance"
+  orphanResourceAutoDeletionGracePeriod: "3600"
+  # https://longhorn.io/kb/troubleshooting-volume-readonly-or-io-error/
+  # https://github.com/longhorn/longhorn/issues/1691
+  guaranteedInstanceManagerCPU: 18

@@ -1,0 +1,17 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: self-hosted-runner-deployment
+  namespace: github-runner
+spec:
+  replicas: 1
+  template:
+    spec:
+      dnsPolicy: Default
+      repository: anagno/*
+      labels:
+        - self-hosted
+      resources:
+        requests:
+          cpu: 2000m
+          memory: 2000Mi
